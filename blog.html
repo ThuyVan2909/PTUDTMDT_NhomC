@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog / Tư vấn</title>
+<style>
+    body { margin: 0; font-family: Arial, sans-serif; }
+
+    .section {
+        border: 1px dashed #bbb;
+        padding: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100px;
+    }
+
+    .section-grid {
+        border: 1px dashed #bbb;
+        padding: 30px;
+        display: grid;
+        gap: 10px;
+    }
+
+    /* Layout tổng thể */
+    .menu { background: #f3f3f3; min-height: 60px; }
+    .banner { background: #ffe6e6; min-height: 200px; font-weight: bold; }
+
+    .filter { background: #fafafa; min-height: 80px; }
+
+    .blog-layout {
+        grid-template-columns: 3fr 1fr;
+        min-height: 600px;
+    }
+
+    .blog-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .blog-post {
+        border: 1px dashed #ccc;
+        padding: 20px;
+        background: #fff;
+    }
+
+    .sidebar {
+        border: 1px dashed #ccc;
+        padding: 20px;
+        background: #f9f9f9;
+        display: grid;
+        gap: 15px;
+    }
+
+    .pagination {
+        text-align: center;
+        padding: 20px;
+        border: 1px dashed #ccc;
+    }
+
+    .footer { background: #f3f3f3; min-height: 100px; }
+</style>
+</head>
+<body>
+
+    <div class="menu section">HEADER / MENU</div>
+    <div class="banner section">BLOG & TƯ VẤN — Banner chính / tiêu đề chuyên mục</div>
+
+    <div class="filter section">
+        Bộ lọc chủ đề: 
+        <span>💄 Trang điểm</span> |
+        <span>🧴 Chăm sóc da</span> |
+        <span>🌿 Xu hướng làm đẹp xanh</span> |
+        <span>📰 Tất cả</span>
+    </div>
+
+    <div class="blog-layout section-grid">
+        <!-- Danh sách bài viết -->
+        <div class="blog-grid">
+            <div class="blog-post">
+                🧴 Bài viết 1 — “Cách chọn kem nền phù hợp với tone da”
+            </div>
+            <div class="blog-post">
+                💋 Bài viết 2 — “Top 5 son lì hot trend 2025”
+            </div>
+            <div class="blog-post">
+                🌿 Bài viết 3 — “Xu hướng mỹ phẩm thuần chay”
+            </div>
+            <div class="blog-post">
+                💄 Bài viết 4 — “Makeup tối giản: 3 bước tự tin ra phố”
+            </div>
+            <div class="blog-post">
+                🧼 Bài viết 5 — “Dưỡng da buổi tối đúng cách”
+            </div>
+            <div class="blog-post">
+                💧 Bài viết 6 — “Sự thật về kem chống nắng vật lý & hoá học”
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div><strong>Bài nổi bật</strong></div>
+            <div>🔥 Cách giữ makeup lâu trôi cả ngày</div>
+            <div>💄 Review son mới: Maybelline SuperStay Vinyl</div>
+            <div>🎥 Video hướng dẫn: “3 bước skincare buổi sáng”</div>
+            <div><strong>Chủ đề nổi bật</strong></div>
+            <div>#Makeup #Skincare #EcoBeauty</div>
+        </div>
+    </div>
+
+    <div class="pagination section">
+        ⬅️ Trang trước | Trang 1 | Trang 2 | Trang 3 | Trang sau ➡️
+    </div>
+
+    <div class="footer section">FOOTER</div>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout Page (Thanh toán)</title>
+<style>
+    body { margin: 0; font-family: Arial; }
+
+    .section {
+        border: 1px dashed #bbb;
+        padding: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100px;
+    }
+
+    .section-grid {
+        border: 1px dashed #bbb;
+        padding: 30px;
+        display: grid;
+        gap: 10px;
+    }
+
+    /* Layout */
+    .menu { background: #f3f3f3; min-height: 60px; }
+    .checkout-header { background: #fafafa; min-height: 80px; font-weight: bold; }
+
+    .checkout-body {
+        grid-template-columns: 2fr 1fr;
+        min-height: 500px;
+    }
+
+    .checkout-form {
+        border: 1px dashed #ccc;
+        display: grid;
+        grid-template-rows: repeat(3, 1fr);
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .address { background: #fffef8; padding: 20px; }
+    .payment { background: #f9f9ff; padding: 20px; }
+    .review-order { background: #f9fff9; padding: 20px; }
+
+    .order-summary {
+        border: 1px dashed #ccc;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .footer { background: #f3f3f3; min-height: 100px; }
+</style>
+</head>
+<body>
+
+    <div class="menu section">HEADER / MENU</div>
+    <div class="checkout-header section">THANH TOÁN</div>
+
+    <div class="checkout-body section-grid">
+        <div class="checkout-form">
+            <div class="address">📍 Thông tin giao hàng: Họ tên, địa chỉ, điện thoại</div>
+            <div class="payment">💳 Phương thức thanh toán: COD / Thẻ / Ví điện tử</div>
+            <div class="review-order">📦 Xác nhận đơn hàng: Danh sách sản phẩm + Tổng giá</div>
+        </div>
+
+        <div class="order-summary">
+            <div>Tổng phụ: xxx đ</div>
+            <div>Phí ship: xxx đ</div>
+            <div><strong>Tổng thanh toán: xxx đ</strong></div>
+            <button>XÁC NHẬN ĐẶT HÀNG</button>
+        </div>
+    </div>
+
+    <div class="footer section">FOOTER</div>
+
+</body>
+</html>
