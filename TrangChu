@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage (Grid Layout)</title>
+    <style>
+        body { margin: 0; font-family: Arial; }
+
+        .section {
+            border: 1px dashed #bbb;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 120px;
+        }
+
+        .section-grid {
+            border: 1px dashed #bbb;
+            padding: 30px;
+            display: grid;
+            gap: 10px;
+        }
+
+        /* Layout từng khối */
+        .menu { background: #f3f3f3; min-height: 60px; }
+        .banner { min-height: 250px; }
+
+        .category { grid-template-columns: repeat(6, 1fr); min-height: 160px; }
+        .best-seller { grid-template-columns: repeat(4, 1fr); min-height: 300px; }
+        .new-arrivals { grid-template-columns: repeat(4, 1fr); min-height: 300px; }
+        .flash-sale { grid-template-columns: 2fr 1fr; min-height: 200px; }
+        .combo { grid-template-columns: repeat(3, 1fr); min-height: 250px; }
+        .review { grid-template-columns: repeat(2, 1fr); min-height: 250px; }
+        .blog { grid-template-columns: repeat(3, 1fr); min-height: 250px; }
+
+        .footer { background: #f3f3f3; min-height: 100px; }
+    </style>
+</head>
+<body>
+
+    <div class="menu section">HEADER / MENU</div>
+    <div class="banner section">HERO BANNER</div>
+
+    <div class="category section-grid">CATEGORY GRID (6 cột)</div>
+    <div class="best-seller section-grid">BEST SELLER GRID (4 cột)</div>
+    <div class="new-arrivals section-grid">NEW ARRIVALS GRID (4 cột)</div>
+    <div class="flash-sale section-grid">FLASH SALE (2 cột: Countdown + SP)</div>
+    <div class="combo section-grid">COMBO / ROUTINE GRID (3 cột)</div>
+    <div class="review section-grid">REVIEW (2 cột)</div>
+    <div class="blog section-grid">BLOG GRID (3 cột)</div>
+
+    <div class="footer section">FOOTER</div>
+
+</body>
+</html>
