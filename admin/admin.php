@@ -1,99 +1,73 @@
 <?php
 session_start();
-include ("../db.php");
+include "../db.php";  // đúng đường dẫn
 
-// CHỐNG TRUY CẬP TRÁI PHÉP
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit;
 }
 
-$sql = "
-SELECT 
-    spu.id AS spu_id,
-    spu.name,
-    spu.brand,
-    sku.price,
-    sku.stock,
-    (SELECT image_url FROM sku_images WHERE sku_id = sku.id AND is_primary = 1 LIMIT 1) AS image
-FROM spu
-LEFT JOIN sku ON sku.spu_id = spu.id
-GROUP BY spu.id
-ORDER BY spu.created_at DESC
-";
+$view = $_GET['view'] ?? 'dashboard';
 
-$products = $conn->query($sql);
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Trang Admin</title>
+    <title>Admin Dashboard</title>
     <style>
-        body { font-family: Arial; background: #f2f2f2; }
-        .container { width: 90%; margin: 40px auto; }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fff;
-        }
-        table th, table td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: center;
-        }
-        table th {
+        body { font-family: Arial; margin: 0; background: #f4f4f4; }
+        .sidebar {
+            width: 230px; 
+            height: 100vh;
+            position: fixed;
+            left: 0; top: 0;
             background: #135071;
             color: #fff;
         }
-        .btn {
-            padding: 6px 12px;
-            border-radius: 5px;
-            text-decoration: none;
+        .sidebar h2 { text-align: center; padding: 20px 0; margin: 0; }
+        .sidebar a {
+            display: block;
+            padding: 14px 20px;
             color: #fff;
+            text-decoration: none;
         }
-        .btn-add { background: #28a745; }
-        .btn-edit { background: #ffc107; color: #000; }
-        .btn-delete { background: #dc3545; }
-        img { width: 70px; height: 70px; object-fit: cover; }
+        .sidebar a:hover { background: #0d3a54; }
+
+        .content {
+            margin-left: 230px;
+            padding: 20px;
+        }
     </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="sidebar">
+    <h2>ADMIN</h2>
+    <a href="admin.php?view=dashboard">🏠 Dashboard</a>
+    <a href="admin.php?view=products">📦 Quản lý sản phẩm</a>
+    <a href="admin.php?view=orders">📑 Quản lý đơn hàng</a>
+    <a href="admin.php?view=users">👤 Người dùng</a>
+</div>
 
-    <h2>Quản lý sản phẩm</h2>
-    <a href="add_product.php" class="btn btn-add">➕ Thêm sản phẩm</a>
-    <br><br>
+<div class="content">
 
-    <table>
-        <tr>
-            <th>Ảnh</th>
-            <th>Tên SP</th>
-            <th>Brand</th>
-            <th>Giá</th>
-            <th>Tồn kho</th>
-            <th>Hành động</th>
-        </tr>
-
-        <?php while ($p = $products->fetch_assoc()): ?>
-        <tr>
-            <td><img src="<?= $p['image'] ?? 'assets/images/no-image.png' ?>"></td>
-            <td><?= $p['brand'] . ' ' . $p['name'] ?></td>
-            <td><?= $p['brand'] ?></td>
-            <td><?= number_format($p['price']) ?>₫</td>
-            <td><?= $p['stock'] ?></td>
-            <td>
-                <a href="edit_product.php?id=<?= $p['spu_id'] ?>" class="btn btn-edit">Sửa</a>
-                <a onclick="return confirm('Xóa sản phẩm?')" 
-                   href="delete_product.php?id=<?= $p['spu_id'] ?>" class="btn btn-delete">Xóa</a>
-            </td>
-        </tr>
-        <?php endwhile; ?>
-
-    </table>
+<?php
+// Gọi file tương ứng
+if ($view === 'products') {
+    include "products.php";
+} 
+else if ($view === 'orders') {
+    include "orders.php";
+} 
+else if ($view === 'users') {
+    include "users.php";
+} 
+else {
+    echo "<h2>Chào mừng bạn đến trang quản trị!</h2>";
+    echo "Chọn chức năng bên trái để quản lý.";
+}
+?>
 
 </div>
 
