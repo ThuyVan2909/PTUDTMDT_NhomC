@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th12 06, 2025 lúc 04:55 AM
+-- Thời gian đã tạo: Th12 08, 2025 lúc 07:34 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.0.30
 
@@ -24,6 +24,51 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `attributes`
+--
+
+CREATE TABLE `attributes` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `attributes`
+--
+
+INSERT INTO `attributes` (`id`, `name`) VALUES
+(1, 'Storage'),
+(2, 'Color');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `attribute_values`
+--
+
+CREATE TABLE `attribute_values` (
+  `id` int(11) NOT NULL,
+  `attribute_id` int(11) NOT NULL,
+  `value` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `attribute_values`
+--
+
+INSERT INTO `attribute_values` (`id`, `attribute_id`, `value`) VALUES
+(1, 1, '128GB'),
+(2, 1, '256GB'),
+(3, 1, '512GB'),
+(4, 1, '1TB'),
+(5, 2, 'Đen Không Gian'),
+(6, 2, 'Trắng Ngọc Trai'),
+(7, 2, 'Xanh Da Trời'),
+(8, 2, 'Titan Sa Mạc');
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `categories`
 --
 
@@ -40,7 +85,21 @@ CREATE TABLE `categories` (
 INSERT INTO `categories` (`id`, `name`, `parent_id`) VALUES
 (1, 'Điện thoại', NULL),
 (2, 'Laptop', NULL),
-(3, 'Phụ kiện', NULL);
+(3, 'Smartwatch', NULL),
+(5, 'Macbook', 2),
+(6, 'Gaming', 2),
+(7, 'Đồ hoạ', 2),
+(8, 'Mỏng nhẹ', 2),
+(9, 'iPhone', 1),
+(10, 'Samsung', 1),
+(11, 'Oppo', 1),
+(12, 'Xiaomi', 1),
+(13, 'Realme', 1),
+(14, 'Apple Watch', 3),
+(15, 'Samsung Watch', 3),
+(16, 'Huawei Watch', 3),
+(17, 'Oppo Watch', 3),
+(18, 'Pixel Watch', 3);
 
 -- --------------------------------------------------------
 
@@ -124,12 +183,30 @@ CREATE TABLE `sku` (
 --
 
 INSERT INTO `sku` (`id`, `spu_id`, `sku_code`, `variant`, `price`, `promo_price`, `stock`, `warehouse_location`, `created_at`) VALUES
-(1, 1, 'IP14-128', '{\"storage\":\"128GB\",\"color\":\"Blue\"}', 19990000.00, 18990000.00, 50, 'KHO1', '2025-12-06 03:31:49'),
-(2, 2, 'SS23-256', '{\"storage\":\"256GB\",\"color\":\"Black\"}', 21990000.00, 20990000.00, 40, 'KHO2', '2025-12-06 03:31:49'),
-(3, 3, 'RN12-128', '{\"storage\":\"128GB\",\"color\":\"Gray\"}', 5990000.00, 5490000.00, 100, 'KHO1', '2025-12-06 03:31:49'),
-(4, 4, 'MBA-M2-256', '{\"color\":\"Space Gray\",\"storage\":\"256GB\"}', 28990000.00, 27990000.00, 30, 'KHO3', '2025-12-06 03:31:49'),
-(5, 5, 'DXPS13-512', '{\"color\":\"Silver\",\"storage\":\"512GB SSD\"}', 34990000.00, 32990000.00, 20, 'KHO2', '2025-12-06 03:31:49'),
-(6, 6, 'ASUS-VB15', '{\"cpu\":\"i5\",\"ram\":\"8GB\",\"storage\":\"256GB\"}', 14990000.00, 13990000.00, 80, 'KHO1', '2025-12-06 03:31:49');
+(1, 1, 'IP14-128-BLK', '{\"storage\": \"128GB\", \"color\": \"Black\"}', 19990000.00, 18990000.00, 50, 'KHO1', '2025-12-08 09:13:40'),
+(2, 1, 'IP14-256-BLK', '{\"storage\": \"256GB\", \"color\": \"Black\"}', 21990000.00, 20990000.00, 30, 'KHO1', '2025-12-08 09:13:40');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `sku_attribute_values`
+--
+
+CREATE TABLE `sku_attribute_values` (
+  `id` int(11) NOT NULL,
+  `sku_id` int(11) NOT NULL,
+  `attribute_value_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `sku_attribute_values`
+--
+
+INSERT INTO `sku_attribute_values` (`id`, `sku_id`, `attribute_value_id`) VALUES
+(1, 1, 1),
+(2, 1, 5),
+(3, 2, 2),
+(4, 2, 5);
 
 -- --------------------------------------------------------
 
@@ -164,12 +241,8 @@ CREATE TABLE `spu` (
 --
 
 INSERT INTO `spu` (`id`, `name`, `brand`, `category_id`, `description`, `created_at`) VALUES
-(1, 'iPhone 14', 'Apple', 1, 'Điện thoại Apple iPhone 14, hiệu năng mạnh mẽ.', '2025-12-06 03:15:50'),
-(2, 'Samsung Galaxy S23', 'Samsung', 1, 'Flagship mới nhất của Samsung.', '2025-12-06 03:15:50'),
-(3, 'Xiaomi Redmi Note 12', 'Xiaomi', 1, 'Máy ngon giá rẻ.', '2025-12-06 03:15:50'),
-(4, 'MacBook Air M2', 'Apple', 2, 'Laptop Apple hiệu năng mạnh, dùng chip M2.', '2025-12-06 03:15:50'),
-(5, 'Dell XPS 13', 'Dell', 2, 'Ultrabook cao cấp.', '2025-12-06 03:15:50'),
-(6, 'Asus VivoBook 15', 'Asus', 2, 'Laptop phổ thông, phù hợp sinh viên.', '2025-12-06 03:15:50');
+(1, 'iPhone 14', 'Apple', 9, 'iPhone 14', '2025-12-08 09:09:30'),
+(2, 'iPhone 15', 'Apple', 9, 'iPhone 15', '2025-12-08 09:09:30');
 
 -- --------------------------------------------------------
 
@@ -197,6 +270,19 @@ INSERT INTO `users` (`id`, `fullname`, `email`, `password`, `role`, `created_at`
 --
 -- Chỉ mục cho các bảng đã đổ
 --
+
+--
+-- Chỉ mục cho bảng `attributes`
+--
+ALTER TABLE `attributes`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `attribute_values`
+--
+ALTER TABLE `attribute_values`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `attribute_id` (`attribute_id`);
 
 --
 -- Chỉ mục cho bảng `categories`
@@ -242,6 +328,14 @@ ALTER TABLE `sku`
   ADD KEY `spu_id` (`spu_id`);
 
 --
+-- Chỉ mục cho bảng `sku_attribute_values`
+--
+ALTER TABLE `sku_attribute_values`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `sku_id` (`sku_id`),
+  ADD KEY `attribute_value_id` (`attribute_value_id`);
+
+--
 -- Chỉ mục cho bảng `sku_images`
 --
 ALTER TABLE `sku_images`
@@ -267,10 +361,22 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT cho bảng `attributes`
+--
+ALTER TABLE `attributes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT cho bảng `attribute_values`
+--
+ALTER TABLE `attribute_values`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
 -- AUTO_INCREMENT cho bảng `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT cho bảng `item`
@@ -300,7 +406,13 @@ ALTER TABLE `order_tracking`
 -- AUTO_INCREMENT cho bảng `sku`
 --
 ALTER TABLE `sku`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT cho bảng `sku_attribute_values`
+--
+ALTER TABLE `sku_attribute_values`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `sku_images`
@@ -312,7 +424,7 @@ ALTER TABLE `sku_images`
 -- AUTO_INCREMENT cho bảng `spu`
 --
 ALTER TABLE `spu`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
@@ -323,6 +435,12 @@ ALTER TABLE `users`
 --
 -- Các ràng buộc cho các bảng đã đổ
 --
+
+--
+-- Các ràng buộc cho bảng `attribute_values`
+--
+ALTER TABLE `attribute_values`
+  ADD CONSTRAINT `attribute_values_ibfk_1` FOREIGN KEY (`attribute_id`) REFERENCES `attributes` (`id`) ON DELETE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `item`
@@ -354,6 +472,13 @@ ALTER TABLE `order_tracking`
 --
 ALTER TABLE `sku`
   ADD CONSTRAINT `sku_ibfk_1` FOREIGN KEY (`spu_id`) REFERENCES `spu` (`id`);
+
+--
+-- Các ràng buộc cho bảng `sku_attribute_values`
+--
+ALTER TABLE `sku_attribute_values`
+  ADD CONSTRAINT `sku_attribute_values_ibfk_1` FOREIGN KEY (`sku_id`) REFERENCES `sku` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `sku_attribute_values_ibfk_2` FOREIGN KEY (`attribute_value_id`) REFERENCES `attribute_values` (`id`) ON DELETE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `sku_images`
