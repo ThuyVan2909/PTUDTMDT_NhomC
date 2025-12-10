@@ -16,7 +16,7 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Lendly Store</title>
+    <title>TechZone</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
@@ -32,16 +32,26 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
 </head>
 <body class="bg-light">
 
+
+
+
 <!-- HEADER -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="#">Lendly Store</a>
+    <a class="navbar-brand fw-bold" href="#">TechZone</a>
     <div class="d-flex gap-2">
       <button class="btn btn-outline-primary" onclick="openLogin()">Đăng nhập</button>
-      <a href="#" class="btn btn-outline-success">Giỏ hàng</a>
+      <a href="cart.php" class="btn btn-outline-success position-relative">
+    Giỏ hàng
+    <span id="cartCount" 
+          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+</a>
+
     </div>
   </div>
 </nav>
+
+
 
 <div class="container py-4">
 
@@ -125,6 +135,12 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
       <input type="password" name="password" placeholder="Mật khẩu" required>
       <button type="submit" class="login-submit">Đăng nhập</button>
     </form>
+    <div class="text-center mt-2">
+        <small>
+            Bạn chưa có tài khoản? 
+            <a href="register.php" class="fw-bold text-primary">Đăng ký ngay</a>
+        </small>
+    </div>
   </div>
 </div>
 
@@ -176,5 +192,14 @@ $(".watch-cat").click(function(){
 loadSection("watch", watchCat, "");
 
 </script>
+
+<script>
+$(document).ready(function(){
+    $.get("cart_count.php", function(count){
+        $("#cartCount").text(count);
+    });
+});
+</script>
+
 </body>
 </html>

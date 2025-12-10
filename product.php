@@ -1,7 +1,8 @@
+
 <?php
+// TRANG PRODUCT DETAIL KHI CLICK VAO 1 SẢN PHẨM
 session_start();
 include 'db.php';
-
 $spu_id = isset($_GET['spu_id']) ? intval($_GET['spu_id']) : 0;
 if (!$spu_id) { echo "Product not found"; exit; }
 
@@ -125,11 +126,36 @@ body { font-family: Arial; background: #f7f7f7; margin: 0; }
 
     <!-- LEFT COLUMN: IMAGES -->
     <div class="images">
-        <?php foreach ($images as $img): ?>
-            <img id="mainImg" src="<?= $img ?>">
-            <?php break; ?> 
-        <?php endforeach; ?>
-    </div>
+
+    <?php 
+$fixedImages = array_map(function($p) {
+    // Nếu DB đã lưu path đầy đủ thì giữ nguyên
+    if (str_starts_with($p, '/techzone/')) {
+        return $p;
+    }
+    // Nếu DB chỉ lưu /assets/... thì thêm /techzone vào đầu
+    return '/techzone' . $p;
+}, $images);
+?>
+
+
+    <img id="mainImg" 
+     src="<?= htmlspecialchars($fixedImages[0] ?? '/techzone/assets/images/no-image.png') ?>" 
+     alt="main image">
+
+<div style="display:flex; gap:10px; margin-top:15px;">
+    <?php foreach (array_slice($fixedImages, 1) as $img): ?>
+        <img src="<?= htmlspecialchars($img) ?>" 
+             style="width:60px;height:60px;object-fit:cover;border-radius:5px;cursor:pointer"
+             onclick="document.getElementById('mainImg').src='<?= htmlspecialchars($img) ?>'">
+    <?php endforeach; ?>
+</div>
+
+</div>
+
+
+
+
 
     <!-- RIGHT COLUMN: PRODUCT INFO -->
     <div class="info">
@@ -137,43 +163,162 @@ body { font-family: Arial; background: #f7f7f7; margin: 0; }
         <h1><?= $spu['name'] ?></h1>
 
         <!-- PRICE BOX -->
+         <?php
+        $firstSku = $conn->query("SELECT price, promo_price FROM sku WHERE spu_id = $spu_id LIMIT 1")->fetch_assoc();
+        ?>
         <div class="price-box">
-            <span id="promo_price">
-                <?= number_format($skus->fetch_assoc()['promo_price'] ?? $spu['price']) ?> đ
-            </span><br>
-        </div>
+    <span id="promo_price"><?= number_format($firstSku['promo_price']) ?> đ</span><br>
+    <span id="normal_price" class="price-old"><?= number_format($firstSku['price']) ?> đ</span>
+</div>
 
         <!-- ATTRIBUTES -->
-        <?php foreach ($attributes as $attrId => $attr): ?>
-            <div class="attr-group">
-                <h3><?= $attr['name'] ?></h3>
-                <div class="attr-values">
-                    <?php foreach ($attr['values'] as $v): ?>
-                        <button data-value-id="<?= $v['id'] ?>">
-                            <?= $v['value'] ?>
-                        </button>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        <?php endforeach; ?>
+<?php foreach ($attributes as $attrId => $attr): ?>
+    <div class="attr-group">
+        <h3><?= $attr['name'] ?></h3>
+        <div class="attr-values">
+            <?php foreach ($attr['values'] as $v): ?>
+                <button 
+                    data-attr-id="<?= $attrId ?>" 
+                    data-attr-name="<?= htmlspecialchars($attr['name']) ?>"
+                    data-value-id="<?= $v['id'] ?>">
+                    <?= $v['value'] ?>
+                </button>
+            <?php endforeach; ?>
+        </div>
+    </div>
+<?php endforeach; ?>
 
-        <!-- BUY BUTTON -->
-        <button class="buy-btn">MUA NGAY</button>
+
+        <!-- BUY BUTTONS -->
+<div style="display:flex; gap:12px; margin-top:20px;">
+    <button class="buy-btn" id="addToCartBtn" style="background:#ff9900;">THÊM VÀO GIỎ</button>
+    <button class="buy-btn" id="buyNowBtn">MUA NGAY</button>
+</div>
+
+<!-- FORM BUY NOW -->
+<form id="buyNowForm" action="checkout.php" method="POST" style="display:none;">
+    <input type="hidden" name="sku_id" id="formSkuId">
+    <input type="hidden" name="quantity" value="1">
+    <input type="hidden" name="fullname" value="Khách lẻ">
+    <input type="hidden" name="phone" value="0000000000">
+    <input type="hidden" name="province_id" value="">
+    <input type="hidden" name="district_id" value="">
+    <input type="hidden" name="street" value="Chưa cung cấp">
+    <input type="hidden" name="payment_method" value="cod">
+    <input type="hidden" name="shipping_method" value="standard">
+</form>
+
+
+
+
+</div>
+
+        <input type="hidden" id="selectedSkuId" value="<?= $defaultSkuId ?>">
+
 
     </div>
 
 </div>
 
 <script>
-// Kích hoạt nút khi chọn
+
+
+// ID attribute theo DB của bạn
+const ID_ATTR_CAPACITY = 1; // dung lượng
+const ID_ATTR_COLOR = 2;    // màu sắc
+
+let selectedValues = {}; // attribute_id → value_id
+
 document.querySelectorAll(".attr-values button").forEach(btn => {
     btn.addEventListener("click", () => {
-        let container = btn.parentNode;
-        container.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+        // active button trong nhóm
+        const group = btn.parentNode;
+        group.querySelectorAll("button").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
+
+        const attrId = parseInt(btn.dataset.attrId);
+        const valueId = parseInt(btn.dataset.valueId);
+
+        // lưu lựa chọn
+        selectedValues[attrId] = valueId;
+
+        // nếu chọn MÀU → đổi ảnh
+        if (attrId === ID_ATTR_COLOR) {
+            fetch("get_sku_images.php?spu_id=<?= $spu_id ?>&color_value_id=" + valueId)
+                .then(r => r.json())
+                .then(imgs => {
+                    if (imgs.length > 0) {
+                        document.getElementById("mainImg").src = imgs[0];
+                    }
+                });
+        }
+
+        // nếu chọn DUNG LƯỢNG → đổi giá
+        if (attrId === ID_ATTR_CAPACITY) {
+            fetch("get_sku_price.php?spu_id=<?= $spu_id ?>&capacity_value_id=" + valueId)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.price && data.promo_price) {
+                        document.getElementById("promo_price").innerText =
+                            new Intl.NumberFormat().format(data.promo_price) + " đ";
+                        document.getElementById("normal_price").innerText =
+                            new Intl.NumberFormat().format(data.price) + " đ";
+                    }
+                });
+        }
+
+        // tìm SKU đúng với bộ thuộc tính đã chọn
+        fetch("get_sku_by_attributes.php?spu_id=<?= $spu_id ?>&values=" + JSON.stringify(selectedValues))
+            .then(r => r.json())
+            .then(data => {
+                if (data.sku_id) {
+                    document.getElementById("selectedSkuId").value = data.sku_id;
+                    console.log("Selected SKU:", data.sku_id);
+                }
+            });
     });
 });
+
+// ADD TO CART
+document.getElementById("addToCartBtn").addEventListener("click", () => {
+    const selectedSkuId = document.getElementById("selectedSkuId").value;
+    if (!selectedSkuId) {
+        alert("Vui lòng chọn đầy đủ thuộc tính");
+        return;
+    }
+
+    fetch("add_to_cart.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: "sku_id=" + selectedSkuId + "&quantity=1"
+    })
+    .then(r => r.text())
+    .then(msg => alert(msg));
+});
+
+// BUY NOW
+document.getElementById("buyNowBtn").addEventListener("click", () => {
+    const skuId = document.getElementById("selectedSkuId").value;
+    document.getElementById("formSkuId").value = skuId;
+
+    fetch("add_to_cart.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: "sku_id=" + skuId + "&quantity=1"
+    }).then(() => document.getElementById("buyNowForm").submit());
+});
+
+
+
+
+
+
+
 </script>
+
+
+
+
 
 </body>
 </html>

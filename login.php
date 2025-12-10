@@ -26,6 +26,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id']   = $user['id'];
             $_SESSION['user_name'] = $user['fullname'];
             $_SESSION['role']      = $user['role'];
+            // MERGE CART SESSION → USER CART
+            $sessionId = session_id();
+            $userId = $user['id'];
+
+            $merge = $conn->prepare("
+            UPDATE cart 
+            SET user_id = ?, session_id = NULL
+            WHERE session_id = ? AND user_id IS NULL
+            ");
+            $merge->bind_param("is", $userId, $sessionId);
+            $merge->execute();
+
 
             // Chuyển trang tùy role
             if ($user['role'] === 'admin') {
@@ -56,9 +68,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="email" name="email" placeholder="Email" required />
     <input type="password" name="password" placeholder="Mật khẩu" required />
     <button type="submit">Đăng nhập</button>
+  
+    
 </form>
 
 <?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
+
+
 
 </body>
 </html>
