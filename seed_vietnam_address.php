@@ -1,31 +1,50 @@
 <?php
 include 'db.php';
 
-$provJson = file_get_contents("https://api.vnappmob.com/api/v2/province/");
-if (!$provJson) {
-    die("Không lấy được provinces");
+// Kiểm tra kết nối API
+function getAPI($url) {
+    $res = file_get_contents($url);
+    if ($res === false) {
+        die("Lỗi gọi API: " . $url);
+    }
+    return json_decode($res, true);
 }
-$provs = json_decode($provJson, true)['results'];
 
-foreach ($provs as $prov) {
-    $province_id = intval($prov['province_id']);
+// 1. Lấy provinces
+$provData = getAPI("https://api.vnappmob.com/api/v2/province/");
+
+if (!isset($provData['results'])) {
+    die("API provinces trả về sai format");
+}
+
+foreach ($provData['results'] as $prov) {
+
+    $province_id   = intval($prov['province_id']);
     $province_name = $prov['province_name'];
 
-    $stmt = $conn->prepare("INSERT IGNORE INTO provinces(id,name) VALUES(?,?)");
+    // Insert province
+    $stmt = $conn->prepare("INSERT IGNORE INTO provinces (id, name) VALUES (?, ?)");
     $stmt->bind_param("is", $province_id, $province_name);
     $stmt->execute();
 
-    // lấy districts
-    $distJson = file_get_contents("https://api.vnappmob.com/api/v2/province/district/".$province_id);
-    $dists = json_decode($distJson, true)['results'];
-    foreach ($dists as $dist) {
-        $district_id = intval($dist['district_id']);
-        $district_name = $dist['district_name'];
+    // 2. Lấy districts theo province
+    $distData = getAPI("https://api.vnappmob.com/api/v2/province/district/" . $province_id);
 
-        $stmt = $conn->prepare("INSERT IGNORE INTO districts(id,province_id,name) VALUES(?,?,?)");
-        $stmt->bind_param("iis", $district_id, $province_id, $district_name);
-        $stmt->execute();
+    if (isset($distData['results'])) {
+        foreach ($distData['results'] as $dist) {
+
+            $district_id   = intval($dist['district_id']);
+            $district_name = $dist['district_name'];
+
+            $stmt = $conn->prepare("
+                INSERT IGNORE INTO districts (id, province_id, name) 
+                VALUES (?, ?, ?)
+            ");
+            $stmt->bind_param("iis", $district_id, $province_id, $district_name);
+            $stmt->execute();
+        }
     }
 }
 
 echo "Seed provinces + districts hoàn tất.";
+?>

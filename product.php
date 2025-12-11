@@ -223,9 +223,12 @@ $fixedImages = array_map(function($p) {
 <script>
 
 
-// ID attribute theo DB của bạn
+// ID attribute theo DB
 const ID_ATTR_CAPACITY = 1; // dung lượng
-const ID_ATTR_COLOR = 2;    // màu sắc
+const ID_ATTR_COLOR    = 2; // màu sắc
+const ID_ATTR_CPU      = 3; // CPU
+const ID_ATTR_RAM      = 4; // RAM
+const ID_ATTR_SSD      = 5; // SSD
 
 let selectedValues = {}; // attribute_id → value_id
 
@@ -253,31 +256,29 @@ document.querySelectorAll(".attr-values button").forEach(btn => {
                 });
         }
 
-        // nếu chọn DUNG LƯỢNG → đổi giá
-        if (attrId === ID_ATTR_CAPACITY) {
-            fetch("get_sku_price.php?spu_id=<?= $spu_id ?>&capacity_value_id=" + valueId)
-                .then(r => r.json())
-                .then(data => {
-                    if (data.price && data.promo_price) {
-                        document.getElementById("promo_price").innerText =
-                            new Intl.NumberFormat().format(data.promo_price) + " đ";
-                        document.getElementById("normal_price").innerText =
-                            new Intl.NumberFormat().format(data.price) + " đ";
-                    }
-                });
-        }
+        // tìm SKU đúng với bộ thuộc tính đã chọn → trả về sku_id, price, promo_price, image
+        fetch("fetch_sku.php", {
+            method: 'POST',
+            headers: { 'Content-Type':'application/json' },
+            body: JSON.stringify({ spu_id: <?= $spu_id ?>, values: selectedValues })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data && data.sku_id) {
+                // update hidden input SKU
+                document.getElementById("selectedSkuId").value = data.sku_id;
 
-        // tìm SKU đúng với bộ thuộc tính đã chọn
-        fetch("get_sku_by_attributes.php?spu_id=<?= $spu_id ?>&values=" + JSON.stringify(selectedValues))
-            .then(r => r.json())
-            .then(data => {
-                if (data.sku_id) {
-                    document.getElementById("selectedSkuId").value = data.sku_id;
-                    console.log("Selected SKU:", data.sku_id);
-                }
-            });
+                // update giá
+                if (data.price) document.getElementById("normal_price").innerText = new Intl.NumberFormat().format(data.price) + " đ";
+                if (data.promo_price) document.getElementById("promo_price").innerText = new Intl.NumberFormat().format(data.promo_price) + " đ";
+
+                // update ảnh
+                if (data.image) document.getElementById("mainImg").src = data.image;
+            }
+        });
     });
 });
+
 
 // ADD TO CART
 document.getElementById("addToCartBtn").addEventListener("click", () => {

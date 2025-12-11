@@ -3,7 +3,7 @@ $conn = new mysqli("localhost","root","","lendly_db");
 
 // Laptop
 $laptop_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 2");
-$laptop_brands = $conn->query("SELECT DISTINCT brand FROM spu WHERE category_id IN (SELECT id FROM categories WHERE parent_id=2)");
+
 
 // Điện thoại
 $phone_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 1");
@@ -64,12 +64,7 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
             <button class="btn btn-outline-primary laptop-cat" data-id="<?= $c['id'] ?>"><?= $c['name'] ?></button>
         <?php endwhile; ?>
     </div>
-    <div class="d-flex gap-2 mb-4">
-        <button class="btn btn-outline-dark laptop-brand active-filter" data-brand="">Tất cả</button>
-        <?php while($b=$laptop_brands->fetch_assoc()): ?>
-            <button class="btn btn-outline-dark laptop-brand" data-brand="<?= $b['brand'] ?>"><?= $b['brand'] ?></button>
-        <?php endwhile; ?>
-    </div>
+    
     <div id="laptop-products" class="row g-3"></div>
 </section>
 
@@ -82,7 +77,8 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
 
     <!-- Category cha + con -->
     <div class="d-flex gap-2 mb-4">
-        <button class="btn btn-outline-primary phone-cat active-filter" data-id="1">Điện thoại</button>
+        <button class="btn btn-outline-primary phone-cat phone-cat-all" data-id="">Điện thoại</button>
+
 
         <?php while($c=$phone_categories->fetch_assoc()): ?>
             <button class="btn btn-outline-primary phone-cat" data-id="<?= $c['id'] ?>">
@@ -164,12 +160,12 @@ $(".laptop-cat").click(function(){
     loadSection("laptop", laptopCat, laptopBrand);
     $(".laptop-cat").removeClass("active-filter"); $(this).addClass("active-filter");
 });
-$(".laptop-brand").click(function(){
-    laptopBrand=$(this).data("brand");
-    loadSection("laptop", laptopCat, laptopBrand);
-    $(".laptop-brand").removeClass("active-filter"); $(this).addClass("active-filter");
-});
-loadSection("laptop", laptopCat, laptopBrand);
+//$(".laptop-brand").click(function(){
+    //laptopBrand=$(this).data("brand");
+    //loadSection("laptop", laptopCat, laptopBrand);
+    //$(".laptop-brand").removeClass("active-filter"); $(this).addClass("active-filter");
+//});
+loadSection("laptop", laptopCat, "");
 
 // Điện thoại
 let phoneCat="", phoneBrand="";
@@ -177,6 +173,13 @@ $(".phone-cat").click(function(){
     phoneCat=$(this).data("id");
     loadSection("phone", phoneCat, phoneBrand);
     $(".phone-cat").removeClass("active-filter"); $(this).addClass("active-filter");
+});
+// Reset filter khi click "Tất cả điện thoại"
+$(".phone-cat-all").click(function(){
+    phoneCat = ""; // reset biến
+    loadSection("phone", phoneCat, ""); // load tất cả điện thoại
+    $(".phone-cat").removeClass("active-filter"); 
+    $(this).addClass("active-filter");
 });
 
 loadSection("phone", phoneCat, "");
