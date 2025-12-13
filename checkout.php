@@ -39,6 +39,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     /* Tính tổng */
     $total = 0.0;
     foreach ($cart as $k => $it) {
+        /* Lấy coupon từ session nếu có */
+$discount_total = 0;
+if (isset($_SESSION['coupon'])) {
+    $discount_total = floatval($_SESSION['coupon']['discount']);
+}
+
+/* Không cho giảm quá tổng */
+$discount_total = min($discount_total, $total);
+
+/* Tổng cuối cùng */
+$final_price = $total - $discount_total;
+
         $sku_id = intval($it['sku_id']);
         $pRow = $conn->query("SELECT price FROM sku WHERE id=$sku_id");
         if (!$pRow) continue;
@@ -53,31 +65,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    /* Tạo đơn hàng */
-    $sql = "
-        INSERT INTO orders(
-            user_id, total, status,
-            fullname, phone,
-            payment_method, shipping_method,
-            province_id, district_id, street,
-            created_at
-        )
-        VALUES (?,?, 'pending', ?,?,?,?,?,?, ?, NOW())
-    ";
+    /* Tạo đơn hàng — đã thêm cột discount và final_price */
+$sql = "
+    INSERT INTO orders(
+        user_id, total, discount, final_price, status,
+        fullname, phone, payment_method, shipping_method,
+        province_id, district_id, street, created_at
+    )
+    VALUES (?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, NOW())
+";
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param(
-        "idsssssis",
-        $user_id,
-        $total,
-        $fullname,
-        $phone,
-        $payment_method,
-        $shipping_method,
-        $province_id,
-        $district_id,
-        $street
-    );
+$stmt = $conn->prepare($sql);
+$stmt->bind_param(
+    "idddsssssiis",
+    $user_id,
+    $total,
+    $discount_total,
+    $final_price,
+    $fullname,
+    $phone,
+    $payment_method,
+    $shipping_method,
+    $province_id,
+    $district_id,
+    $street
+);
+
 
     if (!$stmt->execute()) {
         die("Execute failed (insert order): " . $stmt->error);
@@ -85,23 +98,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $order_id = $stmt->insert_id;
 
-    /* Thêm items + trừ stock */
-    foreach ($cart as $it) {
-        $skuId = intval($it['sku_id']);
-        $qty = intval($it['quantity']);
-        $price = floatval($it['price']);
+    /* PHÂN BỔ GIẢM GIÁ CHO TỪNG ITEM THEO TỶ LỆ */
+foreach ($cart as $it) {
+    $skuId = intval($it['sku_id']);
+    $qty = intval($it['quantity']);
+    $price = floatval($it['price']);
 
-        $stmt2 = $conn->prepare("
-            INSERT INTO order_items(order_id, sku_id, quantity, price)
-            VALUES (?, ?, ?, ?)
-        ");
-        $stmt2->bind_param("iiid", $order_id, $skuId, $qty, $price);
-        $stmt2->execute();
+    $subtotal = $price * $qty;
 
-        $stmt3 = $conn->prepare("UPDATE sku SET stock = stock - ? WHERE id = ?");
-        $stmt3->bind_param("ii", $qty, $skuId);
-        $stmt3->execute();
+    // Tỷ lệ giá trị
+    if ($discount_total > 0) {
+        $ratio = $subtotal / $total;
+        $item_discount = round($discount_total * $ratio);
+    } else {
+        $item_discount = 0;
     }
+
+    /* Lưu item + giảm giá */
+    $stmt2 = $conn->prepare("
+        INSERT INTO order_items(order_id, sku_id, quantity, price, discount_amount)
+        VALUES (?, ?, ?, ?, ?)
+    ");
+    $stmt2->bind_param("iiidi", $order_id, $skuId, $qty, $price, $item_discount);
+    $stmt2->execute();
+
+    /* Trừ tồn kho */
+    $stmt3 = $conn->prepare("UPDATE sku SET stock = stock - ? WHERE id = ?");
+    $stmt3->bind_param("ii", $qty, $skuId);
+    $stmt3->execute();
+}
+
 
     unset($_SESSION['cart']);
 
@@ -113,6 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt4->bind_param("i", $order_id);
     $stmt4->execute();
 
+    unset($_SESSION['coupon']);
     header("Location: order_success.php?id=$order_id");
     exit;
 }

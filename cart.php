@@ -4,6 +4,10 @@ include 'db.php';
 
 $cart = $_SESSION['cart'] ?? [];
 $total = 0;
+
+// Giá trị mã giảm giá đang áp dụng
+$coupon_code = $_SESSION['coupon_code'] ?? "";
+$coupon_discount = $_SESSION['coupon_discount'] ?? 0;
 ?>
 
 <!DOCTYPE html>
@@ -27,6 +31,9 @@ th { background: #fafafa; }
 .total-row { font-weight: bold; font-size: 18px; text-align: right; }
 .btn { padding: 12px 20px; background:#e30019; color:#fff; border:none; border-radius:5px; cursor:pointer; font-size:16px; margin-top:20px; text-decoration:none; display:inline-block; }
 .btn:hover { background:#c00; }
+
+.coupon-box { margin-top: 20px; padding: 15px; background:#fafafa; border-radius:6px; }
+.coupon-input { width:200px; padding:8px; }
 </style>
 </head>
 <body>
@@ -80,11 +87,35 @@ th { background: #fafafa; }
 <?php endforeach; else: ?>
 <tr><td colspan="5" style="text-align:center;">Giỏ hàng trống</td></tr>
 <?php endif; ?>
+
+<!-- Tổng tạm tính -->
 <tr>
     <td colspan="4" class="total-row">Tạm tính:</td>
     <td class="total-row"><?= number_format($total) ?> đ</td>
 </tr>
+
+<!-- Nếu có mã giảm giá -->
+<?php if($coupon_discount > 0): ?>
+<tr>
+    <td colspan="4" class="total-row" style="color:green">Giảm giá (<?= htmlspecialchars($coupon_code) ?>):</td>
+    <td class="total-row" style="color:green">-<?= number_format($coupon_discount) ?> đ</td>
+</tr>
+<tr>
+    <td colspan="4" class="total-row">Tổng thanh toán:</td>
+    <td class="total-row"><?= number_format($total - $coupon_discount) ?> đ</td>
+</tr>
+<?php endif; ?>
+
 </table>
+
+<!-- Nhập mã giảm giá -->
+<div class="coupon-box">
+    <form method="post" action="apply_coupon.php">
+        <label>Mã giảm giá:</label>
+        <input type="text" name="coupon_code" class="coupon-input" value="<?= htmlspecialchars($coupon_code) ?>">
+        <button class="btn">Áp dụng</button>
+    </form>
+</div>
 
 <?php if(!empty($cart)): ?>
 <a href="checkout.php" class="btn">Thanh toán</a>

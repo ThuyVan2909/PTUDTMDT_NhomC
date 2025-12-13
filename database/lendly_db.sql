@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th12 11, 2025 lúc 09:01 AM
+-- Thời gian đã tạo: Th12 13, 2025 lúc 08:22 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.0.30
 
@@ -38,7 +38,10 @@ CREATE TABLE `attributes` (
 
 INSERT INTO `attributes` (`id`, `name`) VALUES
 (1, 'Storage'),
-(2, 'Color');
+(2, 'Color'),
+(3, 'CPU'),
+(4, 'RAM'),
+(5, 'SSD');
 
 -- --------------------------------------------------------
 
@@ -65,7 +68,14 @@ INSERT INTO `attribute_values` (`id`, `attribute_id`, `value`) VALUES
 (6, 2, 'Trắng Ngọc Trai'),
 (7, 2, 'Xanh Da Trời'),
 (8, 2, 'Titan Sa Mạc'),
-(9, 2, 'Xám Bạc');
+(9, 2, 'Xám Bạc'),
+(10, 3, 'i5 13500H'),
+(11, 3, 'i7 13500H'),
+(12, 4, '8GB'),
+(13, 4, '16GB'),
+(14, 5, '250GB'),
+(15, 5, '500GB'),
+(16, 5, '1TB');
 
 -- --------------------------------------------------------
 
@@ -88,9 +98,9 @@ INSERT INTO `categories` (`id`, `name`, `parent_id`) VALUES
 (2, 'Laptop', NULL),
 (3, 'Smartwatch', NULL),
 (5, 'Macbook', 2),
-(6, 'Gaming', 2),
-(7, 'Đồ hoạ', 2),
-(8, 'Mỏng nhẹ', 2),
+(6, 'Asus', 2),
+(7, 'Acer', 2),
+(8, 'Dell', 2),
 (9, 'iPhone', 1),
 (10, 'Samsung', 1),
 (11, 'Oppo', 1),
@@ -101,6 +111,21 @@ INSERT INTO `categories` (`id`, `name`, `parent_id`) VALUES
 (16, 'Huawei Watch', 3),
 (17, 'Oppo Watch', 3),
 (18, 'Pixel Watch', 3);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `coupons`
+--
+
+CREATE TABLE `coupons` (
+  `id` int(11) NOT NULL,
+  `code` varchar(50) DEFAULT NULL,
+  `discount_amount` int(11) DEFAULT NULL,
+  `min_order_total` int(11) DEFAULT 0,
+  `expired_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -789,11 +814,26 @@ CREATE TABLE `orders` (
   `user_id` int(11) DEFAULT NULL,
   `total` decimal(10,2) DEFAULT NULL,
   `status` enum('pending','confirmed','processing','shipping','delivered','cancelled') DEFAULT 'pending',
+  `payment_method` varchar(50) DEFAULT NULL,
+  `shipping_method` varchar(50) DEFAULT NULL,
   `fullname` varchar(255) DEFAULT NULL,
   `phone` varchar(50) DEFAULT NULL,
+  `province_id` int(11) NOT NULL,
+  `district_id` int(11) NOT NULL,
+  `street` varchar(255) DEFAULT NULL,
   `address` text DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `coupon_code` varchar(50) DEFAULT NULL,
+  `coupon_discount` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `orders`
+--
+
+INSERT INTO `orders` (`id`, `user_id`, `total`, `status`, `payment_method`, `shipping_method`, `fullname`, `phone`, `province_id`, `district_id`, `street`, `address`, `created_at`, `coupon_code`, `coupon_discount`) VALUES
+(1, 1, 29990000.00, 'pending', 'cod', 'standard', 'Nam', '0932660941', 51, 522, '123 Lê Lợi', NULL, '2025-12-13 05:09:07', NULL, 0),
+(2, 1, 61980000.00, 'pending', 'cod', 'standard', 'Nam', '0932660941', 51, 522, '123 Lê Lợi', NULL, '2025-12-13 06:05:29', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -809,6 +849,51 @@ CREATE TABLE `order_items` (
   `price` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `order_items`
+--
+
+INSERT INTO `order_items` (`id`, `order_id`, `sku_id`, `quantity`, `price`) VALUES
+(1, 1, 15, 1, 29990000.00),
+(2, 2, 4, 1, 19990000.00),
+(3, 2, 148, 1, 41990000.00);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `order_item_discounts`
+--
+
+CREATE TABLE `order_item_discounts` (
+  `id` int(11) NOT NULL,
+  `order_item_id` int(11) DEFAULT NULL,
+  `discount_amount` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `order_item_returns`
+--
+
+CREATE TABLE `order_item_returns` (
+  `id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `order_item_id` int(11) NOT NULL,
+  `sku_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `reason` text DEFAULT NULL,
+  `status` enum('pending','approved','rejected','refunded') DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `order_item_returns`
+--
+
+INSERT INTO `order_item_returns` (`id`, `order_id`, `order_item_id`, `sku_id`, `quantity`, `reason`, `status`, `created_at`) VALUES
+(1, 2, 2, 4, 1, 'ko mua', 'pending', '2025-12-13 06:05:49');
+
 -- --------------------------------------------------------
 
 --
@@ -822,6 +907,14 @@ CREATE TABLE `order_tracking` (
   `note` text DEFAULT NULL,
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `order_tracking`
+--
+
+INSERT INTO `order_tracking` (`id`, `order_id`, `status`, `note`, `updated_at`) VALUES
+(1, 1, 'pending', 'Đơn hàng đã được tạo', '2025-12-13 05:09:07'),
+(2, 2, 'pending', 'Đơn hàng đã được tạo', '2025-12-13 06:05:29');
 
 -- --------------------------------------------------------
 
@@ -929,7 +1022,7 @@ INSERT INTO `sku` (`id`, `spu_id`, `sku_code`, `variant`, `price`, `promo_price`
 (1, 1, 'IP14-128-BLACK', '{\"storage\":\"128GB\",\"color\":\"Black\"}', 19990000.00, 18990000.00, 30, 'KHO1', '2025-12-11 04:58:17'),
 (2, 1, 'IP14-128-WHITE', '{\"storage\":\"128GB\",\"color\":\"White\"}', 19990000.00, 18990000.00, 25, 'KHO1', '2025-12-11 04:58:17'),
 (3, 1, 'IP14-128-BLUE', '{\"storage\":\"128GB\",\"color\":\"Blue\"}', 19990000.00, 18990000.00, 20, 'KHO1', '2025-12-11 04:58:17'),
-(4, 1, 'IP14-128-TITAN', '{\"storage\":\"128GB\",\"color\":\"Titan\"}', 19990000.00, 18990000.00, 20, 'KHO1', '2025-12-11 04:58:17'),
+(4, 1, 'IP14-128-TITAN', '{\"storage\":\"128GB\",\"color\":\"Titan\"}', 19990000.00, 18990000.00, 19, 'KHO1', '2025-12-11 04:58:17'),
 (5, 1, 'IP14-256-BLACK', '{\"storage\":\"256GB\",\"color\":\"Black\"}', 21990000.00, 20990000.00, 30, 'KHO1', '2025-12-11 04:58:17'),
 (6, 1, 'IP14-256-WHITE', '{\"storage\":\"256GB\",\"color\":\"White\"}', 21990000.00, 20990000.00, 20, 'KHO1', '2025-12-11 04:58:17'),
 (7, 1, 'IP14-256-BLUE', '{\"storage\":\"256GB\",\"color\":\"Blue\"}', 21990000.00, 20990000.00, 18, 'KHO1', '2025-12-11 04:58:17'),
@@ -940,7 +1033,7 @@ INSERT INTO `sku` (`id`, `spu_id`, `sku_code`, `variant`, `price`, `promo_price`
 (12, 1, 'IP14-512-TITAN', '{\"storage\":\"512GB\",\"color\":\"Titan\"}', 25990000.00, 24990000.00, 8, 'KHO1', '2025-12-11 04:58:17'),
 (13, 1, 'IP14-1TB-BLACK', '{\"storage\":\"1TB\",\"color\":\"Black\"}', 29990000.00, 28990000.00, 10, 'KHO1', '2025-12-11 04:58:17'),
 (14, 1, 'IP14-1TB-WHITE', '{\"storage\":\"1TB\",\"color\":\"White\"}', 29990000.00, 28990000.00, 10, 'KHO1', '2025-12-11 04:58:17'),
-(15, 1, 'IP14-1TB-BLUE', '{\"storage\":\"1TB\",\"color\":\"Blue\"}', 29990000.00, 28990000.00, 10, 'KHO1', '2025-12-11 04:58:17'),
+(15, 1, 'IP14-1TB-BLUE', '{\"storage\":\"1TB\",\"color\":\"Blue\"}', 29990000.00, 28990000.00, 9, 'KHO1', '2025-12-11 04:58:17'),
 (16, 1, 'IP14-1TB-TITAN', '{\"storage\":\"1TB\",\"color\":\"Titan\"}', 29990000.00, 28990000.00, 10, 'KHO1', '2025-12-11 04:58:17'),
 (17, 2, 'IP15-128-BLACK', '{\"storage\":\"128GB\",\"color\":\"Black\"}', 22990000.00, 21990000.00, 30, 'KHO1', '2025-12-11 05:02:55'),
 (18, 2, 'IP15-128-WHITE', '{\"storage\":\"128GB\",\"color\":\"White\"}', 22990000.00, 21990000.00, 25, 'KHO1', '2025-12-11 05:02:55'),
@@ -984,31 +1077,70 @@ INSERT INTO `sku` (`id`, `spu_id`, `sku_code`, `variant`, `price`, `promo_price`
 (65, 4, 'S25-1TB-WHITE', '{\"storage\":\"1TB\",\"color\":\"White\"}', 35990000.00, 34990000.00, 10, 'KHO1', '2025-12-11 07:34:39'),
 (66, 5, 'S25U-256-BLACK', '{\"storage\":\"256GB\",\"color\":\"Black\"}', 27990000.00, 26990000.00, 30, 'KHO1', '2025-12-11 07:35:03'),
 (67, 5, 'S25U-256-WHITE', '{\"storage\":\"256GB\",\"color\":\"White\"}', 27990000.00, 26990000.00, 25, 'KHO1', '2025-12-11 07:35:03'),
-(68, 5, 'S25U-256-SILVER', '{\"storage\":\"256GB\",\"color\":\"Xám Bạc\"}', 27990000.00, 26990000.00, 20, 'KHO1', '2025-12-11 07:35:03'),
 (69, 5, 'S25U-512-BLACK', '{\"storage\":\"512GB\",\"color\":\"Black\"}', 31990000.00, 30990000.00, 15, 'KHO1', '2025-12-11 07:35:03'),
 (70, 5, 'S25U-512-WHITE', '{\"storage\":\"512GB\",\"color\":\"White\"}', 31990000.00, 30990000.00, 10, 'KHO1', '2025-12-11 07:35:03'),
-(71, 5, 'S25U-512-SILVER', '{\"storage\":\"512GB\",\"color\":\"Xám Bạc\"}', 31990000.00, 30990000.00, 12, 'KHO1', '2025-12-11 07:35:03'),
 (72, 5, 'S25U-1TB-BLACK', '{\"storage\":\"1TB\",\"color\":\"Black\"}', 35990000.00, 34990000.00, 10, 'KHO1', '2025-12-11 07:35:03'),
 (73, 5, 'S25U-1TB-WHITE', '{\"storage\":\"1TB\",\"color\":\"White\"}', 35990000.00, 34990000.00, 10, 'KHO1', '2025-12-11 07:35:03'),
-(74, 5, 'S25U-1TB-SILVER', '{\"storage\":\"1TB\",\"color\":\"Xám Bạc\"}', 35990000.00, 34990000.00, 10, 'KHO1', '2025-12-11 07:35:03'),
 (100, 6, 'OPPO-X7-256-BLACK', '{\"storage\":\"256GB\",\"color\":\"Black\"}', 19990000.00, 18990000.00, 15, 'KHO1', '2025-12-11 07:55:21'),
 (101, 6, 'OPPO-X7-256-WHITE', '{\"storage\":\"256GB\",\"color\":\"White\"}', 19990000.00, 18990000.00, 10, 'KHO1', '2025-12-11 07:55:21'),
-(102, 6, 'OPPO-X7-256-SILVER', '{\"storage\":\"256GB\",\"color\":\"Silver\"}', 19990000.00, 18990000.00, 10, 'KHO1', '2025-12-11 07:55:21'),
 (103, 6, 'OPPO-X7-512-BLACK', '{\"storage\":\"512GB\",\"color\":\"Black\"}', 21990000.00, 20990000.00, 10, 'KHO1', '2025-12-11 07:55:21'),
 (104, 6, 'OPPO-X7-512-WHITE', '{\"storage\":\"512GB\",\"color\":\"White\"}', 21990000.00, 20990000.00, 8, 'KHO1', '2025-12-11 07:55:21'),
-(105, 6, 'OPPO-X7-512-SILVER', '{\"storage\":\"512GB\",\"color\":\"Silver\"}', 21990000.00, 20990000.00, 8, 'KHO1', '2025-12-11 07:55:21'),
 (106, 6, 'OPPO-X7-1TB-BLACK', '{\"storage\":\"1TB\",\"color\":\"Black\"}', 24990000.00, 23990000.00, 5, 'KHO1', '2025-12-11 07:55:21'),
 (107, 6, 'OPPO-X7-1TB-WHITE', '{\"storage\":\"1TB\",\"color\":\"White\"}', 24990000.00, 23990000.00, 5, 'KHO1', '2025-12-11 07:55:21'),
-(108, 6, 'OPPO-X7-1TB-SILVER', '{\"storage\":\"1TB\",\"color\":\"Silver\"}', 24990000.00, 23990000.00, 5, 'KHO1', '2025-12-11 07:55:21'),
 (109, 7, 'OPPO-X7PRO-256-BLACK', '{\"storage\":\"256GB\",\"color\":\"Black\"}', 25990000.00, 24990000.00, 10, 'KHO1', '2025-12-11 07:55:21'),
 (110, 7, 'OPPO-X7PRO-256-WHITE', '{\"storage\":\"256GB\",\"color\":\"White\"}', 25990000.00, 24990000.00, 8, 'KHO1', '2025-12-11 07:55:21'),
-(111, 7, 'OPPO-X7PRO-256-SILVER', '{\"storage\":\"256GB\",\"color\":\"Silver\"}', 25990000.00, 24990000.00, 8, 'KHO1', '2025-12-11 07:55:21'),
 (112, 7, 'OPPO-X7PRO-512-BLACK', '{\"storage\":\"512GB\",\"color\":\"Black\"}', 27990000.00, 26990000.00, 6, 'KHO1', '2025-12-11 07:55:21'),
 (113, 7, 'OPPO-X7PRO-512-WHITE', '{\"storage\":\"512GB\",\"color\":\"White\"}', 27990000.00, 26990000.00, 6, 'KHO1', '2025-12-11 07:55:21'),
-(114, 7, 'OPPO-X7PRO-512-SILVER', '{\"storage\":\"512GB\",\"color\":\"Silver\"}', 27990000.00, 26990000.00, 6, 'KHO1', '2025-12-11 07:55:21'),
 (115, 7, 'OPPO-X7PRO-1TB-BLACK', '{\"storage\":\"1TB\",\"color\":\"Black\"}', 31990000.00, 30990000.00, 3, 'KHO1', '2025-12-11 07:55:21'),
 (116, 7, 'OPPO-X7PRO-1TB-WHITE', '{\"storage\":\"1TB\",\"color\":\"White\"}', 31990000.00, 30990000.00, 3, 'KHO1', '2025-12-11 07:55:21'),
-(117, 7, 'OPPO-X7PRO-1TB-SILVER', '{\"storage\":\"1TB\",\"color\":\"Silver\"}', 31990000.00, 30990000.00, 3, 'KHO1', '2025-12-11 07:55:21');
+(117, 8, 'RN14P-BLACK', '{\"storage\":\"256GB\",\"color\":\"Black\"}', 8990000.00, 8490000.00, 20, 'KHO1', '2025-12-11 09:09:54'),
+(118, 8, 'RN14P-WHITE', '{\"storage\":\"256GB\",\"color\":\"White\"}', 8990000.00, 8490000.00, 15, 'KHO1', '2025-12-11 09:09:54'),
+(119, 8, 'RN14P-BLUE', '{\"storage\":\"256GB\",\"color\":\"Blue\"}', 8990000.00, 8490000.00, 10, 'KHO1', '2025-12-11 09:09:54'),
+(120, 9, 'RN13P-BLACK', '{\"storage\":\"128GB\",\"color\":\"Black\"}', 7990000.00, 7490000.00, 25, 'KHO1', '2025-12-11 09:09:54'),
+(121, 9, 'RN13P-WHITE', '{\"storage\":\"128GB\",\"color\":\"White\"}', 7990000.00, 7490000.00, 20, 'KHO1', '2025-12-11 09:09:54'),
+(122, 9, 'RN13P-BLUE', '{\"storage\":\"128GB\",\"color\":\"Blue\"}', 7990000.00, 7490000.00, 15, 'KHO1', '2025-12-11 09:09:54'),
+(123, 10, 'RN12-BLACK', '{\"storage\":\"128GB\",\"color\":\"Black\"}', 6990000.00, 6490000.00, 30, 'KHO1', '2025-12-11 09:09:54'),
+(124, 10, 'RN12-WHITE', '{\"storage\":\"128GB\",\"color\":\"White\"}', 6990000.00, 6490000.00, 25, 'KHO1', '2025-12-11 09:09:54'),
+(125, 11, 'MBA-M2-8-256-SIL', '{\"ram\":\"8GB\",\"ssd\":\"256GB\",\"color\":\"Silver\"}', 31990000.00, 30990000.00, 10, 'KHO1', '2025-12-11 09:58:57'),
+(126, 11, 'MBA-M2-8-256-GRAY', '{\"ram\":\"8GB\",\"ssd\":\"256GB\",\"color\":\"Space Gray\"}', 31990000.00, 30990000.00, 10, 'KHO1', '2025-12-11 09:58:57'),
+(127, 11, 'MBA-M2-8-512-SIL', '{\"ram\":\"8GB\",\"ssd\":\"512GB\",\"color\":\"Silver\"}', 35990000.00, 34990000.00, 8, 'KHO1', '2025-12-11 09:58:57'),
+(128, 11, 'MBA-M2-8-512-GRAY', '{\"ram\":\"8GB\",\"ssd\":\"512GB\",\"color\":\"Space Gray\"}', 35990000.00, 34990000.00, 8, 'KHO1', '2025-12-11 09:58:57'),
+(129, 11, 'MBA-M2-16-256-SIL', '{\"ram\":\"16GB\",\"ssd\":\"256GB\",\"color\":\"Silver\"}', 35990000.00, 34990000.00, 5, 'KHO1', '2025-12-11 09:58:57'),
+(130, 11, 'MBA-M2-16-256-GRAY', '{\"ram\":\"16GB\",\"ssd\":\"256GB\",\"color\":\"Space Gray\"}', 35990000.00, 34990000.00, 5, 'KHO1', '2025-12-11 09:58:57'),
+(131, 11, 'MBA-M2-16-512-SIL', '{\"ram\":\"16GB\",\"ssd\":\"512GB\",\"color\":\"Silver\"}', 39990000.00, 38990000.00, 3, 'KHO1', '2025-12-11 09:58:57'),
+(132, 11, 'MBA-M2-16-512-GRAY', '{\"ram\":\"16GB\",\"ssd\":\"512GB\",\"color\":\"Space Gray\"}', 39990000.00, 38990000.00, 3, 'KHO1', '2025-12-11 09:58:57'),
+(133, 12, 'MBA-M3-8-256-SIL', '{\"ram\":\"8GB\",\"ssd\":\"256GB\",\"color\":\"Silver\"}', 32990000.00, 31990000.00, 10, 'KHO1', '2025-12-11 09:58:57'),
+(134, 12, 'MBA-M3-8-256-GRAY', '{\"ram\":\"8GB\",\"ssd\":\"256GB\",\"color\":\"Space Gray\"}', 32990000.00, 31990000.00, 10, 'KHO1', '2025-12-11 09:58:57'),
+(135, 12, 'MBA-M3-8-512-SIL', '{\"ram\":\"8GB\",\"ssd\":\"512GB\",\"color\":\"Silver\"}', 36990000.00, 35990000.00, 8, 'KHO1', '2025-12-11 09:58:57'),
+(136, 12, 'MBA-M3-8-512-GRAY', '{\"ram\":\"8GB\",\"ssd\":\"512GB\",\"color\":\"Space Gray\"}', 36990000.00, 35990000.00, 8, 'KHO1', '2025-12-11 09:58:57'),
+(137, 12, 'MBA-M3-16-256-SIL', '{\"ram\":\"16GB\",\"ssd\":\"256GB\",\"color\":\"Silver\"}', 36990000.00, 35990000.00, 5, 'KHO1', '2025-12-11 09:58:57'),
+(138, 12, 'MBA-M3-16-256-GRAY', '{\"ram\":\"16GB\",\"ssd\":\"256GB\",\"color\":\"Space Gray\"}', 36990000.00, 35990000.00, 5, 'KHO1', '2025-12-11 09:58:57'),
+(139, 12, 'MBA-M3-16-512-SIL', '{\"ram\":\"16GB\",\"ssd\":\"512GB\",\"color\":\"Silver\"}', 40990000.00, 39990000.00, 3, 'KHO1', '2025-12-11 09:58:57'),
+(140, 12, 'MBA-M3-16-512-GRAY', '{\"ram\":\"16GB\",\"ssd\":\"512GB\",\"color\":\"Space Gray\"}', 40990000.00, 39990000.00, 3, 'KHO1', '2025-12-11 09:58:57'),
+(141, 13, 'MBA-M4-8-256-SIL', '{\"ram\":\"8GB\",\"ssd\":\"256GB\",\"color\":\"Silver\"}', 33990000.00, 32990000.00, 10, 'KHO1', '2025-12-11 09:58:57'),
+(142, 13, 'MBA-M4-8-256-GRAY', '{\"ram\":\"8GB\",\"ssd\":\"256GB\",\"color\":\"Space Gray\"}', 33990000.00, 32990000.00, 10, 'KHO1', '2025-12-11 09:58:57'),
+(143, 13, 'MBA-M4-8-512-SIL', '{\"ram\":\"8GB\",\"ssd\":\"512GB\",\"color\":\"Silver\"}', 37990000.00, 36990000.00, 8, 'KHO1', '2025-12-11 09:58:57'),
+(144, 13, 'MBA-M4-8-512-GRAY', '{\"ram\":\"8GB\",\"ssd\":\"512GB\",\"color\":\"Space Gray\"}', 37990000.00, 36990000.00, 8, 'KHO1', '2025-12-11 09:58:57'),
+(145, 13, 'MBA-M4-16-256-SIL', '{\"ram\":\"16GB\",\"ssd\":\"256GB\",\"color\":\"Silver\"}', 37990000.00, 36990000.00, 5, 'KHO1', '2025-12-11 09:58:57'),
+(146, 13, 'MBA-M4-16-256-GRAY', '{\"ram\":\"16GB\",\"ssd\":\"256GB\",\"color\":\"Space Gray\"}', 37990000.00, 36990000.00, 5, 'KHO1', '2025-12-11 09:58:57'),
+(147, 13, 'MBA-M4-16-512-SIL', '{\"ram\":\"16GB\",\"ssd\":\"512GB\",\"color\":\"Silver\"}', 41990000.00, 40990000.00, 3, 'KHO1', '2025-12-11 09:58:57'),
+(148, 13, 'MBA-M4-16-512-GRAY', '{\"ram\":\"16GB\",\"ssd\":\"512GB\",\"color\":\"Space Gray\"}', 41990000.00, 40990000.00, 2, 'KHO1', '2025-12-11 09:58:57'),
+(149, 14, 'VIVS14-I5-8GB-500GB-BLACK', '{\"cpu\":\"i5 13500H\",\"ram\":\"8GB\",\"ssd\":\"500GB\",\"color\":\"Đen Không Gian\"}', 18000000.00, 17500000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
+(150, 14, 'VIVS14-I5-8GB-1TB-BLACK', '{\"cpu\":\"i5 13500H\",\"ram\":\"8GB\",\"ssd\":\"1TB\",\"color\":\"Đen Không Gian\"}', 19000000.00, 18500000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
+(151, 14, 'VIVS14-I5-16GB-500GB-BLACK', '{\"cpu\":\"i5 13500H\",\"ram\":\"16GB\",\"ssd\":\"500GB\",\"color\":\"Đen Không Gian\"}', 19000000.00, 18500000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
+(152, 14, 'VIVS14-I5-16GB-1TB-BLACK', '{\"cpu\":\"i5 13500H\",\"ram\":\"16GB\",\"ssd\":\"1TB\",\"color\":\"Đen Không Gian\"}', 20000000.00, 19500000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
+(153, 14, 'VIVS14-I5-8GB-500GB-WHITE', '{\"cpu\":\"i5 13500H\",\"ram\":\"8GB\",\"ssd\":\"500GB\",\"color\":\"Trắng Ngọc Trai\"}', 18500000.00, 18000000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
+(154, 14, 'VIVS14-I5-8GB-1TB-WHITE', '{\"cpu\":\"i5 13500H\",\"ram\":\"8GB\",\"ssd\":\"1TB\",\"color\":\"Trắng Ngọc Trai\"}', 19500000.00, 19000000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
+(155, 14, 'VIVS14-I5-16GB-500GB-WHITE', '{\"cpu\":\"i5 13500H\",\"ram\":\"16GB\",\"ssd\":\"500GB\",\"color\":\"Trắng Ngọc Trai\"}', 19500000.00, 19000000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
+(156, 14, 'VIVS14-I5-16GB-1TB-WHITE', '{\"cpu\":\"i5 13500H\",\"ram\":\"16GB\",\"ssd\":\"1TB\",\"color\":\"Trắng Ngọc Trai\"}', 20500000.00, 20000000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
+(157, 14, 'VIVS14-I7-8GB-500GB-BLACK', '{\"cpu\":\"i7 13500H\",\"ram\":\"8GB\",\"ssd\":\"500GB\",\"color\":\"Đen Không Gian\"}', 20000000.00, 19500000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
+(158, 14, 'VIVS14-I7-8GB-1TB-BLACK', '{\"cpu\":\"i7 13500H\",\"ram\":\"8GB\",\"ssd\":\"1TB\",\"color\":\"Đen Không Gian\"}', 21000000.00, 20500000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
+(159, 14, 'VIVS14-I7-16GB-500GB-BLACK', '{\"cpu\":\"i7 13500H\",\"ram\":\"16GB\",\"ssd\":\"500GB\",\"color\":\"Đen Không Gian\"}', 21000000.00, 20500000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
+(160, 14, 'VIVS14-I7-16GB-1TB-BLACK', '{\"cpu\":\"i7 13500H\",\"ram\":\"16GB\",\"ssd\":\"1TB\",\"color\":\"Đen Không Gian\"}', 22000000.00, 21500000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
+(161, 14, 'VIVS14-I7-8GB-500GB-WHITE', '{\"cpu\":\"i7 13500H\",\"ram\":\"8GB\",\"ssd\":\"500GB\",\"color\":\"Trắng Ngọc Trai\"}', 20500000.00, 20000000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
+(162, 14, 'VIVS14-I7-8GB-1TB-WHITE', '{\"cpu\":\"i7 13500H\",\"ram\":\"8GB\",\"ssd\":\"1TB\",\"color\":\"Trắng Ngọc Trai\"}', 21500000.00, 21000000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
+(163, 14, 'VIVS14-I7-16GB-500GB-WHITE', '{\"cpu\":\"i7 13500H\",\"ram\":\"16GB\",\"ssd\":\"500GB\",\"color\":\"Trắng Ngọc Trai\"}', 21500000.00, 21000000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
+(164, 14, 'VIVS14-I7-16GB-1TB-WHITE', '{\"cpu\":\"i7 13500H\",\"ram\":\"16GB\",\"ssd\":\"1TB\",\"color\":\"Trắng Ngọc Trai\"}', 22500000.00, 22000000.00, 50, 'KHO1', '2025-12-11 13:10:53');
 
 -- --------------------------------------------------------
 
@@ -1157,58 +1289,256 @@ INSERT INTO `sku_attribute_values` (`id`, `sku_id`, `attribute_value_id`) VALUES
 (144, 65, 6),
 (145, 66, 2),
 (146, 67, 2),
-(147, 68, 2),
 (148, 69, 3),
 (149, 70, 3),
-(150, 71, 3),
 (151, 72, 4),
 (152, 73, 4),
-(153, 74, 4),
 (154, 66, 5),
 (155, 67, 6),
-(156, 68, 9),
 (157, 69, 5),
 (158, 70, 6),
-(159, 71, 9),
 (160, 72, 5),
 (161, 73, 6),
-(162, 74, 9),
 (163, 100, 2),
 (164, 101, 2),
-(165, 102, 2),
 (166, 103, 3),
 (167, 104, 3),
-(168, 105, 3),
 (169, 106, 4),
 (170, 107, 4),
-(171, 108, 4),
 (172, 100, 5),
 (173, 101, 6),
-(174, 102, 9),
 (175, 103, 5),
 (176, 104, 6),
-(177, 105, 9),
 (178, 106, 5),
 (179, 107, 6),
-(180, 108, 9),
 (181, 109, 2),
 (182, 110, 2),
-(183, 111, 2),
 (184, 112, 3),
 (185, 113, 3),
-(186, 114, 3),
 (187, 115, 4),
 (188, 116, 4),
-(189, 117, 4),
 (190, 109, 5),
 (191, 110, 6),
-(192, 111, 9),
 (193, 112, 5),
 (194, 113, 6),
-(195, 114, 9),
 (196, 115, 5),
 (197, 116, 6),
-(198, 117, 9);
+(199, 117, 5),
+(200, 118, 6),
+(201, 119, 7),
+(202, 120, 5),
+(203, 121, 6),
+(204, 122, 7),
+(205, 123, 5),
+(206, 124, 6),
+(207, 125, 12),
+(208, 126, 12),
+(209, 127, 12),
+(210, 128, 12),
+(211, 129, 13),
+(212, 130, 13),
+(213, 131, 13),
+(214, 132, 13),
+(215, 125, 14),
+(216, 126, 14),
+(217, 127, 15),
+(218, 128, 15),
+(219, 129, 14),
+(220, 130, 14),
+(221, 131, 15),
+(222, 132, 15),
+(223, 125, 5),
+(224, 126, 6),
+(225, 127, 5),
+(226, 128, 6),
+(227, 129, 5),
+(228, 130, 6),
+(229, 131, 5),
+(230, 132, 6),
+(231, 133, 12),
+(232, 134, 12),
+(233, 135, 12),
+(234, 136, 12),
+(235, 137, 13),
+(236, 138, 13),
+(237, 139, 13),
+(238, 140, 13),
+(239, 133, 14),
+(240, 134, 14),
+(241, 135, 15),
+(242, 136, 15),
+(243, 137, 14),
+(244, 138, 14),
+(245, 139, 15),
+(246, 140, 15),
+(247, 133, 5),
+(248, 134, 6),
+(249, 135, 5),
+(250, 136, 6),
+(251, 137, 5),
+(252, 138, 6),
+(253, 139, 5),
+(254, 140, 6),
+(255, 141, 12),
+(256, 142, 12),
+(257, 143, 12),
+(258, 144, 12),
+(259, 145, 13),
+(260, 146, 13),
+(261, 147, 13),
+(262, 148, 13),
+(263, 141, 14),
+(264, 142, 14),
+(265, 143, 15),
+(266, 144, 15),
+(267, 145, 14),
+(268, 146, 14),
+(269, 147, 15),
+(270, 148, 15),
+(271, 141, 5),
+(272, 142, 6),
+(273, 143, 5),
+(274, 144, 6),
+(275, 145, 5),
+(276, 146, 6),
+(277, 147, 5),
+(278, 148, 6),
+(279, 125, 12),
+(280, 126, 12),
+(281, 127, 12),
+(282, 128, 12),
+(283, 129, 13),
+(284, 130, 13),
+(285, 131, 13),
+(286, 132, 13),
+(287, 125, 14),
+(288, 126, 14),
+(289, 127, 15),
+(290, 128, 15),
+(291, 129, 14),
+(292, 130, 14),
+(293, 131, 15),
+(294, 132, 15),
+(295, 125, 5),
+(296, 126, 6),
+(297, 127, 5),
+(298, 128, 6),
+(299, 129, 5),
+(300, 130, 6),
+(301, 131, 5),
+(302, 132, 6),
+(303, 133, 12),
+(304, 134, 12),
+(305, 135, 12),
+(306, 136, 12),
+(307, 137, 13),
+(308, 138, 13),
+(309, 139, 13),
+(310, 140, 13),
+(311, 133, 14),
+(312, 134, 14),
+(313, 135, 15),
+(314, 136, 15),
+(315, 137, 14),
+(316, 138, 14),
+(317, 139, 15),
+(318, 140, 15),
+(319, 133, 5),
+(320, 134, 6),
+(321, 135, 5),
+(322, 136, 6),
+(323, 137, 5),
+(324, 138, 6),
+(325, 139, 5),
+(326, 140, 6),
+(327, 141, 12),
+(328, 142, 12),
+(329, 143, 12),
+(330, 144, 12),
+(331, 145, 13),
+(332, 146, 13),
+(333, 147, 13),
+(334, 148, 13),
+(335, 141, 14),
+(336, 142, 14),
+(337, 143, 15),
+(338, 144, 15),
+(339, 145, 14),
+(340, 146, 14),
+(341, 147, 15),
+(342, 148, 15),
+(343, 141, 5),
+(344, 142, 6),
+(345, 143, 5),
+(346, 144, 6),
+(347, 145, 5),
+(348, 146, 6),
+(349, 147, 5),
+(350, 148, 6),
+(391, 149, 10),
+(392, 150, 10),
+(393, 151, 10),
+(394, 152, 10),
+(395, 153, 10),
+(396, 154, 10),
+(397, 155, 10),
+(398, 156, 10),
+(399, 157, 11),
+(400, 158, 11),
+(401, 159, 11),
+(402, 160, 11),
+(403, 161, 11),
+(404, 162, 11),
+(405, 163, 11),
+(406, 164, 11),
+(407, 149, 12),
+(408, 150, 12),
+(409, 151, 13),
+(410, 152, 13),
+(411, 153, 12),
+(412, 154, 12),
+(413, 155, 13),
+(414, 156, 13),
+(415, 157, 12),
+(416, 158, 12),
+(417, 159, 13),
+(418, 160, 13),
+(419, 161, 12),
+(420, 162, 12),
+(421, 163, 13),
+(422, 164, 13),
+(423, 149, 15),
+(424, 150, 16),
+(425, 151, 15),
+(426, 152, 16),
+(427, 153, 15),
+(428, 154, 16),
+(429, 155, 15),
+(430, 156, 16),
+(431, 157, 15),
+(432, 158, 16),
+(433, 159, 15),
+(434, 160, 16),
+(435, 161, 15),
+(436, 162, 16),
+(437, 163, 15),
+(438, 164, 16),
+(439, 149, 5),
+(440, 150, 5),
+(441, 151, 5),
+(442, 152, 5),
+(443, 153, 6),
+(444, 154, 6),
+(445, 155, 6),
+(446, 156, 6),
+(447, 157, 5),
+(448, 158, 5),
+(449, 159, 5),
+(450, 160, 5),
+(451, 161, 6),
+(452, 162, 6),
+(453, 163, 6),
+(454, 164, 6);
 
 -- --------------------------------------------------------
 
@@ -1286,31 +1616,78 @@ INSERT INTO `sku_images` (`id`, `sku_id`, `image_url`, `is_primary`) VALUES
 (72, 65, '/techzone//assets/images/s25/white.jpg', 1),
 (73, 66, '/techzone//assets/images/s25u/black.jpg', 1),
 (74, 67, '/techzone//assets/images/s25u/white.jpg', 1),
-(75, 68, '/techzone//assets/images/s25u/silver.jpg', 1),
 (76, 69, '/techzone//assets/images/s25u/black.jpg', 1),
 (77, 70, '/techzone//assets/images/s25u/white.jpg', 1),
-(78, 71, '/techzone//assets/images/s25u/silver.jpg', 1),
 (79, 72, '/techzone//assets/images/s25u/black.jpg', 1),
-(80, 73, '/techzone//assets/images/s25u/white.jpg', 1),
-(81, 74, '/techzone//assets/images/s25u/silver.jpg', 1),
-(82, 100, 'techzone/assets/images/oppo/x7-black.jpg', 1),
-(83, 101, 'techzone/assets/images/oppo/x7-white.jpg', 1),
-(84, 102, 'techzone/assets/images/oppo/x7-silver.jpg', 1),
-(85, 103, 'techzone/assets/images/oppo/x7-black.jpg', 1),
-(86, 104, 'techzone/assets/images/oppo/x7-white.jpg', 1),
-(87, 105, 'techzone/assets/images/oppo/x7-silver.jpg', 1),
-(88, 106, 'techzone/assets/images/oppo/x7-black.jpg', 1),
-(89, 107, 'techzone/assets/images/oppo/x7-white.jpg', 1),
-(90, 108, 'techzone/assets/images/oppo/x7-silver.jpg', 1),
-(91, 109, 'techzone/assets/images/oppo/x7pro-black.jpg', 1),
-(92, 110, 'techzone/assets/images/oppo/x7pro-white.jpg', 1),
-(93, 111, 'techzone/assets/images/oppo/x7pro-silver.jpg', 1),
-(94, 112, 'techzone/assets/images/oppo/x7pro-black.jpg', 1),
-(95, 113, 'techzone/assets/images/oppo/x7pro-white.jpg', 1),
-(96, 114, 'techzone/assets/images/oppo/x7pro-silver.jpg', 1),
-(97, 115, 'techzone/assets/images/oppo/x7pro-black.jpg', 1),
-(98, 116, 'techzone/assets/images/oppo/x7pro-white.jpg', 1),
-(99, 117, 'techzone/assets/images/oppo/x7pro-silver.jpg', 1);
+(80, 73, '/techzone/assets/images/s25u/white.jpg', 1),
+(82, 100, '/techzone/assets/images/oppo/x7-black.jpg', 1),
+(83, 101, '/techzone/assets/images/oppo/x7-white.jpg', 1),
+(85, 103, '/techzone/assets/images/oppo/x7-black.jpg', 1),
+(86, 104, '/techzone/assets/images/oppo/x7-white.jpg', 1),
+(88, 106, '/techzone/assets/images/oppo/x7-black.jpg', 1),
+(89, 107, '/techzone/assets/images/oppo/x7-white.jpg', 1),
+(91, 109, '/techzone/assets/images/oppo/x7pro-black.jpg', 1),
+(92, 110, '/techzone/assets/images/oppo/x7pro-white.jpg', 1),
+(94, 112, '/techzone/assets/images/oppo/x7pro-black.jpg', 1),
+(95, 113, '/techzone/assets/images/oppo/x7pro-white.jpg', 1),
+(97, 115, '/techzone/assets/images/oppo/x7pro-black.jpg', 1),
+(98, 116, '/techzone/assets/images/oppo/x7pro-white.jpg', 1),
+(100, 117, '/techzone/assets/images/xiaomi/redmi14pro/black.jpg', 1),
+(101, 118, '/techzone/assets/images/xiaomi/redmi14pro/white.jpg', 1),
+(102, 119, '/techzone/assets/images/xiaomi/redmi14pro/blue.jpg', 1),
+(103, 120, '/techzone/assets/images/xiaomi/redmi13pro/black.jpg', 1),
+(104, 121, '/techzone/assets/images/xiaomi/redmi13pro/white.jpg', 1),
+(105, 122, '/techzone/assets/images/xiaomi/redmi13pro/blue.jpg', 1),
+(106, 123, '/techzone/assets/images/xiaomi/redmi12/black.jpg', 1),
+(107, 124, '/techzone/assets/images/xiaomi/redmi12/white.jpg', 1),
+(108, 125, '/techzone/assets/images/macbook/air-m2-silver.jpg', 1),
+(109, 126, '/techzone/assets/images/macbook/air-m2-gray.jpg', 1),
+(110, 127, '/techzone/assets/images/macbook/air-m2-silver.jpg', 1),
+(111, 128, '/techzone/assets/images/macbook/air-m2-gray.jpg', 1),
+(112, 129, '/techzone/assets/images/macbook/air-m2-silver.jpg', 1),
+(113, 130, '/techzone/assets/images/macbook/air-m2-gray.jpg', 1),
+(114, 131, '/techzone/assets/images/macbook/air-m2-silver.jpg', 1),
+(115, 132, '/techzone/assets/images/macbook/air-m2-gray.jpg', 1),
+(116, 125, '/techzone/assets/images/macbook/air-m2-silver.jpg', 1),
+(117, 126, '/techzone/assets/images/macbook/air-m2-gray.jpg', 1),
+(118, 127, '/techzone/assets/images/macbook/air-m2-silver.jpg', 1),
+(119, 128, '/techzone/assets/images/macbook/air-m2-gray.jpg', 1),
+(120, 129, '/techzone/assets/images/macbook/air-m2-silver.jpg', 1),
+(121, 130, '/techzone/assets/images/macbook/air-m2-gray.jpg', 1),
+(122, 131, '/techzone/assets/images/macbook/air-m2-silver.jpg', 1),
+(123, 132, '/techzone/assets/images/macbook/air-m2-gray.jpg', 1),
+(124, 133, '/techzone/assets/images/macbook/air-m3-silver.jpg', 1),
+(125, 134, '/techzone/assets/images/macbook/air-m3-gray.jpg', 1),
+(126, 135, '/techzone/assets/images/macbook/air-m3-silver.jpg', 1),
+(127, 136, '/techzone/assets/images/macbook/air-m3-gray.jpg', 1),
+(128, 137, '/techzone/assets/images/macbook/air-m3-silver.jpg', 1),
+(129, 138, '/techzone/assets/images/macbook/air-m3-gray.jpg', 1),
+(130, 139, '/techzone/assets/images/macbook/air-m3-silver.jpg', 1),
+(131, 140, '/techzone/assets/images/macbook/air-m3-gray.jpg', 1),
+(132, 141, '/techzone/assets/images/macbook/air-m4-silver.jpg', 1),
+(133, 142, '/techzone/assets/images/macbook/air-m4-gray.jpg', 1),
+(134, 143, '/techzone/assets/images/macbook/air-m4-silver.jpg', 1),
+(135, 144, '/techzone/assets/images/macbook/air-m4-gray.jpg', 1),
+(136, 145, '/techzone/assets/images/macbook/air-m4-silver.jpg', 1),
+(137, 146, '/techzone/assets/images/macbook/air-m4-gray.jpg', 1),
+(138, 147, '/techzone/assets/images/macbook/air-m4-silver.jpg', 1),
+(139, 148, '/techzone/assets/images/macbook/air-m4-gray.jpg', 1),
+(140, 149, '/techzone/assets/images/asus/vivs14-black.jpg', 1),
+(141, 150, '/techzone/assets/images/asus/vivs14-black.jpg', 1),
+(142, 151, '/techzone/assets/images/asus/vivs14-black.jpg', 1),
+(143, 152, '/techzone/assets/images/asus/vivs14-black.jpg', 1),
+(144, 153, '/techzone/assets/images/asus/vivs14-black.jpg', 1),
+(145, 154, '/techzone/assets/images/asus/vivs14-black.jpg', 1),
+(146, 155, '/techzone/assets/images/asus/vivs14-black.jpg', 1),
+(147, 156, '/techzone/assets/images/asus/vivs14-black.jpg', 1),
+(148, 157, '/techzone/assets/images/asus/vivs14-white.jpg', 1),
+(149, 158, '/techzone/assets/images/asus/vivs14-white.jpg', 1),
+(150, 159, '/techzone/assets/images/asus/vivs14-white.jpg', 1),
+(151, 160, '/techzone/assets/images/asus/vivs14-white.jpg', 1),
+(152, 161, '/techzone/assets/images/asus/vivs14-white.jpg', 1),
+(153, 162, '/techzone/assets/images/asus/vivs14-white.jpg', 1),
+(154, 163, '/techzone/assets/images/asus/vivs14-white.jpg', 1),
+(155, 164, '/techzone/assets/images/asus/vivs14-white.jpg', 1);
 
 -- --------------------------------------------------------
 
@@ -1337,8 +1714,17 @@ INSERT INTO `spu` (`id`, `name`, `brand`, `category_id`, `description`, `created
 (3, 'iPhone 16', 'Apple', 9, 'iPhone 16 thế hệ mới với nhiều cải tiến.', '2025-12-11 07:07:04'),
 (4, 'S25', 'Samsung', 10, NULL, '2025-12-11 07:33:21'),
 (5, 'S25 Ultra', 'Samsung', 10, NULL, '2025-12-11 07:33:21'),
-(6, 'Find X7', 'Oppo', 11, 'Oppo Find X7 - cao cấp, sang trọng', '2025-12-11 07:53:29'),
-(7, 'Find X7 Pro', 'Oppo', 11, 'Oppo Find X7 Pro - cao cấp, tối ưu hiệu năng', '2025-12-11 07:53:29');
+(6, 'Find X9', 'Oppo', 11, 'Oppo Find X9 - cao cấp, sang trọng', '2025-12-11 07:53:29'),
+(7, 'Find X9 Pro', 'Oppo', 11, 'Oppo Find X9 Pro - cao cấp, tối ưu hiệu năng', '2025-12-11 07:53:29'),
+(8, 'Redmi Note 14 Pro+', 'Xiaomi', 12, 'Điện thoại Xiaomi Redmi Note 14 Pro+', '2025-12-11 09:07:49'),
+(9, 'Redmi Note 13 Pro+', 'Xiaomi', 12, 'Điện thoại Xiaomi Redmi Note 13 Pro+', '2025-12-11 09:07:49'),
+(10, 'Redmi Note 12', 'Xiaomi', 12, 'Điện thoại Xiaomi Redmi Note 12', '2025-12-11 09:07:49'),
+(11, 'MacBook Air M2', 'Apple', 5, NULL, '2025-12-11 09:53:52'),
+(12, 'MacBook Air M3', 'Apple', 5, NULL, '2025-12-11 09:53:52'),
+(13, 'MacBook Air M4', 'Apple', 5, NULL, '2025-12-11 09:53:52'),
+(14, 'Vivobook S14', 'Asus', 6, 'Laptop Asus Vivobook S14, phù hợp học tập và văn phòng.', '2025-12-11 12:40:08'),
+(15, 'TUF F15', 'Asus', 6, 'Laptop Asus TUF F15, mạnh mẽ cho gaming và làm việc nặng.', '2025-12-11 12:40:08'),
+(16, 'ROG Strix G15', 'Asus', 6, 'Laptop Asus ROG Strix G15, tối ưu cho game thủ chuyên nghiệp.', '2025-12-11 12:40:08');
 
 -- --------------------------------------------------------
 
@@ -1349,6 +1735,8 @@ INSERT INTO `spu` (`id`, `name`, `brand`, `category_id`, `description`, `created
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `fullname` varchar(255) DEFAULT NULL,
+  `gender` enum('Nam','Nữ','Khác') DEFAULT NULL,
+  `birthday` date DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `role` enum('customer','admin') DEFAULT 'customer',
@@ -1365,9 +1753,9 @@ CREATE TABLE `users` (
 -- Đang đổ dữ liệu cho bảng `users`
 --
 
-INSERT INTO `users` (`id`, `fullname`, `email`, `password`, `role`, `created_at`, `phone`, `address`, `province_id`, `district_id`, `ward_id`, `street`) VALUES
-(1, 'test user', 'user@gmail.com', '$2y$10$CIHU9nhtsgDv7WFoj49B3.V8x62xguhZfwFrRX5VaeRhEjftL7wwe', '', '2025-12-03 05:56:54', NULL, NULL, NULL, NULL, NULL, NULL),
-(2, 'Admin', 'admin@gmail.com', '$2y$10$CIHU9nhtsgDv7WFoj49B3.V8x62xguhZfwFrRX5VaeRhEjftL7wwe', 'admin', '2025-12-03 05:56:54', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users` (`id`, `fullname`, `gender`, `birthday`, `email`, `password`, `role`, `created_at`, `phone`, `address`, `province_id`, `district_id`, `ward_id`, `street`) VALUES
+(1, 'Nam', 'Nam', '2005-08-30', 'user@gmail.com', '$2y$10$CIHU9nhtsgDv7WFoj49B3.V8x62xguhZfwFrRX5VaeRhEjftL7wwe', '', '2025-12-03 05:56:54', '0932660941', NULL, 51, 522, NULL, '123 Lê Lợi'),
+(2, 'Admin', NULL, NULL, 'admin@gmail.com', '$2y$10$CIHU9nhtsgDv7WFoj49B3.V8x62xguhZfwFrRX5VaeRhEjftL7wwe', 'admin', '2025-12-03 05:56:54', NULL, NULL, NULL, NULL, NULL, NULL);
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -1393,6 +1781,13 @@ ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Chỉ mục cho bảng `coupons`
+--
+ALTER TABLE `coupons`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `code` (`code`);
+
+--
 -- Chỉ mục cho bảng `districts`
 --
 ALTER TABLE `districts`
@@ -1411,7 +1806,9 @@ ALTER TABLE `item`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `fk_orders_province` (`province_id`),
+  ADD KEY `fk_orders_district` (`district_id`),
+  ADD KEY `fk_orders_user` (`user_id`);
 
 --
 -- Chỉ mục cho bảng `order_items`
@@ -1420,6 +1817,19 @@ ALTER TABLE `order_items`
   ADD PRIMARY KEY (`id`),
   ADD KEY `order_id` (`order_id`),
   ADD KEY `sku_id` (`sku_id`);
+
+--
+-- Chỉ mục cho bảng `order_item_discounts`
+--
+ALTER TABLE `order_item_discounts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `order_item_id` (`order_item_id`);
+
+--
+-- Chỉ mục cho bảng `order_item_returns`
+--
+ALTER TABLE `order_item_returns`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Chỉ mục cho bảng `order_tracking`
@@ -1481,13 +1891,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `attributes`
 --
 ALTER TABLE `attributes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `categories`
 --
 ALTER TABLE `categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT cho bảng `coupons`
+--
+ALTER TABLE `coupons`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `item`
@@ -1499,43 +1915,55 @@ ALTER TABLE `item`
 -- AUTO_INCREMENT cho bảng `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `order_items`
 --
 ALTER TABLE `order_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT cho bảng `order_item_discounts`
+--
+ALTER TABLE `order_item_discounts`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `order_item_returns`
+--
+ALTER TABLE `order_item_returns`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT cho bảng `order_tracking`
 --
 ALTER TABLE `order_tracking`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `sku`
 --
 ALTER TABLE `sku`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=118;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
 
 --
 -- AUTO_INCREMENT cho bảng `sku_attribute_values`
 --
 ALTER TABLE `sku_attribute_values`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=199;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=455;
 
 --
 -- AUTO_INCREMENT cho bảng `sku_images`
 --
 ALTER TABLE `sku_images`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=156;
 
 --
 -- AUTO_INCREMENT cho bảng `spu`
 --
 ALTER TABLE `spu`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
@@ -1569,6 +1997,9 @@ ALTER TABLE `item`
 -- Các ràng buộc cho bảng `orders`
 --
 ALTER TABLE `orders`
+  ADD CONSTRAINT `fk_orders_district` FOREIGN KEY (`district_id`) REFERENCES `districts` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_orders_province` FOREIGN KEY (`province_id`) REFERENCES `provinces` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_orders_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
@@ -1577,6 +2008,12 @@ ALTER TABLE `orders`
 ALTER TABLE `order_items`
   ADD CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
   ADD CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`sku_id`) REFERENCES `sku` (`id`);
+
+--
+-- Các ràng buộc cho bảng `order_item_discounts`
+--
+ALTER TABLE `order_item_discounts`
+  ADD CONSTRAINT `order_item_discounts_ibfk_1` FOREIGN KEY (`order_item_id`) REFERENCES `order_items` (`id`);
 
 --
 -- Các ràng buộc cho bảng `order_tracking`

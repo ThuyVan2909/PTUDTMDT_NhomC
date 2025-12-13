@@ -331,6 +331,7 @@ $user = $conn->query("SELECT * FROM users WHERE id = $user_id")->fetch_assoc();
 
         // Kiểm tra đã yêu cầu trả chưa
         $check = $conn->prepare("SELECT id FROM order_item_returns WHERE order_item_id=?");
+        
         $check->bind_param("i", $it['id']);
         $check->execute();
         $returned = $check->get_result()->num_rows > 0;
@@ -364,15 +365,27 @@ $user = $conn->query("SELECT * FROM users WHERE id = $user_id")->fetch_assoc();
 
     // Kiểm tra đơn hàng có thuộc user không
     $check = $conn->prepare("
-        SELECT oi.*, p.name, o.user_id 
-        FROM order_items oi
-        JOIN orders o ON oi.order_id=o.id
-        JOIN products p ON oi.product_id=p.id
-        WHERE oi.id=? LIMIT 1
-    ");
-    $check->bind_param("i", $order_item_id);
-    $check->execute();
-    $item = $check->get_result()->fetch_assoc();
+    SELECT 
+        oi.*, 
+        s.sku_code, 
+        s.variant,
+        p.name,
+        o.user_id
+    FROM order_items oi
+    JOIN orders o ON oi.order_id = o.id
+    JOIN sku s ON oi.sku_id = s.id
+    JOIN spu p ON s.spu_id = p.id
+    WHERE oi.id = ?
+    LIMIT 1
+");
+
+if (!$check) {
+    die("SQL ERROR: " . $conn->error);
+}
+
+$check->bind_param("i", $order_item_id);
+$check->execute();
+$item = $check->get_result()->fetch_assoc();
 
     if (!$item || $item['user_id'] != $uid) {
         echo "<p>Dữ liệu không hợp lệ.</p>";
