@@ -1,5 +1,9 @@
 <?php
 $conn = new mysqli("localhost","root","","lendly_db");
+session_start();
+$isLoggedIn = isset($_SESSION['user_id']);
+$userName = $isLoggedIn ? $_SESSION['user_name'] : null;
+
 
 // Laptop
 $laptop_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 2");
@@ -39,15 +43,28 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
   <div class="container">
     <a class="navbar-brand fw-bold" href="#">TechZone</a>
+    
     <div class="d-flex gap-2">
-      <button class="btn btn-outline-primary" onclick="openLogin()">Đăng nhập</button>
-      <a href="cart.php" class="btn btn-outline-success position-relative">
-    Giỏ hàng
-    <span id="cartCount" 
-          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
-</a>
 
-    </div>
+    <?php if(!$isLoggedIn): ?>
+        <!-- Nếu chưa đăng nhập -->
+        <button class="btn btn-outline-primary" onclick="openLogin()">Đăng nhập</button>
+
+    <?php else: ?>
+        <!-- Nếu đã đăng nhập -->
+        <a href="account.php" class="btn btn-outline-primary">
+            Tài khoản (<?= htmlspecialchars($userName) ?>)
+        </a>
+    <?php endif; ?>
+
+    <a href="cart.php" class="btn btn-outline-success position-relative">
+        Giỏ hàng
+        <span id="cartCount" 
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+    </a>
+
+</div>
+
   </div>
 </nav>
 
