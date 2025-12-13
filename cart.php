@@ -5,9 +5,17 @@ include 'db.php';
 $cart = $_SESSION['cart'] ?? [];
 $total = 0;
 
-// Giá trị mã giảm giá đang áp dụng
-$coupon_code = $_SESSION['coupon_code'] ?? "";
-$coupon_discount = $_SESSION['coupon_discount'] ?? 0;
+
+// FIX: Nếu giỏ trống → reset coupon
+if (empty($cart)) {
+    unset($_SESSION['coupon_code']);
+    unset($_SESSION['coupon_discount']);
+    $coupon_code = "";
+    $coupon_discount = 0;
+} else {
+    $coupon_code = $_SESSION['coupon_code'] ?? "";
+    $coupon_discount = $_SESSION['coupon_discount'] ?? 0;
+}
 ?>
 
 <!DOCTYPE html>
@@ -40,7 +48,7 @@ th { background: #fafafa; }
 
 <div class="container">
 <h2>Giỏ hàng</h2>
-<table>
+<table id="cartTable">
 <tr>
     <th>Ảnh sản phẩm</th>
     <th>Tên sản phẩm</th>
@@ -55,7 +63,6 @@ th { background: #fafafa; }
         $subtotal = $price * $item['quantity'];
         $total += $subtotal;
 
-        // Lấy ảnh chính xác của SKU
         $sku_id = intval($item['sku_id']);
         $img_query = $conn->query("SELECT image_url FROM sku_images WHERE sku_id=$sku_id AND is_primary=1 LIMIT 1");
         $img_data = $img_query->fetch_assoc();
@@ -80,9 +87,18 @@ th { background: #fafafa; }
         <?php endif; ?>
     </td>
     <td>
-        <input type="number" class="qty-input" min="1" value="<?= $item['quantity'] ?>" onchange="updateQty(<?= $item['sku_id'] ?>, this.value)">
+        <input type="number" class="qty-input" min="1" value="<?= $item['quantity'] ?>" 
+               onchange="updateQty(<?= $item['sku_id'] ?>, this.value)">
     </td>
-    <td><?= number_format($subtotal) ?> đ</td>
+    <td>
+    <?= number_format($subtotal) ?> đ
+    <br>
+    <a href="javascript:void(0)" onclick="removeItem(<?= $item['sku_id'] ?>)" 
+       style="color:red; font-size:13px; text-decoration:none;">
+        Xóa
+    </a>
+</td>
+
 </tr>
 <?php endforeach; else: ?>
 <tr><td colspan="5" style="text-align:center;">Giỏ hàng trống</td></tr>
@@ -91,30 +107,34 @@ th { background: #fafafa; }
 <!-- Tổng tạm tính -->
 <tr>
     <td colspan="4" class="total-row">Tạm tính:</td>
-    <td class="total-row"><?= number_format($total) ?> đ</td>
+    <td class="total-row" id="subtotalDisplay"><?= number_format($total) ?> đ</td>
 </tr>
 
-<!-- Nếu có mã giảm giá -->
-<?php if($coupon_discount > 0): ?>
-<tr>
-    <td colspan="4" class="total-row" style="color:green">Giảm giá (<?= htmlspecialchars($coupon_code) ?>):</td>
-    <td class="total-row" style="color:green">-<?= number_format($coupon_discount) ?> đ</td>
+<!-- Giảm giá -->
+<tr id="discountRow" style="<?= $coupon_discount > 0 ? '' : 'display:none;' ?>">
+    <td colspan="4" class="total-row" style="color:green">
+        Giảm giá (<span id="couponCode"><?= htmlspecialchars($coupon_code) ?></span>):
+    </td>
+    <td class="total-row" style="color:green" id="discountDisplay">
+        -<?= number_format($coupon_discount) ?> đ
+    </td>
 </tr>
-<tr>
+
+<!-- Tổng thanh toán -->
+<tr id="finalRow" style="<?= $coupon_discount > 0 ? '' : 'display:none;' ?>">
     <td colspan="4" class="total-row">Tổng thanh toán:</td>
-    <td class="total-row"><?= number_format($total - $coupon_discount) ?> đ</td>
+    <td class="total-row" id="finalTotal">
+        <?= number_format($total - $coupon_discount) ?> đ
+    </td>
 </tr>
-<?php endif; ?>
 
 </table>
 
 <!-- Nhập mã giảm giá -->
 <div class="coupon-box">
-    <form method="post" action="apply_coupon.php">
-        <label>Mã giảm giá:</label>
-        <input type="text" name="coupon_code" class="coupon-input" value="<?= htmlspecialchars($coupon_code) ?>">
-        <button class="btn">Áp dụng</button>
-    </form>
+    <label>Mã giảm giá:</label>
+    <input type="text" id="coupon_code" name="coupon_code" class="coupon-input" value="<?= htmlspecialchars($coupon_code) ?>">
+    <button class="btn" onclick="applyCoupon()">Áp dụng</button>
 </div>
 
 <?php if(!empty($cart)): ?>
@@ -122,14 +142,69 @@ th { background: #fafafa; }
 <?php endif; ?>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
+// ==========================
+// CẬP NHẬT SỐ LƯỢNG SKU
+// ==========================
 function updateQty(sku, qty){
-    $.post("update_cart.php", { sku_id: sku, quantity: qty }, function(){
-        location.reload();
+    $.post("update_cart.php", { sku_id: sku, quantity: qty }, function(res){
+
+        // Update subtotal
+        $("#subtotalDisplay").text(res.subtotal.toLocaleString() + " đ");
+
+        // Nếu đã có voucher trước đó → update final total
+        if(res.discount > 0){
+            $("#discountRow").show();
+            $("#discountDisplay").text("-" + res.discount.toLocaleString() + " đ");
+
+            $("#finalRow").show();
+            $("#finalTotal").text(res.final_total.toLocaleString() + " đ");
+        }
+
+    }, "json");
+}
+
+// ==========================
+// ÁP DỤNG COUPON
+// ==========================
+function applyCoupon(){
+    let code = $("#coupon_code").val();
+
+    $.post("apply_coupon.php", { coupon_code: code }, function(res){
+
+        if(!res.status){
+            alert(res.message);
+            return;
+        }
+
+        // Hiện giảm giá
+        $("#discountRow").show();
+        $("#discountDisplay").text("-" + res.discount.toLocaleString() + " đ");
+
+        $("#couponCode").text(code);
+
+        // Hiện tổng sau giảm
+        $("#finalRow").show();
+        $("#finalTotal").text(res.total_after_discount.toLocaleString() + " đ");
+
+        alert(res.message);
+
+    }, "json");
+}
+
+function removeItem(sku){
+    $.post("remove_item.php", { sku_id: sku }, function(res){
+        res = JSON.parse(res);
+        if(res.status){
+            location.reload();
+        } else {
+            alert("Không thể xoá sản phẩm.");
+        }
     });
 }
 </script>
-</div>
 
+</div>
 </body>
 </html>
