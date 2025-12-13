@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th12 13, 2025 lúc 08:22 AM
+-- Thời gian đã tạo: Th12 13, 2025 lúc 02:50 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.0.30
 
@@ -126,6 +126,15 @@ CREATE TABLE `coupons` (
   `expired_at` datetime DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `coupons`
+--
+
+INSERT INTO `coupons` (`id`, `code`, `discount_amount`, `min_order_total`, `expired_at`, `created_at`) VALUES
+(1, 'SALE100', 100000, 10000000, '2026-12-31 23:59:59', '2025-12-13 07:38:12'),
+(2, 'SALE200', 200000, 20000000, '2026-12-31 23:59:59', '2025-12-13 07:38:12'),
+(3, 'SALE500', 500000, 3000000, '2026-08-30 23:59:59', '2025-12-13 07:38:12');
 
 -- --------------------------------------------------------
 
@@ -813,7 +822,9 @@ CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   `total` decimal(10,2) DEFAULT NULL,
-  `status` enum('pending','confirmed','processing','shipping','delivered','cancelled') DEFAULT 'pending',
+  `discount` int(11) DEFAULT 0,
+  `final_price` decimal(10,2) DEFAULT 0.00,
+  `status` enum('Đã đặt','Người bán đang chuẩn bị hàng','Đơn vị giao hàng đã nhận hàng','Hàng đang giao đến nhà bạn','Đơn hàng đã giao','Đơn bị huỷ') DEFAULT 'Đã đặt',
   `payment_method` varchar(50) DEFAULT NULL,
   `shipping_method` varchar(50) DEFAULT NULL,
   `fullname` varchar(255) DEFAULT NULL,
@@ -831,9 +842,15 @@ CREATE TABLE `orders` (
 -- Đang đổ dữ liệu cho bảng `orders`
 --
 
-INSERT INTO `orders` (`id`, `user_id`, `total`, `status`, `payment_method`, `shipping_method`, `fullname`, `phone`, `province_id`, `district_id`, `street`, `address`, `created_at`, `coupon_code`, `coupon_discount`) VALUES
-(1, 1, 29990000.00, 'pending', 'cod', 'standard', 'Nam', '0932660941', 51, 522, '123 Lê Lợi', NULL, '2025-12-13 05:09:07', NULL, 0),
-(2, 1, 61980000.00, 'pending', 'cod', 'standard', 'Nam', '0932660941', 51, 522, '123 Lê Lợi', NULL, '2025-12-13 06:05:29', NULL, 0);
+INSERT INTO `orders` (`id`, `user_id`, `total`, `discount`, `final_price`, `status`, `payment_method`, `shipping_method`, `fullname`, `phone`, `province_id`, `district_id`, `street`, `address`, `created_at`, `coupon_code`, `coupon_discount`) VALUES
+(1, 1, 29990000.00, 0, 0.00, '', 'cod', 'standard', 'Nam', '0932660941', 51, 522, '123 Lê Lợi', NULL, '2025-12-13 05:09:07', NULL, 0),
+(2, 1, 61980000.00, 0, 0.00, '', 'cod', 'standard', 'Nam', '0932660941', 51, 522, '123 Lê Lợi', NULL, '2025-12-13 06:05:29', NULL, 0),
+(3, NULL, 62490000.00, 0, 62490000.00, 'Đã đặt', 'bank', 'express', 'A', '1', 92, 925, '112', NULL, '2025-12-13 13:20:12', NULL, 0),
+(4, NULL, 62490000.00, 0, 62490000.00, 'Đã đặt', 'bank', 'express', 'A', '1', 92, 925, '112', NULL, '2025-12-13 13:22:19', NULL, 0),
+(5, NULL, 62490000.00, 0, 62490000.00, 'Đã đặt', 'cod', 'standard', '1', '1', 77, 750, '1', NULL, '2025-12-13 13:33:26', NULL, 0),
+(6, NULL, 62490000.00, 0, 62490000.00, 'Đã đặt', 'cod', 'standard', '1', '1', 77, 750, '1', NULL, '2025-12-13 13:36:04', NULL, 0),
+(7, NULL, 75980000.00, 0, 75980000.00, 'Đã đặt', 'cod', 'standard', '1', '1', 92, 925, '11', NULL, '2025-12-13 13:47:15', NULL, 0),
+(8, NULL, 41990000.00, 0, 41990000.00, 'Đã đặt', 'cod', 'standard', '1', '1', 31, 313, '1', NULL, '2025-12-13 13:48:45', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -846,17 +863,23 @@ CREATE TABLE `order_items` (
   `order_id` int(11) DEFAULT NULL,
   `sku_id` int(11) DEFAULT NULL,
   `quantity` int(11) DEFAULT NULL,
-  `price` decimal(10,2) DEFAULT NULL
+  `price` decimal(10,2) DEFAULT NULL,
+  `discount_amount` decimal(15,2) NOT NULL DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `order_items`
 --
 
-INSERT INTO `order_items` (`id`, `order_id`, `sku_id`, `quantity`, `price`) VALUES
-(1, 1, 15, 1, 29990000.00),
-(2, 2, 4, 1, 19990000.00),
-(3, 2, 148, 1, 41990000.00);
+INSERT INTO `order_items` (`id`, `order_id`, `sku_id`, `quantity`, `price`, `discount_amount`) VALUES
+(1, 1, 15, 1, 29990000.00, 0.00),
+(2, 2, 4, 1, 19990000.00, 0.00),
+(3, 2, 148, 1, 41990000.00, 0.00),
+(4, 6, 131, 1, 39990000.00, 0.00),
+(5, 6, 164, 1, 22500000.00, 0.00),
+(6, 7, 141, 1, 33990000.00, 0.00),
+(7, 7, 147, 1, 41990000.00, 0.00),
+(8, 8, 147, 1, 41990000.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -914,7 +937,10 @@ CREATE TABLE `order_tracking` (
 
 INSERT INTO `order_tracking` (`id`, `order_id`, `status`, `note`, `updated_at`) VALUES
 (1, 1, 'pending', 'Đơn hàng đã được tạo', '2025-12-13 05:09:07'),
-(2, 2, 'pending', 'Đơn hàng đã được tạo', '2025-12-13 06:05:29');
+(2, 2, 'pending', 'Đơn hàng đã được tạo', '2025-12-13 06:05:29'),
+(3, 6, 'Đã đặt', 'Đơn hàng đã được tạo', '2025-12-13 13:36:04'),
+(4, 7, 'Đã đặt', 'Đơn hàng đã được tạo', '2025-12-13 13:47:15'),
+(5, 8, 'Đã đặt', 'Đơn hàng đã được tạo', '2025-12-13 13:48:45');
 
 -- --------------------------------------------------------
 
@@ -1107,7 +1133,7 @@ INSERT INTO `sku` (`id`, `spu_id`, `sku_code`, `variant`, `price`, `promo_price`
 (128, 11, 'MBA-M2-8-512-GRAY', '{\"ram\":\"8GB\",\"ssd\":\"512GB\",\"color\":\"Space Gray\"}', 35990000.00, 34990000.00, 8, 'KHO1', '2025-12-11 09:58:57'),
 (129, 11, 'MBA-M2-16-256-SIL', '{\"ram\":\"16GB\",\"ssd\":\"256GB\",\"color\":\"Silver\"}', 35990000.00, 34990000.00, 5, 'KHO1', '2025-12-11 09:58:57'),
 (130, 11, 'MBA-M2-16-256-GRAY', '{\"ram\":\"16GB\",\"ssd\":\"256GB\",\"color\":\"Space Gray\"}', 35990000.00, 34990000.00, 5, 'KHO1', '2025-12-11 09:58:57'),
-(131, 11, 'MBA-M2-16-512-SIL', '{\"ram\":\"16GB\",\"ssd\":\"512GB\",\"color\":\"Silver\"}', 39990000.00, 38990000.00, 3, 'KHO1', '2025-12-11 09:58:57'),
+(131, 11, 'MBA-M2-16-512-SIL', '{\"ram\":\"16GB\",\"ssd\":\"512GB\",\"color\":\"Silver\"}', 39990000.00, 38990000.00, 2, 'KHO1', '2025-12-11 09:58:57'),
 (132, 11, 'MBA-M2-16-512-GRAY', '{\"ram\":\"16GB\",\"ssd\":\"512GB\",\"color\":\"Space Gray\"}', 39990000.00, 38990000.00, 3, 'KHO1', '2025-12-11 09:58:57'),
 (133, 12, 'MBA-M3-8-256-SIL', '{\"ram\":\"8GB\",\"ssd\":\"256GB\",\"color\":\"Silver\"}', 32990000.00, 31990000.00, 10, 'KHO1', '2025-12-11 09:58:57'),
 (134, 12, 'MBA-M3-8-256-GRAY', '{\"ram\":\"8GB\",\"ssd\":\"256GB\",\"color\":\"Space Gray\"}', 32990000.00, 31990000.00, 10, 'KHO1', '2025-12-11 09:58:57'),
@@ -1117,13 +1143,13 @@ INSERT INTO `sku` (`id`, `spu_id`, `sku_code`, `variant`, `price`, `promo_price`
 (138, 12, 'MBA-M3-16-256-GRAY', '{\"ram\":\"16GB\",\"ssd\":\"256GB\",\"color\":\"Space Gray\"}', 36990000.00, 35990000.00, 5, 'KHO1', '2025-12-11 09:58:57'),
 (139, 12, 'MBA-M3-16-512-SIL', '{\"ram\":\"16GB\",\"ssd\":\"512GB\",\"color\":\"Silver\"}', 40990000.00, 39990000.00, 3, 'KHO1', '2025-12-11 09:58:57'),
 (140, 12, 'MBA-M3-16-512-GRAY', '{\"ram\":\"16GB\",\"ssd\":\"512GB\",\"color\":\"Space Gray\"}', 40990000.00, 39990000.00, 3, 'KHO1', '2025-12-11 09:58:57'),
-(141, 13, 'MBA-M4-8-256-SIL', '{\"ram\":\"8GB\",\"ssd\":\"256GB\",\"color\":\"Silver\"}', 33990000.00, 32990000.00, 10, 'KHO1', '2025-12-11 09:58:57'),
+(141, 13, 'MBA-M4-8-256-SIL', '{\"ram\":\"8GB\",\"ssd\":\"256GB\",\"color\":\"Silver\"}', 33990000.00, 32990000.00, 9, 'KHO1', '2025-12-11 09:58:57'),
 (142, 13, 'MBA-M4-8-256-GRAY', '{\"ram\":\"8GB\",\"ssd\":\"256GB\",\"color\":\"Space Gray\"}', 33990000.00, 32990000.00, 10, 'KHO1', '2025-12-11 09:58:57'),
 (143, 13, 'MBA-M4-8-512-SIL', '{\"ram\":\"8GB\",\"ssd\":\"512GB\",\"color\":\"Silver\"}', 37990000.00, 36990000.00, 8, 'KHO1', '2025-12-11 09:58:57'),
 (144, 13, 'MBA-M4-8-512-GRAY', '{\"ram\":\"8GB\",\"ssd\":\"512GB\",\"color\":\"Space Gray\"}', 37990000.00, 36990000.00, 8, 'KHO1', '2025-12-11 09:58:57'),
 (145, 13, 'MBA-M4-16-256-SIL', '{\"ram\":\"16GB\",\"ssd\":\"256GB\",\"color\":\"Silver\"}', 37990000.00, 36990000.00, 5, 'KHO1', '2025-12-11 09:58:57'),
 (146, 13, 'MBA-M4-16-256-GRAY', '{\"ram\":\"16GB\",\"ssd\":\"256GB\",\"color\":\"Space Gray\"}', 37990000.00, 36990000.00, 5, 'KHO1', '2025-12-11 09:58:57'),
-(147, 13, 'MBA-M4-16-512-SIL', '{\"ram\":\"16GB\",\"ssd\":\"512GB\",\"color\":\"Silver\"}', 41990000.00, 40990000.00, 3, 'KHO1', '2025-12-11 09:58:57'),
+(147, 13, 'MBA-M4-16-512-SIL', '{\"ram\":\"16GB\",\"ssd\":\"512GB\",\"color\":\"Silver\"}', 41990000.00, 40990000.00, 1, 'KHO1', '2025-12-11 09:58:57'),
 (148, 13, 'MBA-M4-16-512-GRAY', '{\"ram\":\"16GB\",\"ssd\":\"512GB\",\"color\":\"Space Gray\"}', 41990000.00, 40990000.00, 2, 'KHO1', '2025-12-11 09:58:57'),
 (149, 14, 'VIVS14-I5-8GB-500GB-BLACK', '{\"cpu\":\"i5 13500H\",\"ram\":\"8GB\",\"ssd\":\"500GB\",\"color\":\"Đen Không Gian\"}', 18000000.00, 17500000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
 (150, 14, 'VIVS14-I5-8GB-1TB-BLACK', '{\"cpu\":\"i5 13500H\",\"ram\":\"8GB\",\"ssd\":\"1TB\",\"color\":\"Đen Không Gian\"}', 19000000.00, 18500000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
@@ -1140,7 +1166,7 @@ INSERT INTO `sku` (`id`, `spu_id`, `sku_code`, `variant`, `price`, `promo_price`
 (161, 14, 'VIVS14-I7-8GB-500GB-WHITE', '{\"cpu\":\"i7 13500H\",\"ram\":\"8GB\",\"ssd\":\"500GB\",\"color\":\"Trắng Ngọc Trai\"}', 20500000.00, 20000000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
 (162, 14, 'VIVS14-I7-8GB-1TB-WHITE', '{\"cpu\":\"i7 13500H\",\"ram\":\"8GB\",\"ssd\":\"1TB\",\"color\":\"Trắng Ngọc Trai\"}', 21500000.00, 21000000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
 (163, 14, 'VIVS14-I7-16GB-500GB-WHITE', '{\"cpu\":\"i7 13500H\",\"ram\":\"16GB\",\"ssd\":\"500GB\",\"color\":\"Trắng Ngọc Trai\"}', 21500000.00, 21000000.00, 50, 'KHO1', '2025-12-11 13:10:53'),
-(164, 14, 'VIVS14-I7-16GB-1TB-WHITE', '{\"cpu\":\"i7 13500H\",\"ram\":\"16GB\",\"ssd\":\"1TB\",\"color\":\"Trắng Ngọc Trai\"}', 22500000.00, 22000000.00, 50, 'KHO1', '2025-12-11 13:10:53');
+(164, 14, 'VIVS14-I7-16GB-1TB-WHITE', '{\"cpu\":\"i7 13500H\",\"ram\":\"16GB\",\"ssd\":\"1TB\",\"color\":\"Trắng Ngọc Trai\"}', 22500000.00, 22000000.00, 49, 'KHO1', '2025-12-11 13:10:53');
 
 -- --------------------------------------------------------
 
@@ -1903,7 +1929,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT cho bảng `coupons`
 --
 ALTER TABLE `coupons`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT cho bảng `item`
@@ -1915,13 +1941,13 @@ ALTER TABLE `item`
 -- AUTO_INCREMENT cho bảng `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `order_item_discounts`
@@ -1939,7 +1965,7 @@ ALTER TABLE `order_item_returns`
 -- AUTO_INCREMENT cho bảng `order_tracking`
 --
 ALTER TABLE `order_tracking`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `sku`
