@@ -5,6 +5,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
 $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
 
 
+
 // Laptop
 $laptop_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 2");
 
@@ -15,6 +16,7 @@ $phone_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 1")
 
 // Smartwatch
 $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3");
+
 
 ?>
 <!DOCTYPE html>
@@ -32,6 +34,25 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
         .login-box input { width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:5px; }
         .login-submit { width:100%; padding:10px; background:#135071; color:#fff; border:none; border-radius:6px; cursor:pointer; }
         .close-btn { position:absolute; right:15px; top:10px; cursor:pointer; font-size:20px; }
+        
+/* Highlight khi scroll đến */
+/* Highlight viền card với fade */
+.product-highlight {
+    position: relative;
+    border: 2px solid #e30019;
+    box-shadow: 0 0 15px rgba(227,0,25,0.5);
+    border-radius: 8px; /* khớp với .card */
+    opacity: 1;
+    transition: opacity 1.5s ease, box-shadow 1.5s ease;
+}
+
+.product-highlight.fade-out {
+    opacity: 0;
+    box-shadow: 0 0 0 rgba(227,0,25,0);
+}
+
+</style>
+
     </style>
 </head>
 <body class="bg-light">
@@ -210,6 +231,90 @@ $(".watch-cat").click(function(){
 });
 
 loadSection("watch", watchCat, "");
+
+
+
+const url = new URL(window.location.href);
+const section = url.searchParams.get("section");
+const cat = url.searchParams.get("cat");
+const pid = url.searchParams.get("product_id");
+
+
+if (section && cat) {
+    if (section === "laptop") {
+    laptopCat = cat;
+    loadSection("laptop", laptopCat, "");
+
+    $(".laptop-cat").removeClass("active-filter");
+    $(".laptop-cat[data-id='" + cat + "']").addClass("active-filter");
+
+    // Scroll tới section trước
+    window.scrollTo(0, document.getElementById("laptop-section").offsetTop - 80);
+
+    // Scroll tới đúng sản phẩm
+    if (pid) {
+        setTimeout(() => {
+            const el = document.getElementById("product-" + pid);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 200);
+    }
+}
+    if (section === "phone") {
+    phoneCat = cat;
+    loadSection("phone", phoneCat, "");
+
+    $(".phone-cat").removeClass("active-filter");
+    $(".phone-cat[data-id='" + cat + "']").addClass("active-filter");
+
+    window.scrollTo(0, document.getElementById("phone-section").offsetTop - 80);
+
+    if (pid) {
+        setTimeout(() => {
+            const el = document.getElementById("product-" + pid);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 200);
+    }
+}
+    if (section === "watch") {
+    watchCat = cat;
+    loadSection("watch", watchCat, "");
+
+    $(".watch-cat").removeClass("active-filter");
+    $(".watch-cat[data-id='" + cat + "']").addClass("active-filter");
+
+    window.scrollTo(0, document.getElementById("watch-section").offsetTop - 80);
+
+    if (pid) {
+        setTimeout(() => {
+            const el = document.getElementById("product-" + pid);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 200);
+    }
+}
+
+}
+
+// SCROLL TO PRODUCT
+const productId = url.searchParams.get("product_id");
+if (productId) {
+    setTimeout(() => {
+        const el = document.getElementById("product-" + productId);
+        if (el) {
+            // Scroll tới sản phẩm
+            window.scrollTo({
+                top: el.offsetTop - 80,
+                behavior: "smooth"
+            });
+
+            // Thêm highlight
+            el.classList.add("product-highlight");
+
+            // Tự động bỏ highlight sau 2.5s
+            setTimeout(() => el.classList.remove("product-highlight"), 2500);
+        }
+    }, 500);
+}
+
 
 </script>
 

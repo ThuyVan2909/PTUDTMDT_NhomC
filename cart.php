@@ -5,6 +5,12 @@ include 'db.php';
 $cart = $_SESSION['cart'] ?? [];
 $total = 0;
 
+$breadcrumbs = [
+    ["label" => "Trang chủ", "url" => "index.php"],
+    ["label" => "Giỏ hàng"]
+];
+
+include "breadcrumb.php";
 
 // FIX: Nếu giỏ trống → reset coupon
 if (empty($cart)) {

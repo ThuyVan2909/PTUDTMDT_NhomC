@@ -26,6 +26,72 @@ if (isset($_SESSION['user_id'])) {
 }
 
 
+
+// 1. Lấy data sản phẩm
+$spu_id = $_GET['spu_id'];
+
+$stmt = $conn->prepare("
+    SELECT p.name AS product_name,
+           c.id AS category_id,
+           c.name AS category_name,
+           c.parent_id,
+           pc.name AS parent_name
+    FROM spu p
+    LEFT JOIN categories c ON p.category_id = c.id
+    LEFT JOIN categories pc ON c.parent_id = pc.id
+    WHERE p.id = ?
+");
+$stmt->bind_param("i", $spu_id);
+$stmt->execute();
+$res = $stmt->get_result();
+$data = $res->fetch_assoc();
+
+$product_name  = $data['product_name'];
+$category_id   = $data['category_id'];
+$category_name = $data['category_name'];
+$parent_name   = $data['parent_name'];
+$parent_id     = $data['parent_id'];
+
+
+// 2. Build breadcrumb
+$breadcrumbs = [
+    ["label" => "Trang chủ", "url" => "index.php"],
+];
+
+// Xác định section dựa theo parent_id (giống cấu trúc của bạn)
+$section = match($parent_id) {
+    1 => "phone",
+    2 => "laptop",
+    3 => "watch",
+    default => ""
+};
+
+// 3. Nếu có danh mục cha (Macbook thuộc Laptop)
+// 3. Nếu có danh mục cha (ví dụ Laptop)
+if (!empty($parent_id)) {
+    $breadcrumbs[] = [
+        "label" => $parent_name,
+        "url"   => "index.php?section=$section&cat=$parent_id&product_id=$spu_id"
+    ];
+}
+
+// 4. Danh mục con (ví dụ MacBook)
+$breadcrumbs[] = [
+    "label" => $category_name,
+    "url"   => "index.php?section=$section&cat=$category_id&product_id=$spu_id"
+];
+
+
+// 5. Tên sản phẩm (không có URL)
+$breadcrumbs[] = ["label" => $product_name];
+
+include "breadcrumb.php";
+
+
+
+
+
+
 // lấy SKU list
 $skus = $conn->query("SELECT id, sku_code, price, promo_price, stock FROM sku WHERE spu_id = $spu_id");
 

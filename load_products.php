@@ -13,9 +13,15 @@ $sql = "SELECT * FROM spu WHERE 1";
 // 1) Lọc category
 // -----------------------
 if (!empty($category)) {
-    // truyền category trực tiếp
-    $sql .= " AND category_id = " . intval($category);
-} else {
+    $cat = intval($category);
+
+    // Lấy cả danh mục cha + danh mục con
+    $sql .= " AND category_id IN (
+        SELECT id FROM categories 
+        WHERE id = $cat OR parent_id = $cat
+    )";
+}
+else {
     // không truyền category → map theo section
     $sectionMap = [
         'phone'  => 1,
@@ -78,8 +84,9 @@ while ($spu = $res->fetch_assoc()) {
     $minPriceFmt = $minPrice ? number_format($minPrice) . "₫" : "";
 
     // HTML hiển thị sản phẩm
+    // THÊM ID CHO MỖI PRODUCT → scroll chính xác
     $html .= "
-        <div class='col-md-3 mb-4'>
+        <div class='col-md-3 mb-4' id='product-{$spu['id']}'>
             <a href='product.php?spu_id={$spu['id']}' class='text-decoration-none text-dark'>
                 <div class='card h-100 shadow-sm'>
                     <img src='{$img}' class='card-img-top' style='height:180px;object-fit:contain'>

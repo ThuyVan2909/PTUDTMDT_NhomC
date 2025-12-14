@@ -4,7 +4,12 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit;
 }
+$breadcrumbs = [
+    ["label" => "Trang chủ", "url" => "index.php"],
+    ["label" => "Tài khoản"]
+];
 
+include "breadcrumb.php";
 $conn = new mysqli("localhost", "root", "", "lendly_db");
 $user_id = $_SESSION['user_id'];
 
@@ -516,7 +521,11 @@ $item = $check->get_result()->fetch_assoc();
         <div class='card-body view-card-body'>
             <h6 class='card-title'>" . htmlspecialchars($row['name']) . "</h6>
             <p class='text-danger fw-bold'>" . number_format($price) . " đ</p>
-            <a href='product_detail.php?id={$row['spu_id']}' class='btn btn-primary btn-sm'>Xem lại</a>
+            <a href='product.php?spu_id={$row['spu_id']}' 
+   class='btn btn-primary btn-sm'>
+   Xem lại
+</a>
+
         </div>
     </div>
 </div>";
