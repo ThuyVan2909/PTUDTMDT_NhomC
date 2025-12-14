@@ -52,7 +52,29 @@ $user = $conn->query("SELECT * FROM users WHERE id = $user_id")->fetch_assoc();
             border-bottom:1px solid #eee;
         }
         .sidebar a:hover { color:#0d6efd; }
-    </style>
+.view-card {
+    height: 100%;                 /* Card luôn full chiều cao của cột */
+    display: flex;
+    flex-direction: column;
+}
+
+.view-card-img {
+    height: 180px;                /* Cố định chiều cao ảnh */
+    object-fit: contain;          /* Không méo ảnh */
+    background-color: #f8f8f8;    /* Làm nền sáng cho ảnh */
+    padding: 10px;
+}
+
+.view-card-body {
+    flex-grow: 1;                 /* Body căng đều, giúp nút luôn nằm dưới */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+</style>
+
+
+
 </head>
 <body class="bg-light">
 
@@ -441,9 +463,71 @@ $item = $check->get_result()->fetch_assoc();
 } elseif ($tab === 'history') {
 
     echo "<h3 class='fw-bold mb-3'>Sản phẩm đã xem</h3>";
-    echo "Chưa có dữ liệu.";
 
+    $stmt = $conn->prepare("
+        SELECT 
+            vh.*,
+            p.name,
+            s.id AS sku_id,
+            s.price,
+            s.promo_price,
+            si.image_url
+        FROM view_history vh
+        JOIN spu p ON vh.spu_id = p.id
+        JOIN sku s 
+            ON s.spu_id = p.id
+            AND s.id = (
+                SELECT id 
+                FROM sku 
+                WHERE spu_id = p.id 
+                ORDER BY id ASC 
+                LIMIT 1
+            )
+        LEFT JOIN sku_images si 
+            ON si.sku_id = s.id AND si.is_primary = 1
+        WHERE vh.user_id = ?
+        ORDER BY vh.viewed_at DESC
+        LIMIT 20
+    ");
+
+    if (!$stmt) {
+        die("SQL ERROR HISTORY: " . $conn->error);
+    }
+
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    if ($res->num_rows == 0) {
+        echo "<p>Bạn chưa xem sản phẩm nào.</p>";
+    } else {
+
+        echo "<div class='row'>";
+
+        while ($row = $res->fetch_assoc()) {
+
+            $img = $row['image_url'] ?: "/techzone/assets/images/no-image.png";
+            $price = $row['promo_price'] ?: $row['price'];
+
+            echo "
+<div class='col-md-3 mb-4'>
+    <div class='card view-card'>
+        <img src='$img' class='card-img-top view-card-img'>
+        <div class='card-body view-card-body'>
+            <h6 class='card-title'>" . htmlspecialchars($row['name']) . "</h6>
+            <p class='text-danger fw-bold'>" . number_format($price) . " đ</p>
+            <a href='product_detail.php?id={$row['spu_id']}' class='btn btn-primary btn-sm'>Xem lại</a>
+        </div>
+    </div>
+</div>";
+
+        }
+
+        echo "</div>";
+    }
 }
+
+
 
     ?>
     </div>

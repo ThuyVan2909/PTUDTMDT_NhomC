@@ -46,6 +46,9 @@ th { background: #fafafa; }
 </head>
 <body>
 
+
+
+
 <div class="container">
 <h2>Giỏ hàng</h2>
 <table id="cartTable">
@@ -137,9 +140,16 @@ th { background: #fafafa; }
     <button class="btn" onclick="applyCoupon()">Áp dụng</button>
 </div>
 
-<?php if(!empty($cart)): ?>
-<a href="checkout.php" class="btn">Thanh toán</a>
+<?php if (!empty($cart)): ?>
+    <?php if (!isset($_SESSION['user_id'])): ?>
+    <button onclick="showNeedLogin()" class="btn">Thanh toán</button>
+<?php else: ?>
+    <a href="checkout.php" class="btn">Thanh toán</a>
 <?php endif; ?>
+
+<?php endif; ?>
+
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -205,6 +215,53 @@ function removeItem(sku){
 }
 </script>
 
+
 </div>
+
+<!-- POPUP YÊU CẦU ĐĂNG NHẬP -->
+<div id="needLoginPopup" style="
+    display:none; position:fixed; top:0; left:0;
+    width:100%; height:100%; background:rgba(0,0,0,0.6);
+    z-index:99999; justify-content:center; align-items:center;">
+    
+    <div style="background:#fff; padding:25px; border-radius:12px;
+        width:90%; max-width:380px; text-align:center;">
+        
+        <h2 style="margin-bottom:15px; color:#333;">Bạn cần đăng nhập</h2>
+        <p style="margin-bottom:20px;">Vui lòng đăng nhập để tiếp tục thanh toán.</p>
+
+        <!-- CHỈ GỌI POPUP LOGIN, KHÔNG REDIRECT -->
+        <button onclick="openLogin(); closeNeedLogin();" class="btn" 
+                style="padding:10px 20px; display:inline-block;">
+            Đăng nhập ngay
+        </button>
+
+        <br><br>
+        <button onclick="closeNeedLogin()" 
+                style="border:none; background:none; cursor:pointer; color:#888;">
+            Đóng
+        </button>
+    </div>
+</div>
+
+<script>
+function showNeedLogin(){
+    document.getElementById('needLoginPopup').style.display = 'flex';
+}
+function closeNeedLogin(){
+    document.getElementById('needLoginPopup').style.display = 'none';
+}
+</script>
+
+<script>
+function openLogin() {
+    window.location.href = "login.php";
+}
+</script>
+
+
+
+
+
 </body>
 </html>

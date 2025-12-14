@@ -9,6 +9,23 @@ if (!$spu_id) { echo "Product not found"; exit; }
 $spu = $conn->query("SELECT * FROM spu WHERE id = $spu_id LIMIT 1")->fetch_assoc();
 if (!$spu) { echo "SPU không tồn tại"; exit; }
 
+
+// ===============================
+// GHI LỊCH SỬ SẢN PHẨM ĐÃ XEM
+// ===============================
+if (isset($_SESSION['user_id'])) {
+    $user_id = intval($_SESSION['user_id']);
+
+    // Xóa bản ghi cũ nếu user đã xem sản phẩm này (để tránh trùng)
+    $conn->query("DELETE FROM view_history WHERE user_id = $user_id AND spu_id = $spu_id");
+
+    // Thêm bản ghi mới
+    $stmt = $conn->prepare("INSERT INTO view_history (user_id, spu_id) VALUES (?, ?)");
+    $stmt->bind_param("ii", $user_id, $spu_id);
+    $stmt->execute();
+}
+
+
 // lấy SKU list
 $skus = $conn->query("SELECT id, sku_code, price, promo_price, stock FROM sku WHERE spu_id = $spu_id");
 
@@ -308,11 +325,6 @@ document.getElementById("buyNowBtn").addEventListener("click", () => {
         body: "sku_id=" + skuId + "&quantity=1"
     }).then(() => document.getElementById("buyNowForm").submit());
 });
-
-
-
-
-
 
 
 </script>

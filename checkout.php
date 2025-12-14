@@ -1,9 +1,28 @@
 <?php
 session_start();
+
 include 'db.php';
 
 $user_id = $_SESSION['user_id'] ?? null;
 $cart = $_SESSION['cart'] ?? [];
+
+if (!$user_id) {
+    // Nếu gọi AJAX → trả JSON cho JS bật popup login
+    if (isset($_POST['ajax']) && $_POST['ajax'] == 1) {
+        echo json_encode([
+            'status' => false,
+            'need_login' => true,
+            'message' => 'Bạn cần đăng nhập để thanh toán'
+        ]);
+        exit;
+    }
+
+    // Nếu truy cập trực tiếp URL /checkout.php  
+    // => Hiện popup login (không redirect)
+    echo "<script>window.location='login.php';</script>";
+    exit;
+}
+
 
 if (empty($cart)) {
     echo "Giỏ hàng trống";
@@ -297,6 +316,8 @@ $('#province').change(function(){
 
 
 </script>
+
+
 
 <script>
 $('#checkoutForm').submit(function(e){
