@@ -133,30 +133,6 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
 
 
 
-
-
-<!-- SMARTWATCH -->
-<section id="watch-section">
-    <h2 class="fw-bold mt-5 mb-3">Smartwatch</h2>
-
-    <!-- Category cha + con -->
-    <div class="d-flex gap-2 mb-4">
-        <button class="btn btn-outline-primary watch-cat active-filter" data-id="3">Smartwatch</button>
-
-        <?php while($c=$watch_categories->fetch_assoc()): ?>
-            <button class="btn btn-outline-primary watch-cat" data-id="<?= $c['id'] ?>">
-                <?= $c['name'] ?>
-            </button>
-        <?php endwhile; ?>
-    </div>
-
-    <!-- XOÁ PHẦN BRAND -->
-
-    <div id="watch-products" class="row g-3"></div>
-</section>
-
-
-
 </div>
 
 <!-- LOGIN MODAL -->
@@ -222,15 +198,7 @@ $(".phone-cat-all").click(function(){
 
 loadSection("phone", phoneCat, "");
 
-// Smartwatch
-let watchCat="", watchBrand="";
-$(".watch-cat").click(function(){
-    watchCat=$(this).data("id");
-    loadSection("watch", watchCat, watchBrand);
-    $(".watch-cat").removeClass("active-filter"); $(this).addClass("active-filter");
-});
 
-loadSection("watch", watchCat, "");
 
 
 
@@ -275,22 +243,7 @@ if (section && cat) {
         }, 200);
     }
 }
-    if (section === "watch") {
-    watchCat = cat;
-    loadSection("watch", watchCat, "");
-
-    $(".watch-cat").removeClass("active-filter");
-    $(".watch-cat[data-id='" + cat + "']").addClass("active-filter");
-
-    window.scrollTo(0, document.getElementById("watch-section").offsetTop - 80);
-
-    if (pid) {
-        setTimeout(() => {
-            const el = document.getElementById("product-" + pid);
-            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-        }, 200);
-    }
-}
+    
 
 }
 

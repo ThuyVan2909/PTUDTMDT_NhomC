@@ -25,12 +25,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user_name'] = $user['fullname'];
         $_SESSION['role']      = $user['role'];
 
+        if ($user['role'] === 'admin') {
+        header("Location: admin/admin.php");
+    } else {
         header("Location: index.php");
-        exit;
-    } 
-    else {
-        $error = "Sai email hoặc mật khẩu!";
     }
+    exit;
+} 
+else {
+    $error = "Sai email hoặc mật khẩu!";
+}
 }
 ?>
 <!DOCTYPE html>
