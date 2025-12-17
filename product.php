@@ -131,6 +131,20 @@ while ($r = $res->fetch_assoc()) {
 $defaultSku = $conn->query("SELECT id FROM sku WHERE spu_id = $spu_id LIMIT 1")->fetch_assoc();
 $defaultSkuId = $defaultSku['id'] ?? 0;
 
+// lấy attribute values của SKU mặc định
+$defaultValues = [];
+if ($defaultSkuId) {
+    $q = $conn->query("
+        SELECT attribute_value_id 
+        FROM sku_attribute_values 
+        WHERE sku_id = $defaultSkuId
+    ");
+    while ($r = $q->fetch_assoc()) {
+        $defaultValues[] = (int)$r['attribute_value_id'];
+    }
+}
+
+
 $images = [];
 if ($defaultSkuId) {
     $img = $conn->query("
@@ -152,6 +166,11 @@ if ($defaultSkuId) {
 <title><?= $spu['name'] ?></title>
 
 <style>
+.buy-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 body { font-family: Arial; background: #f7f7f7; margin: 0; }
 .container { width: 1200px; margin: auto; padding: 20px; display: flex; gap: 40px; }
 
@@ -200,6 +219,38 @@ body { font-family: Arial; background: #f7f7f7; margin: 0; }
     border: none;
     margin-top: 20px;
 }
+
+/* SPECIFICATIONS TABLE */
+.spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background: #fff;
+}
+
+.spec-table thead th {
+    background: #f5f5f5;
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+}
+
+.spec-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+.spec-name {
+    width: 40%;
+    color: #555;
+}
+
+.spec-value {
+    width: 60%;
+    font-weight: 500;
+}
+
 </style>
 
 </head>
@@ -278,6 +329,11 @@ $fixedImages = array_map(function($p) {
     <button class="buy-btn" id="buyNowBtn">MUA NGAY</button>
 </div>
 
+<!-- THÔNG SỐ KỸ THUẬT (SPU) -->
+<!-- ========================= -->
+<div id="specifications" style="margin-top:40px;"></div>
+
+
 <!-- FORM BUY NOW -->
 <form id="buyNowForm" action="checkout.php" method="POST" style="display:none;">
     <input type="hidden" name="sku_id" id="formSkuId">
@@ -304,6 +360,14 @@ $fixedImages = array_map(function($p) {
 </div>
 
 <script>
+const DEFAULT_SKU_ID = <?= (int)$defaultSkuId ?>;
+const TOTAL_ATTRIBUTES = <?= count($attributes) ?>;
+const DEFAULT_VALUES = <?= json_encode($defaultValues) ?>;
+</script>
+
+
+<script>
+
 
 
 // ID attribute theo DB
@@ -314,6 +378,23 @@ const ID_ATTR_RAM      = 4; // RAM
 const ID_ATTR_SSD      = 5; // SSD
 
 let selectedValues = {}; // attribute_id → value_id
+function isFullySelected() {
+    return Object.keys(selectedValues).length === TOTAL_ATTRIBUTES;
+}
+
+function updateBuyButtons() {
+    const addBtn = document.getElementById("addToCartBtn");
+    const buyBtn = document.getElementById("buyNowBtn");
+
+    if (isFullySelected()) {
+        addBtn.classList.remove("disabled");
+        buyBtn.classList.remove("disabled");
+    } else {
+        addBtn.classList.add("disabled");
+        buyBtn.classList.add("disabled");
+    }
+}
+
 
 document.querySelectorAll(".attr-values button").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -327,6 +408,8 @@ document.querySelectorAll(".attr-values button").forEach(btn => {
 
         // lưu lựa chọn
         selectedValues[attrId] = valueId;
+        updateBuyButtons();
+
 
         // nếu chọn MÀU → đổi ảnh
         if (attrId === ID_ATTR_COLOR) {
@@ -365,6 +448,10 @@ document.querySelectorAll(".attr-values button").forEach(btn => {
 
 // ADD TO CART
 document.getElementById("addToCartBtn").addEventListener("click", () => {
+        if (!isFullySelected()) {
+        alert("Vui lòng chọn tất cả thuộc tính sản phẩm");
+        return;
+    }
     const selectedSkuId = document.getElementById("selectedSkuId").value;
     if (!selectedSkuId) {
         alert("Vui lòng chọn đầy đủ thuộc tính");
@@ -382,6 +469,10 @@ document.getElementById("addToCartBtn").addEventListener("click", () => {
 
 // BUY NOW
 document.getElementById("buyNowBtn").addEventListener("click", () => {
+        if (!isFullySelected()) {
+        alert("Vui lòng chọn phiên bản");
+        return;
+    }
     const skuId = document.getElementById("selectedSkuId").value;
     document.getElementById("formSkuId").value = skuId;
 
@@ -392,9 +483,42 @@ document.getElementById("buyNowBtn").addEventListener("click", () => {
     }).then(() => document.getElementById("buyNowForm").submit());
 });
 
-
+updateBuyButtons();
 </script>
 
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("get_spu_specifications.php?spu_id=<?= $spu_id ?>")
+        .then(res => res.json())
+        .then(data => {
+            if (!Array.isArray(data) || data.length === 0) return;
+
+            let html = `
+                <h3>Thông số kỹ thuật</h3>
+                <table class="spec-table">
+                    <tbody>
+            `;
+
+            data.forEach(item => {
+                html += `
+                    <tr>
+                        <td class="spec-name">${item.spec_name}</td>
+                        <td class="spec-value">${item.spec_value}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById("specifications").innerHTML = html;
+        })
+        .catch(err => console.error("SPEC ERROR:", err));
+});
+</script>
 
 
 
