@@ -41,88 +41,122 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Đăng ký</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="assets/css/register.css">
 </head>
-<body class="bg-light">
+    <body class="bg-light">
 
-<div class="container py-5">
-    <h2 class="mb-4">Đăng ký tài khoản</h2>
+<div class="container py-5 d-flex justify-content-center">
+    <div class="card shadow-lg border-0" style="max-width: 600px; width: 100%; border-radius: 16px;">
+        
+        <div class="register-header text-white"
+     style="background-color:#1A3D64;
+            border-radius:16px 16px 0 0;">
 
-    <?php if(isset($error)): ?>
-        <div class="alert alert-danger"><?= $error ?></div>
-    <?php endif; ?>
+    <div class="d-flex align-items-center justify-content-between">
+        <div class="text-start">
+            <h3 class="mb-1 fw-semibold">Đăng ký tài khoản</h3>  
+        </div> 
+        <img src="assets/images/LogoRemoveBg.png"
+             alt="logo"
+             style="height:50px; width:auto;">
 
-    <form method="POST" action="">
-        <div class="mb-3">
-            <label>Họ tên</label>
-            <input type="text" name="fullname" class="form-control" required>
-        </div>
+        
+        
+    </div>
 
-        <div class="mb-3">
-            <label>Email</label>
-            <input type="email" name="email" class="form-control" required>
-        </div>
-
-        <div class="mb-3">
-            <label>Mật khẩu</label>
-            <input type="password" name="password" class="form-control" required>
-        </div>
-
-        <div class="mb-3">
-            <label>Số điện thoại</label>
-            <input type="text" name="phone" class="form-control">
-        </div>
-
-        <div class="mb-3">
-            <label>Tỉnh/Thành</label>
-            <select name="province_id" id="province" class="form-control" required>
-                <option value="">Chọn Tỉnh/Thành</option>
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label>Quận/Huyện</label>
-            <select name="district_id" id="district" class="form-control" required>
-                <option value="">Chọn Quận/Huyện</option>
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label>Địa chỉ cụ thể</label>
-            <input type="text" name="address" class="form-control" placeholder="Số nhà, đường..." required>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Đăng ký</button>
-    </form>
 </div>
 
-<script>
-$(document).ready(function(){
-    // Load provinces
-    $.getJSON('get_provinces.php', function(data){
-        var html = '<option value="">Chọn Tỉnh/Thành</option>';
-        data.forEach(function(p){
-            html += `<option value="${p.id}">${p.name}</option>`;
-        });
-        $('#province').html(html);
-    });
+        <div class="card-body p-4">
 
-    // Load districts khi chọn province
-    $('#province').change(function(){
-        var province_id = $(this).val();
-        if(province_id){
-            $.getJSON('get_districts.php', {province_id: province_id}, function(data){
-                var html = '<option value="">Chọn Quận/Huyện</option>';
-                data.forEach(function(d){
-                    html += `<option value="${d.id}">${d.name}</option>`;
-                });
-                $('#district').html(html);
+        <?php if(isset($error)): ?>
+            <div class="alert alert-danger"><?= $error ?></div>
+        <?php endif; ?>
+
+        <form method="POST" action="">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Họ tên</label>
+                    <input type="text" name="fullname" class="form-control rounded-3" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Email</label>
+                    <input type="email" name="email" class="form-control rounded-3" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Mật khẩu</label>
+                    <input type="password" name="password" class="form-control rounded-3" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Số điện thoại</label>
+                    <input type="text" name="phone" class="form-control rounded-3">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Tỉnh / Thành</label>
+                        <select name="province_id" id="province" class="form-control rounded-3" required>
+                            <option value="">Chọn Tỉnh/Thành</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Quận / Huyện</label>
+                        <select name="district_id" id="district" class="form-control rounded-3" required>
+                            <option value="">Chọn Quận/Huyện</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Địa chỉ cụ thể</label>
+                    <input type="text" name="address" class="form-control rounded-3"
+                           placeholder="Số nhà, đường..." required>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit"
+                            class="btn text-white fw-semibold rounded-pill py-2"
+                            style="background-color:#1A3D64;">
+                        Đăng ký
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+    <script>
+    $(document).ready(function(){
+        // Load provinces
+        $.getJSON('get_provinces.php', function(data){
+            var html = '<option value="">Chọn Tỉnh/Thành</option>';
+            data.forEach(function(p){
+                html += `<option value="${p.id}">${p.name}</option>`;
             });
-        } else {
-            $('#district').html('<option value="">Chọn Quận/Huyện</option>');
-        }
+            $('#province').html(html);
+        });
+
+        // Load districts khi chọn province
+        $('#province').change(function(){
+            var province_id = $(this).val();
+            if(province_id){
+                $.getJSON('get_districts.php', {province_id: province_id}, function(data){
+                    var html = '<option value="">Chọn Quận/Huyện</option>';
+                    data.forEach(function(d){
+                        html += `<option value="${d.id}">${d.name}</option>`;
+                    });
+                    $('#district').html(html);
+                });
+            } else {
+                $('#district').html('<option value="">Chọn Quận/Huyện</option>');
+            }
+        });
     });
-});
-</script>
+    </script>
 
 </body>
 </html>

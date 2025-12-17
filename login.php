@@ -38,17 +38,61 @@ else {
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
+    <meta charset="UTF-8">
     <title>Đăng nhập</title>
-</head>
-<body>
-<form method="POST">
-    <input type="email" name="email" placeholder="Email" required />
-    <input type="password" name="password" placeholder="Mật khẩu" required />
-    <button type="submit">Đăng nhập</button>
-</form>
 
-<?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- CSS riêng -->
+    <link rel="stylesheet" href="assets/css/login.css">
+</head>
+
+<body>
+
+<div class="login-page">
+    <div class="card login-card">
+
+        <!-- HEADER -->
+        <div class="login-header">
+    <div class="login-header-content">
+
+        <div class="login-top">
+            <h3 class="login-title">Đăng nhập</h3>
+        </div>
+
+    </div>
+</div>
+
+
+        <!-- FORM -->
+        <div class="card-body p-4">
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Email</label>
+                    <input type="email" name="email" class="form-control" placeholder="Email" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Mật khẩu</label>
+                    <input type="password" name="password" class="form-control" placeholder="Mật khẩu" required>
+                </div>
+
+                <div class="d-grid mb-3">
+                    <button type="submit" class="btn btn-login">
+                        Đăng nhập
+                    </button>
+                </div>
+            </form>
+
+            <?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
+        </div>
+
+    </div>
+</div>
+
 </body>
 </html>
+
