@@ -40,241 +40,179 @@ $user = $conn->query("SELECT * FROM users WHERE id = $user_id")->fetch_assoc();
 <head>
     <title>Tài khoản - TechZone</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .sidebar {
-            width: 260px;
-            min-height: 100vh;
-            background: #fff;
-            border-right: 1px solid #ddd;
-            padding: 20px;
-        }
-        .sidebar a {
-            display:block;
-            padding:10px 0;
-            color:#333;
-            text-decoration:none;
-            font-size:16px;
-            border-bottom:1px solid #eee;
-        }
-        .sidebar a:hover { color:#0d6efd; }
-.view-card {
-    height: 100%;                 /* Card luôn full chiều cao của cột */
-    display: flex;
-    flex-direction: column;
-}
-
-.view-card-img {
-    height: 180px;                /* Cố định chiều cao ảnh */
-    object-fit: contain;          /* Không méo ảnh */
-    background-color: #f8f8f8;    /* Làm nền sáng cho ảnh */
-    padding: 10px;
-}
-
-.view-card-body {
-    flex-grow: 1;                 /* Body căng đều, giúp nút luôn nằm dưới */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-</style>
-
-
-
+    <link rel="stylesheet" href="assets/css/account.css">
 </head>
-<body class="bg-light">
+
+<body>
 
 <div class="d-flex">
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <h5 class="fw-bold mb-3"><?= $user['fullname'] ?></h5>
+        <div class="user-box mb-4 d-flex align-items-center">
+            <div class="user-avatar">
+                <?= strtoupper(substr($user['fullname'], 0, 1)) ?>
+            </div>
+            <div class="ms-3">
+                <div class="user-name"><?= $user['fullname'] ?></div>
+            </div>
+    </div>
 
-        <a href="?tab=profile">Thông tin tài khoản</a>
-        <a href="?tab=address">Địa chỉ</a>
-        <a href="?tab=orders">Quản lý đơn hàng</a>
-        <a href="?tab=history">Sản phẩm đã xem</a>
-        <a href="logout.php" class="text-danger fw-bold">Đăng xuất</a>
+       <?php $tabActive = $_GET['tab'] ?? 'profile'; ?>
+
+        <a href="?tab=profile" class="<?= $tabActive=='profile'?'active':'' ?>">
+    Thông tin tài khoản
+        </a>
+        <a href="?tab=address" class="<?= $tabActive=='address'?'active':'' ?>">
+    Địa chỉ
+        </a>
+        <a href="?tab=orders" class="<?= $tabActive=='orders'?'active':'' ?>">
+    Quản lý đơn hàng
+        </a>
+        <a href="?tab=history" class="<?= $tabActive=='history'?'active':'' ?>">
+    Sản phẩm đã xem
+        </a>
+        <a href="logout.php" class="logout">Đăng xuất</a>
     </div>
 
     <!-- CONTENT -->
     <div class="flex-fill p-4">
-    <?php
-        $tab = $_GET['tab'] ?? 'profile';
+        <div class="main-card page-transition">
 
-        if ($tab === 'profile') {
+<?php
+$tab = $_GET['tab'] ?? 'profile';
 
-            if (isset($_GET['updated'])) {
-                echo "<div class='alert alert-success'>Cập nhật thông tin thành công.</div>";
-            }
+if ($tab === 'profile') {
 
-            echo "<h3 class='fw-bold mb-4'>Thông tin tài khoản</h3>";
-    ?>
-
-            <form method="POST">
-                <input type="hidden" name="update_profile" value="1">
-
-                <div class="mb-3">
-                    <label class="form-label">Họ tên</label>
-                    <input type="text" name="fullname" class="form-control" 
-                           value="<?= $user['fullname'] ?>" required>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Giới tính</label>
-                    <select name="gender" class="form-control">
-                        <option value="">-- Chọn giới tính --</option>
-                        <option value="Nam"   <?= $user['gender']=='Nam'?'selected':'' ?>>Nam</option>
-                        <option value="Nữ"    <?= $user['gender']=='Nữ'?'selected':'' ?>>Nữ</option>
-                        <option value="Khác"  <?= $user['gender']=='Khác'?'selected':'' ?>>Khác</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Số điện thoại</label>
-                    <input type="text" name="phone" class="form-control" 
-                           value="<?= $user['phone'] ?>">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" name="email" class="form-control" 
-                           value="<?= $user['email'] ?>" required>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Ngày sinh</label>
-                    <input type="date" name="birthday" class="form-control" 
-                           value="<?= $user['birthday'] ?>">
-                </div>
-
-                <button class="btn btn-primary">Lưu thông tin</button>
-            </form>
-
-    <?php
-        } elseif ($tab === 'address') {
-
-            // LẤY ĐỊA CHỈ HIỆN TẠI TỪ DB
-    $currentProvince = $user['province_id'];
-    $currentDistrict = $user['district_id'];
-    $currentStreet   = $user['street'];
+    if (isset($_GET['updated'])) {
+        echo "<div class='alert alert-success'>Cập nhật thông tin thành công.</div>";
+    }
+    echo "<h3 class='fw-bold mb-4 text-primary-custom'>Thông tin tài khoản</h3>";
 ?>
-    <h3 class="fw-bold mb-3">Địa chỉ</h3>
 
-    <div class="row g-3">
+<form method="POST">
+    <input type="hidden" name="update_profile" value="1">
 
-        <div class="col-md-4">
-            <label class="form-label">Tỉnh / Thành phố</label>
-            <select id="province" class="form-select">
-                <option value="">--Chọn tỉnh/thành phố--</option>
-            </select>
-        </div>
-
-        <div class="col-md-4">
-            <label class="form-label">Quận / Huyện</label>
-            <select id="district" class="form-select">
-                <option value="">--Chọn quận/huyện--</option>
-            </select>
-        </div>
-
-        <div class="col-md-4">
-            <label class="form-label">Tên đường</label>
-            <input type="text" id="street" class="form-control"
-                value="<?= htmlspecialchars($currentStreet) ?>"
-                placeholder="VD: 123 Lê Lợi">
-        </div>
-
+    <div class="mb-3">
+        <label class="form-label">Họ tên</label>
+        <input type="text" name="fullname" class="form-control" value="<?= $user['fullname'] ?>" required>
     </div>
 
-    <button id="saveAddress" class="btn btn-primary mt-3">Lưu địa chỉ</button>
+    <div class="mb-3">
+        <label class="form-label">Giới tính</label>
+        <select name="gender" class="form-select">
+            <option value="">-- Chọn --</option>
+            <option value="Nam" <?= $user['gender']=='Nam'?'selected':'' ?>>Nam</option>
+            <option value="Nữ" <?= $user['gender']=='Nữ'?'selected':'' ?>>Nữ</option>
+            <option value="Khác" <?= $user['gender']=='Khác'?'selected':'' ?>>Khác</option>
+        </select>
+    </div>
 
-    <hr class="my-4">
+    <div class="mb-3">
+        <label class="form-label">Số điện thoại</label>
+        <input type="text" name="phone" class="form-control" value="<?= $user['phone'] ?>">
+    </div>
 
-    <h5>Địa chỉ hiện tại:</h5>
-    <p>
-        <b>Tỉnh:</b> <span id="textProvince"></span><br>
-        <b>Quận/Huyện:</b> <span id="textDistrict"></span><br>
-        <b>Đường:</b> <?= htmlspecialchars($currentStreet ?? "") ?>
-    </p>
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" value="<?= $user['email'] ?>" required>
+    </div>
 
-    <script>
-        let currentProvince = "<?= $currentProvince ?>";
-        let currentDistrict = "<?= $currentDistrict ?>";
+    <div class="mb-4">
+        <label class="form-label">Ngày sinh</label>
+        <input type="date" name="birthday" class="form-control" value="<?= $user['birthday'] ?>">
+    </div>
 
-        // LOAD PROVINCES
-        fetch("get_provinces.php")
-            .then(res => res.json())
-            .then(data => {
-                let province = document.getElementById("province");
-                let textProvince = document.getElementById("textProvince");
+    <button class="btn btn-red">Lưu thông tin</button>
+</form>
 
-                data.forEach(p => {
-                    let opt = document.createElement("option");
-                    opt.value = p.id;
-                    opt.textContent = p.name;
+<?php
+} elseif ($tab === 'address') {
 
-                    if (p.id == currentProvince) {
-                        opt.selected = true;
-                        textProvince.textContent = p.name;
-                    }
+$currentProvince = $user['province_id'];
+$currentDistrict = $user['district_id'];
+$currentStreet   = $user['street'];
+?>
 
-                    province.appendChild(opt);
-                });
+<h3 class="fw-bold mb-4 text-primary-custom">Địa chỉ</h3>
 
-                if (currentProvince) loadDistricts(currentProvince, true);
-            });
+<div class="row g-3 mb-3">
+    <div class="col-md-4">
+        <label class="form-label">Tỉnh / Thành phố</label>
+        <select id="province" class="form-select"></select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Quận / Huyện</label>
+        <select id="district" class="form-select"></select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Tên đường</label>
+        <input type="text" id="street" class="form-control" value="<?= htmlspecialchars($currentStreet) ?>">
+    </div>
+</div>
 
-        // HÀM LOAD DISTRICTS
-        function loadDistricts(pid, isFirstLoad = false) {
-            fetch("get_districts.php?province_id=" + pid)
-                .then(res => res.text())
-                .then(html => {
-                    let district = document.getElementById("district");
-                    let textDistrict = document.getElementById("textDistrict");
+<button id="saveAddress" class="btn btn-red">Lưu địa chỉ</button>
 
-                    district.innerHTML = html;
+<div class="address-current">
+    <h5>Địa chỉ hiện tại</h5>
+    <p><strong>Tỉnh:</strong> <span id="textProvince"></span></p>
+    <p><strong>Quận/Huyện:</strong> <span id="textDistrict"></span></p>
+    <p><strong>Đường:</strong> <?= htmlspecialchars($currentStreet ?? "") ?></p>
+</div>
 
-                    if (isFirstLoad && currentDistrict) {
-                        district.value = currentDistrict;
+<!-- JS GIỮ NGUYÊN -->
+<script>
+let currentProvince = "<?= $currentProvince ?>";
+let currentDistrict = "<?= $currentDistrict ?>";
 
-                        // SET TEXT
-                        let selected = district.options[district.selectedIndex];
-                        if (selected) textDistrict.textContent = selected.text;
-                    }
-                });
+fetch("get_provinces.php")
+.then(res=>res.json())
+.then(data=>{
+    let p=document.getElementById("province");
+    let tp=document.getElementById("textProvince");
+    data.forEach(x=>{
+        let o=document.createElement("option");
+        o.value=x.id;o.text=x.name;
+        if(x.id==currentProvince){o.selected=true;tp.textContent=x.name;}
+        p.appendChild(o);
+    });
+    if(currentProvince) loadDistricts(currentProvince,true);
+});
+
+function loadDistricts(pid,first=false){
+    fetch("get_districts.php?province_id="+pid)
+    .then(res=>res.text())
+    .then(html=>{
+        let d=document.getElementById("district");
+        let td=document.getElementById("textDistrict");
+        d.innerHTML=html;
+        if(first && currentDistrict){
+            d.value=currentDistrict;
+            let s=d.options[d.selectedIndex];
+            if(s) td.textContent=s.text;
         }
+    });
+}
 
-        // Khi chọn tỉnh -> load district
-        document.getElementById("province").addEventListener("change", function () {
-            loadDistricts(this.value, false);
-        });
+document.getElementById("province").addEventListener("change",function(){
+    loadDistricts(this.value,false);
+});
 
-        // LƯU VÀO DB
-        document.getElementById("saveAddress").addEventListener("click", function () {
-            let province = document.getElementById("province").value;
-            let district = document.getElementById("district").value;
-            let street   = document.getElementById("street").value;
-
-            let form = new FormData();
-            form.append("province", province);
-            form.append("district", district);
-            form.append("street", street);
-
-            fetch("save_address.php", {
-                method: "POST",
-                body: form
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert(data.msg);
-                location.reload();
-            });
-        });
-    </script>
+document.getElementById("saveAddress").addEventListener("click",function(){
+    let f=new FormData();
+    f.append("province",province.value);
+    f.append("district",district.value);
+    f.append("street",street.value);
+    fetch("save_address.php",{method:"POST",body:f})
+    .then(r=>r.json())
+    .then(d=>{alert(d.msg);location.reload();});
+});
+</script>
 
 <?php
 } elseif ($tab === 'orders') {
 
-    echo "<h3 class='fw-bold mb-3'>Quản lý đơn hàng</h3>";
+    echo "<h3 class='fw-bold mb-4 text-primary-custom'>Quản lý đơn hàng</h3>";
 
     $uid = $_SESSION['user_id'];
     $stmt = $conn->prepare("SELECT * FROM orders WHERE user_id=? ORDER BY id DESC");
@@ -301,7 +239,7 @@ $user = $conn->query("SELECT * FROM users WHERE id = $user_id")->fetch_assoc();
                     <td>{$o['status']}</td>
                     <td>{$o['created_at']}</td>
                     <td>
-                        <a href='account.php?tab=order_detail&id={$o['id']}' class='btn btn-sm btn-primary'>
+                        <a href='account.php?tab=order_detail&id={$o['id']}' class='btn-outline-primary-custom'>
                             Xem chi tiết
                         </a>
                     </td>
@@ -467,7 +405,7 @@ $item = $check->get_result()->fetch_assoc();
 
 } elseif ($tab === 'history') {
 
-    echo "<h3 class='fw-bold mb-3'>Sản phẩm đã xem</h3>";
+    echo "<h3 class='fw-bold mb-4 text-primary-custom'>Sản phẩm đã xem</h3>";
 
     $stmt = $conn->prepare("
         SELECT 
@@ -522,7 +460,7 @@ $item = $check->get_result()->fetch_assoc();
             <h6 class='card-title'>" . htmlspecialchars($row['name']) . "</h6>
             <p class='text-danger fw-bold'>" . number_format($price) . " đ</p>
             <a href='product.php?spu_id={$row['spu_id']}' 
-   class='btn btn-primary btn-sm'>
+   class='btn-outline-primary-custom'>
    Xem lại
 </a>
 
