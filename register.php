@@ -130,33 +130,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     <script>
-    $(document).ready(function(){
-        // Load provinces
-        $.getJSON('get_provinces.php', function(data){
-            var html = '<option value="">Chọn Tỉnh/Thành</option>';
-            data.forEach(function(p){
-                html += `<option value="${p.id}">${p.name}</option>`;
-            });
-            $('#province').html(html);
-        });
+$(document).ready(function(){
 
-        // Load districts khi chọn province
-        $('#province').change(function(){
-            var province_id = $(this).val();
-            if(province_id){
-                $.getJSON('get_districts.php', {province_id: province_id}, function(data){
-                    var html = '<option value="">Chọn Quận/Huyện</option>';
-                    data.forEach(function(d){
-                        html += `<option value="${d.id}">${d.name}</option>`;
-                    });
-                    $('#district').html(html);
-                });
-            } else {
-                $('#district').html('<option value="">Chọn Quận/Huyện</option>');
-            }
+    // Load provinces (phần này giữ nguyên nếu get_provinces.php trả JSON)
+    $.getJSON('get_provinces.php', function(data){
+        var html = '<option value="">Chọn Tỉnh/Thành</option>';
+        data.forEach(function(p){
+            html += `<option value="${p.id}">${p.name}</option>`;
         });
+        $('#province').html(html);
     });
-    </script>
+
+    // Load districts theo province (SỬA Ở ĐÂY)
+    $('#province').change(function(){
+        var province_id = $(this).val();
+
+        if (province_id) {
+            $.get('get_districts.php', { province_id: province_id }, function(html){
+                $('#district').html(html);
+            });
+        } else {
+            $('#district').html('<option value="">Chọn Quận/Huyện</option>');
+        }
+    });
+
+});
+</script>
+
 
 </body>
 </html>
