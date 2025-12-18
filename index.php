@@ -51,13 +51,63 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
     box-shadow: 0 0 0 rgba(227,0,25,0);
 }
 
+
+
+/* ===== ANNOUNCEMENT BAR ===== */
+.announcement-bar {
+    background: #1A3D64; /* xanh TechZone */
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.announcement-track {
+    display: inline-flex;
+    align-items: center;
+    gap: 48px;
+    padding: 8px 0;
+    animation: marquee 18s linear infinite;
+}
+
+.announcement-track span {
+    display: inline-block;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+
 </style>
 
-    </style>
+
+
+
+    
 </head>
 <body class="bg-light">
 
 
+<!-- ANNOUNCEMENT BAR -->
+<div class="announcement-bar">
+  <div class="announcement-track">
+    <span>Thu cũ giá ngon – Lên đời tiết kiệm</span>
+    <span>Sản phẩm chính hãng – Xuất VAT đầy đủ</span>
+    <span>Giao nhanh – Miễn phí cho đơn 300k</span>
+
+    <!-- duplicate để chạy mượt -->
+    <span>Thu cũ giá ngon – Lên đời tiết kiệm</span>
+    <span>Sản phẩm chính hãng – Xuất VAT đầy đủ</span>
+    <span>Giao nhanh – Miễn phí cho đơn 300k</span>
+  </div>
+</div>
 
 
 <!-- HEADER -->
