@@ -51,21 +51,281 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
     box-shadow: 0 0 0 rgba(227,0,25,0);
 }
 
+
+
+/* ===== ANNOUNCEMENT BAR ===== */
+.announcement-bar {
+    background: #1A3D64; /* xanh TechZone */
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.announcement-track {
+    display: inline-flex;
+    align-items: center;
+    gap: 48px;
+    padding: 8px 0;
+    animation: marquee 18s linear infinite;
+}
+
+.announcement-track span {
+    display: inline-block;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+
+
+/* ===== HEADER STYLE (TechZone) ===== */
+.navbar {
+    background: linear-gradient(90deg, #EEF4FA, #F8FAFC);
+    border-bottom: 1px solid #D6E0EA;
+}
+
+.navbar .nav-link {
+    color: #0F172A !important;
+    font-weight: 500;
+}
+
+.navbar .nav-link:hover {
+    color: #1A3D64 !important;
+}
+
+.navbar-brand {
+    letter-spacing: 0.5px;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    height: 64px; 
+}
+
+input.form-control:focus {
+    box-shadow: none;
+    border-color: #1A3D64;
+}
+
+.navbar-brand img {
+    object-fit: contain;
+}
+
+.brand-text {
+    font-size: 1.25rem;
+    color: #1A3D64;
+    letter-spacing: 0.5px;
+}
+.logo-img {
+    height: 50px;       /* 28–32 là chuẩn */
+    width: auto;
+    object-fit: contain;
+    display: block;     /* 🔥 chặn baseline */
+}
+.navbar-nav .nav-item {
+    position: relative;
+}
+.navbar-nav .nav-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 18px;
+    background-color: #d0d7e2; /* xám xanh nhẹ */
+}.search-box {
+    width: 360px;
+}
+
+/* Icon box bên trái */
+.search-icon-box {
+    width: 44px;
+    height: 44px;
+    border: 1px solid #dbe3ec;
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1A3D64;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.search-icon-box svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Input */
+.search-input {
+    height: 44px;
+    border-radius: 0 8px 8px 0;
+    border-left: none;
+}
+
+/* Focus */
+.search-input:focus {
+    box-shadow: none;
+    border-color: #1A3D64;
+}
+
+/* Hover icon */
+.search-icon-box:hover {
+    background: #1A3D64;
+    color: #fff;
+}
+.btn-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #dc3545;
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: #1A3D64;
+    --bs-btn-border-color: #1A3D64;
+    --bs-btn-hover-bg: #1A3D64;
+    --bs-btn-hover-color: #fff;
+}
+
+
+/* ===== FOOTER ===== */
+.footer {
+    background: linear-gradient(90deg, #EEF4FA, #F8FAFC);
+    border-top: 1px solid #E2E8F0;
+}
+
+.footer h6 {
+    color: #0F172A;
+}
+
+.footer-links li {
+    margin-bottom: 8px;
+}
+
+.footer-links a {
+    color: #475569;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.footer-links a:hover {
+    color: #1A3D64;
+}
+
+.social-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #E2E8F0;
+    color: #1A3D64;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.social-icon:hover {
+    background: #1A3D64;
+    color: #fff;
+}
+
+
+
+
 </style>
 
-    </style>
+
+
+
+    
 </head>
 <body class="bg-light">
 
 
+<!-- ANNOUNCEMENT BAR -->
+<div class="announcement-bar">
+  <div class="announcement-track">
+    <span>Thu cũ giá ngon – Lên đời tiết kiệm</span>
+    <span>Sản phẩm chính hãng – Xuất VAT đầy đủ</span>
+    <span>Giao nhanh – Miễn phí cho đơn 300k</span>
+
+    <!-- duplicate để chạy mượt -->
+    <span>Thu cũ giá ngon – Lên đời tiết kiệm</span>
+    <span>Sản phẩm chính hãng – Xuất VAT đầy đủ</span>
+    <span>Giao nhanh – Miễn phí cho đơn 300k</span>
+  </div>
+</div>
 
 
 <!-- HEADER -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="#">TechZone</a>
-    
-    <div class="d-flex gap-2">
+<nav class="navbar navbar-expand-lg border-bottom">
+  <div class="container d-flex align-items-center">
+
+  <!-- LEFT: LOGO -->
+     <a class="navbar-brand d-flex align-items-center fw-bold me-4" href="#">
+        <img 
+            src="assets/images/logo.png" 
+            class="logo-img"
+            alt="TechZone Logo"
+        >
+    </a>
+
+
+
+    <!-- RIGHT: MENU + SEARCH + ACTIONS -->
+    <div class="d-flex align-items-center gap-4 ms-auto">
+
+            <!-- MENU -->
+        <ul class="navbar-nav flex-row gap-4 d-none d-lg-flex">
+            <li class="nav-item">
+                <a class="nav-link" href="index.php">Trang chủ</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Danh mục</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Liên hệ</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Tra cứu đơn hàng</a>
+            </li>
+        </ul>
+
+         <!-- SEARCH -->
+        <div class="search-box d-flex align-items-center">
+            <div class="search-icon-box">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                </svg>
+            </div>
+            <input 
+                type="text"
+                class="form-control search-input"
+                placeholder="Bạn đang tìm gì?"
+            >
+        </div>
 
     <?php if(!$isLoggedIn): ?>
         <!-- Nếu chưa đăng nhập -->
@@ -153,6 +413,98 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
     </div>
   </div>
 </div>
+
+
+<!-- FOOTER -->
+<footer class="footer mt-5">
+  <div class="container py-5">
+    <div class="row g-4">
+
+      <!-- COL 1: BRAND -->
+      <div class="col-lg-4 col-md-6">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <img src="assets/images/logo.png" alt="TechZone" height="36">
+
+        </div>
+        <p class="text-muted mb-2">
+          Hệ thống bán lẻ thiết bị công nghệ chính hãng: Laptop, Điện thoại,
+          Phụ kiện – Giá tốt, bảo hành minh bạch.
+        </p>
+        <small class="text-muted">
+          © 2025 TechZone. All rights reserved.
+        </small>
+      </div>
+
+      <!-- COL 2: POLICY -->
+      <div class="col-lg-2 col-md-6">
+        <h6 class="fw-semibold mb-3">Chính sách</h6>
+        <ul class="list-unstyled footer-links">
+          <li><a href="#">Chính sách bảo hành</a></li>
+          <li><a href="#">Chính sách đổi trả</a></li>
+          <li><a href="#">Chính sách vận chuyển</a></li>
+          <li><a href="#">Chính sách thanh toán</a></li>
+        </ul>
+      </div>
+
+      <!-- COL 3: SUPPORT -->
+      <div class="col-lg-3 col-md-6">
+        <h6 class="fw-semibold mb-3">Hỗ trợ khách hàng</h6>
+        <ul class="list-unstyled footer-links">
+          <li>Hotline: <strong>1800 9999</strong></li>
+          <li>Email: support@techzone.vn</li>
+          <li><a href="#">Câu hỏi thường gặp (FAQ)</a></li>
+          <li><a href="#">Liên hệ</a></li>
+        </ul>
+      </div>
+
+      <!-- COL 4: SOCIAL -->
+      <div class="col-lg-3 col-md-6">
+        <h6 class="fw-semibold mb-3">Kết nối với TechZone</h6>
+        <div class="d-flex gap-3 mb-3">
+        
+          <a href="https://facebook.com/techzone" 
+            class="social-icon" 
+            target="_blank"
+            aria-label="Facebook TechZone">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
+            <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951"/>
+            </svg>
+            </a>
+            
+            <a href="#" 
+            class="social-icon" 
+            target="_blank"
+            aria-label="Instagram TechZone">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16">
+            <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/>
+            </svg>
+            </a>
+
+
+            <a href="#" 
+            class="social-icon" 
+            target="_blank"
+            aria-label="Youtube TechZone">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-youtube" viewBox="0 0 16 16">
+            <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z"/>
+            </svg>
+            </a>
+
+        </div>
+
+        <div>
+          <small class="text-muted d-block mb-2">Phương thức thanh toán</small>
+          <div class="d-flex gap-2">
+            <img src="assets\images\Zalopay.png" height="26">
+            <img src="assets\images\Apple_Pay_logo.svg.png" height="26">
+            <img src="assets\images\Logo-VNPAY-QR-1.webp" height="26">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
