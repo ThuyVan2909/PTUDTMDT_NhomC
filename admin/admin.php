@@ -74,23 +74,10 @@ else if ($view === 'users') {
     include "users.php";
 } 
 else {
-    echo "<h2>Dashboard tổng quan</h2>";
+
 
     // ----------------------
-    // 1) Số lượng sản phẩm theo danh mục
-    $prodByCat = $conn->query("
-        SELECT c.name AS category_name, COUNT(sp.id) AS total_products
-        FROM categories c
-        LEFT JOIN spu sp ON sp.category_id = c.id
-        GROUP BY c.id
-    ")->fetch_all(MYSQLI_ASSOC);
 
-    echo "<div class='card'><h3>Số lượng sản phẩm theo danh mục</h3>
-    <table><tr><th>Danh mục</th><th>Số lượng</th></tr>";
-    foreach($prodByCat as $r){
-        echo "<tr><td>{$r['category_name']}</td><td>{$r['total_products']}</td></tr>";
-    }
-    echo "</table></div>";
 
     // ----------------------
     // 2) Doanh thu bán ra theo sản phẩm
