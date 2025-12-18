@@ -48,6 +48,16 @@ th { background: #fafafa; }
 
 .coupon-box { margin-top: 20px; padding: 15px; background:#fafafa; border-radius:6px; }
 .coupon-input { width:200px; padding:8px; }
+.coupon-selector {
+    margin-top:8px;
+    padding:10px 12px;
+    border:1px dashed #e30019;
+    color:#e30019;
+    cursor:pointer;
+    border-radius:6px;
+    width:250px;
+}
+
 </style>
 </head>
 <body>
@@ -140,10 +150,13 @@ th { background: #fafafa; }
 </table>
 
 <!-- Nhập mã giảm giá -->
-<div class="coupon-box">
+    <div class="coupon-box">
     <label>Mã giảm giá:</label>
-    <input type="text" id="coupon_code" name="coupon_code" class="coupon-input" value="<?= htmlspecialchars($coupon_code) ?>">
-    <button class="btn" onclick="applyCoupon()">Áp dụng</button>
+    <div id="couponSelector" class="coupon-selector" onclick="openCouponPopup()">
+        <?= $coupon_code ? htmlspecialchars($coupon_code) : 'Chọn mã giảm giá' ?>
+    </div>
+</div>
+
 </div>
 
 <?php if (!empty($cart)): ?>
@@ -266,6 +279,81 @@ function openLogin() {
 </script>
 
 
+<div id="couponPopup" style="display:none;
+    position:fixed; inset:0;
+    background:rgba(0,0,0,.5);
+    z-index:9999;
+    justify-content:center; align-items:center;">
+
+<div style="background:#fff; width:420px; max-height:70vh;
+    overflow:auto; border-radius:10px; padding:20px;">
+
+<h3>Chọn mã giảm giá</h3>
+<div id="couponList"></div>
+
+<br>
+<button onclick="closeCouponPopup()" class="btn" style="background:#999">
+    Đóng
+</button>
+</div>
+</div>
+<script>
+function openCouponPopup(){
+    $("#couponPopup").css("display","flex");
+
+    $.getJSON("get_available_coupons.php", function(res){
+        let html = '';
+
+        res.coupons.forEach(c => {
+            let disabled = c.eligible ? '' : 'opacity:0.4; pointer-events:none;';
+            let note = c.eligible ? 'Có thể sử dụng' : c.reason;
+
+            html += `
+            <div style="border:1px solid #eee; padding:12px;
+                border-radius:8px; margin-bottom:10px; ${disabled}">
+                
+                <strong>${c.code}</strong>
+                <div>Giảm ${c.discount.toLocaleString()} đ</div>
+                <small>${note}</small><br>
+
+                ${c.eligible ? 
+                `<button class="btn" style="margin-top:8px"
+                    onclick="selectCoupon('${c.code}')">
+                    Áp dụng
+                </button>` : ''}
+            </div>`;
+        });
+
+        $("#couponList").html(html);
+    });
+}
+
+function closeCouponPopup(){
+    $("#couponPopup").hide();
+}
+
+function selectCoupon(code){
+    $.post("apply_coupon.php", { coupon_code: code }, function(res){
+
+        if(!res.status){
+            alert(res.message);
+            return;
+        }
+
+        $("#couponSelector").text(code);
+
+        $("#discountRow").show();
+        $("#discountDisplay").text("-" + res.discount.toLocaleString() + " đ");
+
+        $("#couponCode").text(code);
+
+        $("#finalRow").show();
+        $("#finalTotal").text(res.total_after_discount.toLocaleString() + " đ");
+
+        closeCouponPopup();
+    }, "json");
+}
+</script>
 
 
 
