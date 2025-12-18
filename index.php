@@ -85,6 +85,128 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
 }
 
 
+
+/* ===== HEADER STYLE (TechZone) ===== */
+.navbar {
+    background: linear-gradient(90deg, #EEF4FA, #F8FAFC);
+    border-bottom: 1px solid #D6E0EA;
+}
+
+.navbar .nav-link {
+    color: #0F172A !important;
+    font-weight: 500;
+}
+
+.navbar .nav-link:hover {
+    color: #1A3D64 !important;
+}
+
+.navbar-brand {
+    letter-spacing: 0.5px;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    height: 64px; 
+}
+
+input.form-control:focus {
+    box-shadow: none;
+    border-color: #1A3D64;
+}
+
+.navbar-brand img {
+    object-fit: contain;
+}
+
+.brand-text {
+    font-size: 1.25rem;
+    color: #1A3D64;
+    letter-spacing: 0.5px;
+}
+.logo-img {
+    height: 50px;       /* 28–32 là chuẩn */
+    width: auto;
+    object-fit: contain;
+    display: block;     /* 🔥 chặn baseline */
+}
+.navbar-nav .nav-item {
+    position: relative;
+}
+.navbar-nav .nav-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 18px;
+    background-color: #d0d7e2; /* xám xanh nhẹ */
+}.search-box {
+    width: 360px;
+}
+
+/* Icon box bên trái */
+.search-icon-box {
+    width: 44px;
+    height: 44px;
+    border: 1px solid #dbe3ec;
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1A3D64;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.search-icon-box svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Input */
+.search-input {
+    height: 44px;
+    border-radius: 0 8px 8px 0;
+    border-left: none;
+}
+
+/* Focus */
+.search-input:focus {
+    box-shadow: none;
+    border-color: #1A3D64;
+}
+
+/* Hover icon */
+.search-icon-box:hover {
+    background: #1A3D64;
+    color: #fff;
+}
+.btn-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #dc3545;
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: #1A3D64;
+    --bs-btn-border-color: #1A3D64;
+    --bs-btn-hover-bg: #1A3D64;
+    --bs-btn-hover-color: #fff;
+}
+
 </style>
 
 
@@ -111,11 +233,52 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
 
 
 <!-- HEADER -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="#">TechZone</a>
-    
-    <div class="d-flex gap-2">
+<nav class="navbar navbar-expand-lg border-bottom">
+  <div class="container d-flex align-items-center">
+
+  <!-- LEFT: LOGO -->
+     <a class="navbar-brand d-flex align-items-center fw-bold me-4" href="#">
+        <img 
+            src="assets/images/logo.png" 
+            class="logo-img"
+            alt="TechZone Logo"
+        >
+    </a>
+
+
+
+    <!-- RIGHT: MENU + SEARCH + ACTIONS -->
+    <div class="d-flex align-items-center gap-4 ms-auto">
+
+            <!-- MENU -->
+        <ul class="navbar-nav flex-row gap-4 d-none d-lg-flex">
+            <li class="nav-item">
+                <a class="nav-link" href="index.php">Trang chủ</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Danh mục</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Liên hệ</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Tra cứu đơn hàng</a>
+            </li>
+        </ul>
+
+         <!-- SEARCH -->
+        <div class="search-box d-flex align-items-center">
+            <div class="search-icon-box">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                </svg>
+            </div>
+            <input 
+                type="text"
+                class="form-control search-input"
+                placeholder="Bạn đang tìm gì?"
+            >
+        </div>
 
     <?php if(!$isLoggedIn): ?>
         <!-- Nếu chưa đăng nhập -->
