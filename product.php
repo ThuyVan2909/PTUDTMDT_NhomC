@@ -1,4 +1,6 @@
+<?php include 'partials/announcement-bar.php'; ?>
 
+<?php include 'partials/header.php'; ?>
 <?php
 // TRANG PRODUCT DETAIL KHI CLICK VAO 1 SẢN PHẨM
 session_start();
@@ -164,6 +166,10 @@ if ($defaultSkuId) {
 <head>
 <meta charset="UTF-8">
 <title><?= $spu['name'] ?></title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/header.css">
+<link rel="stylesheet" href="assets/css/footer.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <style>
 .buy-btn.disabled {
@@ -521,7 +527,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 
-
+<?php include 'partials/footer.php'; ?>
 
 </body>
 </html>

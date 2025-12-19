@@ -365,7 +365,7 @@ input.form-control:focus {
                 <a class="nav-link" href="#">Liên hệ</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Tra cứu đơn hàng</a>
+                <a class="nav-link" href="account.php?tab=orders">Tra cứu đơn hàng</a>
             </li>
         </ul>
 
