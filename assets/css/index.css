@@ -53,5 +53,17 @@ body {
     border-radius: 8px;
 }
 
+.account-btn {
+    white-space: nowrap;        /* 🔥 chặn xuống dòng */
+    max-width: 220px;           /* giới hạn chiều ngang */
+    overflow: hidden;
+    text-overflow: ellipsis;    /* ... nếu tên dài */
+}
+.account-name {
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 
