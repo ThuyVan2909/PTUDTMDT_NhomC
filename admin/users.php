@@ -13,6 +13,7 @@ $users = $conn->query("
 <meta charset="UTF-8">
 <title>Quản lý người dùng</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/admin-user.css">
 </head>
 
 <body class="bg-light">
@@ -20,7 +21,7 @@ $users = $conn->query("
 
 <h3 class="mb-4">Quản lý người dùng</h3>
 
-<table class="table table-bordered align-middle">
+<table class="table order-table table-striped table-hover align-middle">
 <thead class="table-dark text-center">
 <tr>
     <th>ID</th>
@@ -43,7 +44,10 @@ $users = $conn->query("
     <td><input class="form-control form-control-sm" name="email" value="<?= htmlspecialchars($u['email']) ?>" required></td>
 
     <td>
-        <select name="role" class="form-select form-select-sm">
+        <?php
+        $roleClass = $u['role'] === 'admin' ? 'role-admin' : 'role-customer';
+        ?>
+        <select name="role" class="form-select form-select-sm role-select <?= $roleClass ?>">
             <option value="customer" <?= $u['role']=='customer'?'selected':'' ?>>Customer</option>
             <option value="admin" <?= $u['role']=='admin'?'selected':'' ?>>Admin</option>
         </select>
@@ -52,12 +56,12 @@ $users = $conn->query("
     <td><?= $u['created_at'] ?></td>
 
     <td class="text-center">
-        <button class="btn btn-sm btn-primary">Lưu</button>
+        <button class="btn btn-sm btn-save">Lưu</button>
 
         <?php if ($u['id'] != $_SESSION['user_id']): ?>
             <form method="POST" action="user_delete.php" class="d-inline">
                 <input type="hidden" name="id" value="<?= $u['id'] ?>">
-                <button class="btn btn-sm btn-danger"
+                <button class="btn btn-sm btn-delete"
                         onclick="return confirm('Xóa user này?')">Xóa</button>
             </form>
         <?php endif; ?>
@@ -69,5 +73,20 @@ $users = $conn->query("
 </table>
 
 </div>
+<script>
+document.querySelectorAll('.role-select').forEach(select => {
+    select.addEventListener('change', function () {
+
+        this.classList.remove('role-admin', 'role-customer');
+
+        if (this.value === 'admin') {
+            this.classList.add('role-admin');
+        } else {
+            this.classList.add('role-customer');
+        }
+    });
+});
+</script>
+
 </body>
 </html>
