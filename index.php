@@ -142,7 +142,7 @@ input.form-control:focus {
     height: 18px;
     background-color: #d0d7e2; /* xám xanh nhẹ */
 }.search-box {
-    width: 200px;
+    min-width: 350px;
 }
 
 /* Icon box bên trái */
@@ -162,8 +162,8 @@ input.form-control:focus {
 }
 
 .search-icon-box svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
 }
 
 /* Input */
@@ -261,18 +261,19 @@ input.form-control:focus {
     left: 0;
     right: 0;
     background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.2);
     z-index: 99999;
     display: none;
-    padding: 8px 0;
+    padding: 12px 0;
 }
+
 
 .search-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
+    gap: 16px;
+    padding: 16px 20px;
     cursor: pointer;
     transition: background .15s ease;
 }
@@ -282,28 +283,30 @@ input.form-control:focus {
 }
 
 .search-thumb {
-    width: 56px;
-    height: 56px;
-    border-radius: 8px;
+    width: 108px;      /* tăng từ 56 → 64 */
+    height: 108px;
+    border-radius: 10px;
     object-fit: cover;
     background: #eee;
 }
+
 
 .search-info {
     flex: 1;
 }
 
 .search-name {
-    font-weight: 600;
-    font-size: 14px;
-    margin-bottom: 4px;
+    font-weight: 400;
+    font-size: 18px;   /* tăng từ 14 */
+    margin-bottom: 6px;
 }
 
 .search-price {
     color: #e30019;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 18px;   /* tăng từ 13 */
 }
+
 
 </style>
 
@@ -402,13 +405,8 @@ input.form-control:focus {
 
     <?php else: ?>
         <!-- Nếu đã đăng nhập -->
-        <a href="account.php" class="btn btn-outline-primary ">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                     class="bi bi-person" viewBox="0 0 16 16">
-                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
-                    <path d="M14 13c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4"/>
-            </svg>
-             (<?= htmlspecialchars($userName) ?>)
+        <a href="account.php" class="btn btn-outline-primary">
+            <?= htmlspecialchars($userName) ?>
         </a>
     <?php endif; ?>
 

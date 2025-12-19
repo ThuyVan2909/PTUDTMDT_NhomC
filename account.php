@@ -279,11 +279,19 @@ document.getElementById("saveAddress").addEventListener("click",function(){
 
     // Lấy danh sách sản phẩm
     $stmt = $conn->prepare("
-    SELECT oi.*, s.sku_code, s.variant
+    SELECT 
+        oi.*,
+        s.variant,
+        p.name AS product_name,
+        si.image_url
     FROM order_items oi
     JOIN sku s ON oi.sku_id = s.id
-    WHERE oi.order_id=?
+    JOIN spu p ON s.spu_id = p.id
+    LEFT JOIN sku_images si 
+        ON si.sku_id = s.id AND si.is_primary = 1
+    WHERE oi.order_id = ?
 ");
+
 
     $stmt->bind_param("i", $order_id);
     $stmt->execute();
@@ -291,43 +299,82 @@ document.getElementById("saveAddress").addEventListener("click",function(){
 
     echo "<h5 class='mt-4'>Sản phẩm trong đơn</h5>";
     echo "<table class='table table-bordered'>";
-    echo "<tr>
-            <th>Sản phẩm</th>
-            <th>SL</th>
-            <th>Giá</th>
-            <th>Tổng</th>
-            <th>Trả hàng</th>
-          </tr>";
+echo "<tr>
+        <th>Tên sản phẩm</th>
+        <th>Số lượng</th>
+        <th>Giá tiền</th>
+        <th>Trạng thái</th>
+        <th>Yêu cầu trả hàng</th>
+      </tr>";
 
-    while ($it = $items->fetch_assoc()) {
 
-        // Kiểm tra đã yêu cầu trả chưa
-        $check = $conn->prepare("SELECT id FROM order_item_returns WHERE order_item_id=?");
-        
-        $check->bind_param("i", $it['id']);
-        $check->execute();
-        $returned = $check->get_result()->num_rows > 0;
+        while ($it = $items->fetch_assoc()) {
 
-        echo "<tr>
-                {$it['sku_code']} ({$it['variant']})
-                <td>{$it['quantity']}</td>
-                <td>" . number_format($it['price']) . "₫</td>
-                <td>" . number_format($it['price'] * $it['quantity']) . "₫</td>
-                <td>";
+        $attrs = json_decode($it['variant'], true);
+        $img = $it['image_url'] ?: '/techzone/assets/images/no-image.png';
+        ?>
 
-        if ($returned) {
-            echo "<span class='text-danger'>Đã yêu cầu trả</span>";
-        } else {
-            echo "<a href='account.php?tab=return_item&order_item_id={$it['id']}&order_id={$order_id}' 
-                     class='btn btn-sm btn-warning'>
-                    Trả hàng
-                  </a>";
-        }
+        <tr>
+            <td>
+            <div class="d-flex align-items-center gap-3">
+                <img src="<?= htmlspecialchars($img) ?>"
+                     style="width:60px;height:60px;object-fit:cover;border-radius:8px">
 
-        echo "</td></tr>";
-    }
+                <div>
+                    <div class="fw-semibold">
+                        <?= htmlspecialchars($it['product_name']) ?>
+                    </div>
 
-    echo "</table>";
+                    <div class="text-muted small">
+                        <?php if (!empty($attrs['ram'])): ?>
+                            RAM: <?= $attrs['ram'] ?> ·
+                        <?php endif; ?>
+                        <?php if (!empty($attrs['ssd'])): ?>
+                            SSD: <?= $attrs['ssd'] ?> ·
+                        <?php endif; ?>
+                        <?php if (!empty($attrs['color'])): ?>
+                            Màu: <?= $attrs['color'] ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </td>
+
+        <td><?= $it['quantity'] ?></td>
+        <td><?= number_format($it['price']) ?>₫</td>
+        <td><?= htmlspecialchars($order['status']) ?></td>
+        <td>
+    <?php
+    // kiểm tra đã gửi yêu cầu trả chưa
+    $chk = $conn->prepare("
+        SELECT id 
+        FROM order_item_returns 
+        WHERE order_item_id = ?
+        LIMIT 1
+    ");
+    $chk->bind_param("i", $it['id']);
+    $chk->execute();
+    $returned = $chk->get_result()->num_rows > 0;
+    ?>
+
+    <?php if ($returned): ?>
+        <span class="badge bg-secondary">Đã yêu cầu</span>
+    <?php else: ?>
+        <a href="account.php?tab=return_item&order_item_id=<?= $it['id'] ?>&order_id=<?= $order_id ?>"
+           class="btn btn-sm btn-warning">
+            Trả hàng
+        </a>
+    <?php endif; ?>
+</td>
+
+    </tr>
+
+    <?php
+}
+
+
+echo "</table>";
+
 
 } elseif ($tab === 'return_item') {
 

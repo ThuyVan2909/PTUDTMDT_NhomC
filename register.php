@@ -83,20 +83,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label class="form-label fw-semibold">Email</label>
                     <input type="email" name="email" class="form-control rounded-3" required>
                     <div class="mt-2">
-    <div class="progress" style="height: 6px;">
-        <div id="password-strength-bar"
-             class="progress-bar"
-             style="width: 0%;"></div>
-    </div>
-    <small id="password-strength-text" class="fw-semibold"></small>
 </div>
 
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Mật khẩu</label>
-                    <input type="password" name="password" class="form-control rounded-3" required>
+                    <input type="password"
+                    name="password"
+                    id="password"
+                    class="form-control rounded-3"
+                    required>
                 </div>
+                <div class="progress" style="height: 6px;">
+                    <div id="password-strength-bar"
+                        class="progress-bar"
+                        style="width: 0%;"></div>
+                </div>
+                <small id="password-strength-text" class="fw-semibold"></small>
 
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Số điện thoại</label>
@@ -170,41 +174,47 @@ $(document).ready(function(){
 
 });
 </script>
+
 <script>
-$('#password').on('input', function () {
-    const password = $(this).val();
-    const bar = $('#password-strength-bar');
-    const text = $('#password-strength-text');
+$(document).ready(function () {
 
-    let strength = 0;
+    $('#password').on('input', function () {
+        const password = $(this).val();
+        const bar = $('#password-strength-bar');
+        const text = $('#password-strength-text');
 
-    if (password.length >= 8) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
+        let strength = 0;
 
-    bar.removeClass('strength-weak strength-medium strength-strong');
+        if (password.length >= 8) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
 
-    if (password.length === 0) {
-        bar.css('width', '0%');
-        text.text('');
-        return;
-    }
+        bar.removeClass('bg-danger bg-warning bg-success');
 
-    if (strength <= 1) {
-        bar.addClass('strength-weak').css('width', '33%');
-        text.text('Yếu').css('color', '#dc3545');
-    } 
-    else if (strength <= 3) {
-        bar.addClass('strength-medium').css('width', '66%');
-        text.text('Trung bình').css('color', '#ffc107');
-    } 
-    else {
-        bar.addClass('strength-strong').css('width', '100%');
-        text.text('Mạnh').css('color', '#28a745');
-    }
+        if (password.length === 0) {
+            bar.css('width', '0%');
+            text.text('');
+            return;
+        }
+
+        if (strength <= 1) {
+            bar.addClass('bg-danger').css('width', '33%');
+            text.text('Yếu').css('color', '#dc3545');
+        } 
+        else if (strength <= 3) {
+            bar.addClass('bg-warning').css('width', '66%');
+            text.text('Trung bình').css('color', '#ffc107');
+        } 
+        else {
+            bar.addClass('bg-success').css('width', '100%');
+            text.text('Mạnh').css('color', '#28a745');
+        }
+    });
+
 });
 </script>
+
 
 
 
