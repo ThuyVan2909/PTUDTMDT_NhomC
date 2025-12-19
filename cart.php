@@ -396,6 +396,15 @@ body {
     color: #6b7280;
 }
 
+
+/* ===== SUBTOTAL (TỪNG SẢN PHẨM) ===== */
+.item-subtotal {
+    font-weight: 700;              /* đậm */
+    color: #e30019;                /* đỏ chuẩn UI thương mại */
+    font-size: 16px;
+    white-space: nowrap;            /* không xuống dòng */
+}
+
 </style>
 </head>
 <body>
