@@ -281,6 +281,14 @@ $provinces = $conn->query("SELECT id, name FROM provinces ORDER BY name")->fetch
             font-weight: 700;
             color: #e30019;
         }
+        .order-items {
+    max-height: 360px;
+    overflow-y: auto;
+}
+.order-items img {
+    background: #f5f5f5;
+}
+
     </style>
 </head>
 
@@ -371,10 +379,77 @@ $provinces = $conn->query("SELECT id, name FROM provinces ORDER BY name")->fetch
             <div class="col-lg-5">
                 <div class="checkout-card p-4 sticky-top" style="top:20px;">
                     <h5 class="fw-bold mb-3">Tóm tắt đơn hàng</h5>
+                    <?php
+$finalTotal = 0;
+?>
+
+<div class="order-items mb-3">
+
+<?php foreach ($cart as $item): ?>
+    <?php
+        $skuId = (int)$item['sku_id'];
+        $qty   = (int)$item['quantity'];
+
+        // Giá ưu tiên promo
+        $price = (!empty($item['promo_price']) && $item['promo_price'] > 0)
+            ? (float)$item['promo_price']
+            : (float)$item['price'];
+
+        $itemTotal = $price * $qty;
+        $finalTotal += $itemTotal;
+
+        // LẤY ẢNH SKU (ĐÚNG THEO BẢNG sku_images)
+        $imgRow = $conn->query("
+            SELECT image_url 
+            FROM sku_images 
+            WHERE sku_id = $skuId 
+            ORDER BY is_primary DESC 
+            LIMIT 1
+        ")->fetch_assoc();
+
+        $imgSrc = $imgRow['image_url'] ?? 'assets/images/no-image.png';
+    ?>
+
+    <div class="d-flex align-items-start mb-3">
+
+        <img src="<?= htmlspecialchars($imgSrc) ?>"
+             style="width:60px;height:60px;object-fit:cover;border-radius:8px;margin-right:12px;">
+
+        <div class="flex-grow-1">
+    <div class="fw-semibold">
+        <?= htmlspecialchars($item['spu_name']) ?>
+    </div>
+
+    <?php if (!empty($item['attributes'])): ?>
+        <div class="text-muted small">
+            <?php foreach ($item['attributes'] as $attrName => $attrValue): ?>
+                <div>
+                    <?= htmlspecialchars($attrName) ?>:
+                    <strong><?= htmlspecialchars($attrValue) ?></strong>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="text-muted small mt-1">
+        Số lượng: x<?= $qty ?>
+    </div>
+</div>
+
+
+        <div class="fw-bold text-danger text-end">
+            <?= number_format($itemTotal) ?> đ
+        </div>
+    </div>
+
+<?php endforeach; ?>
+
+</div>
 
                     <div class="summary-row">
                         <span>Tạm tính</span>
-                        <strong><?= number_format($total) ?> đ</strong>
+                        <strong><?= number_format($finalTotal) ?> đ</strong>
+
                     </div>
 
                     <?php if (!empty($_SESSION['coupon']['discount'])): ?>
@@ -389,8 +464,9 @@ $provinces = $conn->query("SELECT id, name FROM provinces ORDER BY name")->fetch
                     <div class="summary-row">
                         <span>Tổng thanh toán</span>
                         <span class="summary-total">
-                            <?= number_format($total - ($_SESSION['coupon']['discount'] ?? 0)) ?> đ
-                        </span>
+    <?= number_format($finalTotal - ($_SESSION['coupon']['discount'] ?? 0)) ?> đ
+</span>
+
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100 mt-4 py-2">
