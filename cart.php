@@ -47,7 +47,7 @@ th { background: #f5f6fa; }
 .attr-list { font-size: 14px; color: #555; }
 .price-old { text-decoration: line-through; color: gray; font-size: 14px; margin-left:5px; }
 .qty-input { width: 50px; padding:5px; text-align:center; }
-.total-row { font-weight: bold; font-size: 18px; text-align: right; }
+.total-row { font-weight: bold; font-size: 18px; text-align: right;  }
 /* .btn { padding: 12px 20px; background:#1A3D64; color:#fff; border:none; border-radius:5px; cursor:pointer; font-size:16px; margin-top:20px; text-decoration:none; display:inline-block; }
 .btn:hover { background:#c00; } */
 
@@ -145,6 +145,7 @@ body {
 .total-row {
     font-size: 16px;
     font-weight: 600;
+    
 }
 
 #finalTotal {
@@ -165,29 +166,210 @@ body {
 .coupon-box {
     background: #fff;
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 14px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    position: relative;
+    min-width: 420px;
+    max-width: 520px;
 }
 
+/* Label */
 .coupon-box label {
+    font-size: 14px;
     font-weight: 600;
-    margin-bottom: 8px;
+    color: #374151;
+    margin-bottom: 6px;
     display: block;
 }
 
+/* Selector */
 .coupon-selector {
-    padding: 12px;
-    border: 1px dashed #1A3D64;
-    border-radius: 8px;
-    color: #1A3D64;
+    padding: 10px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #fff;
+    color: #6b7280;
     cursor: pointer;
-    text-align: center;
-    transition: 0.2s;
+    text-align: left;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.coupon-selector:hover {
-    background: #f0f6ff;
+/* Mũi tên dropdown */
+.coupon-selector::after {
+    content: "▾";
+    font-size: 14px;
+    color: #9ca3af;
 }
+
+/* Hover */
+.coupon-selector:hover {
+    border-color: #1A3D64;
+    background: #f8fbff;
+}
+
+/* Khi đã chọn mã */
+.coupon-selector.active {
+    border-color: #1A3D64;
+    background: #f0f6ff;
+    color: #1A3D64;
+    font-weight: 600;
+}
+
+/* Text placeholder */
+.coupon-placeholder {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+}
+
+/* ===== DROPDOWN POPUP ===== */
+#couponPopup {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 100%;
+    min-width: 420px;
+    max-width: 520px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    z-index: 9999;
+    padding: 10px;
+    max-height: 320px;
+    overflow-y: auto;
+    animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== COUPON ITEM ===== */
+#couponList > div {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+#couponList > div:hover {
+    border-color: #1A3D64;
+    background: #f8fbff;
+}
+
+/* Code */
+#couponList strong {
+    font-size: 14px;
+    color: #1A3D64;
+}
+
+/* Description */
+#couponList small {
+    display: block
+
+}
+
+
+/* ===== COUPON ITEM ===== */
+/* ===== COUPON HORIZONTAL ITEM ===== */
+.coupon-item-horizontal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    margin-bottom: 10px;
+
+    transition: all 0.2s ease;
+}
+
+.coupon-item-horizontal:hover {
+    border-color: #1A3D64;
+    background: #f8fbff;
+}
+
+/* LEFT */
+.coupon-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+}
+
+.coupon-code {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1A3D64;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.coupon-meta {
+    font-size: 12px;
+    color: #6b7280;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.coupon-meta .divider {
+    font-size: 10px;
+}
+
+/* RIGHT */
+.coupon-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.coupon-discount {
+    font-size: 14px;
+    font-weight: 700;
+    color: #e30019;
+    white-space: nowrap;
+}
+
+/* APPLY BUTTON */
+.coupon-apply-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 8px;
+}
+
+/* DISABLED */
+.coupon-disabled-text {
+    font-size: 12px;
+    color: #9ca3af;
+    white-space: nowrap;
+}
+
+
+
 
 /* ===== BUTTON ===== */
 .btn {
@@ -213,6 +395,7 @@ body {
     text-align: center;
     color: #6b7280;
 }
+
 </style>
 </head>
 <body>
@@ -238,10 +421,6 @@ body {
 
 
 <div class="container my-5">
-  <h2 class="mb-4 fw-bold">Giỏ hàng</h2>
-  <!-- <div class="row g-4"> -->
-    <!-- LEFT: CART TABLE -->
-     <!-- <div class="col-lg-8"> -->
         <div class="row">
             <div class="col-12">
 <table id="cartTable">
@@ -286,7 +465,8 @@ body {
         <input type="number" class="qty-input" min="1" value="<?= $item['quantity'] ?>" 
                onchange="updateQty(<?= $item['sku_id'] ?>, this.value)">
     </td>
-    <td>
+
+    <td class="item-subtotal" data-sku="<?= $item['sku_id'] ?>">
     <?= number_format($subtotal) ?> đ
     <br>
     <a href="javascript:void(0)" onclick="removeItem(<?= $item['sku_id'] ?>)" 
@@ -294,6 +474,7 @@ body {
         Xóa
     </a>
 </td>
+
 
 </tr>
 <?php endforeach; else: ?>
@@ -333,12 +514,20 @@ body {
     <div class="col-md-6 ms-auto">
 <!-- Nhập mã giảm giá -->
    <!-- <div class="col-lg-4"> -->
-    <div class="coupon-box">
-    <label>Mã giảm giá:</label>
-    <div id="couponSelector" class="coupon-selector" onclick="openCouponPopup()">
-        <?= $coupon_code ? htmlspecialchars($coupon_code) : 'Chọn mã giảm giá' ?>
+    <div class="coupon-box coupon-wrapper">
+    <label class="coupon-label">Mã giảm giá</label>
+
+    <div id="couponSelector"
+         class="coupon-selector <?= $coupon_code ? 'active' : '' ?>"
+         onclick="openCouponPopup()">
+        <span class="coupon-placeholder">
+            <?= $coupon_code ? htmlspecialchars($coupon_code) : 'Chọn mã giảm giá' ?>
+        </span>
     </div>
-    </div>
+
+    
+</div>
+
 
 
 
@@ -362,20 +551,32 @@ body {
 function updateQty(sku, qty){
     $.post("update_cart.php", { sku_id: sku, quantity: qty }, function(res){
 
-        // Update subtotal
+        if(!res.status) return;
+
+        // ✅ UPDATE TỔNG CỦA DÒNG SKU
+        $(".item-subtotal[data-sku='" + sku + "']")
+            .contents()
+            .first()
+            .replaceWith(res.item_subtotal.toLocaleString() + " đ");
+
+        // ✅ UPDATE TẠM TÍNH
         $("#subtotalDisplay").text(res.subtotal.toLocaleString() + " đ");
 
-        // Nếu đã có voucher trước đó → update final total
+        // ✅ UPDATE GIẢM GIÁ + TỔNG CUỐI
         if(res.discount > 0){
             $("#discountRow").show();
             $("#discountDisplay").text("-" + res.discount.toLocaleString() + " đ");
-
             $("#finalRow").show();
             $("#finalTotal").text(res.final_total.toLocaleString() + " đ");
+        } else {
+            $("#discountRow").hide();
+            $("#finalRow").hide();
         }
 
     }, "json");
 }
+
+
 
 // ==========================
 // ÁP DỤNG COUPON
@@ -461,9 +662,125 @@ function openLogin() {
 }
 </script>
 
+<script>
+// ==========================
+// POPUP COUPON
+// ==========================
+function openCouponPopup() {
+    const selector = document.getElementById('couponSelector');
+    const popup = document.getElementById('couponPopup');
+
+    // Lấy tọa độ selector
+    const rect = selector.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    popup.style.top = rect.bottom + scrollTop + "px";
+    popup.style.left = rect.left + "px";
+    popup.style.display = "block";
+
+    fetch('get_available_coupons.php')
+        .then(res => res.json())
+        .then(data => {
+            const list = document.getElementById('couponList');
+            list.innerHTML = '';
+
+            if (!data.coupons || data.coupons.length === 0) {
+                list.innerHTML = '<p>Không có mã giảm giá khả dụng</p>';
+                return;
+            }
+
+            data.coupons.forEach(c => {
+                const disabled = c.eligible ? '' : 'opacity:0.5; pointer-events:none;';
+
+                list.innerHTML += `
+    <div class="coupon-item-horizontal" style="${disabled}">
+        <div class="coupon-left">
+            <div class="coupon-code">${c.code}</div>
+            <div class="coupon-meta">
+                <span>Đơn tối thiểu ${c.min_order.toLocaleString()} đ</span>
+                <span class="divider">•</span>
+                <span>HSD: ${c.expired_at ?? 'Không giới hạn'}</span>
+            </div>
+        </div>
+
+        <div class="coupon-right">
+            <div class="coupon-discount">-${c.discount.toLocaleString()}đ</div>
+
+            ${c.eligible ? `
+                <button class="btn btn-sm btn-primary coupon-apply-btn"
+                    onclick="applyCouponFromPopup('${c.code}', ${c.discount})">
+                    Áp dụng
+                </button>
+            ` : `
+                <div class="coupon-disabled-text">${c.reason}</div>
+            `}
+        </div>
+    </div>
+`;
+
+
+            });
+        });
+}
+
+// Đóng popup khi click ra ngoài
+document.addEventListener('click', function(e) {
+    const popup = document.getElementById('couponPopup');
+    const selector = document.getElementById('couponSelector');
+    if (!popup.contains(e.target) && !selector.contains(e.target)) {
+        popup.style.display = 'none';
+    }
+});
+
+
+// ==========================
+// ÁP DỤNG COUPON (KHÔNG VỠ LOGIC CŨ)
+// ==========================
+function applyCouponFromPopup(code) {
+    $.post("apply_coupon.php", { coupon_code: code }, function(res) {
+
+        if (!res.status) {
+            alert(res.message);
+            return;
+        }
+
+        // Cập nhật UI
+        $("#couponSelector .coupon-placeholder").text(code);
+        $("#couponSelector").addClass("active");
+
+        $("#discountRow").show();
+        $("#discountDisplay").text("-" + res.discount.toLocaleString() + " đ");
+        $("#couponCode").text(code);
+
+        $("#finalRow").show();
+        $("#finalTotal").text(res.total_after_discount.toLocaleString() + " đ");
+
+        $("#couponPopup").hide();
+
+    }, "json");
+}
+</script>
+
 
 
 <?php include 'partials/footer.php'; ?>
+
+
+<!-- COUPON POPUP -->
+<div id="couponPopup" style="
+    display:none;
+    position:absolute;
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius:8px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    width:250px;
+    max-height:300px;
+    overflow-y:auto;
+    z-index:1000;
+">
+    <div style="padding:10px;" id="couponList"></div>
+</div>
 
 </body>
 </html>
