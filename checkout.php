@@ -93,10 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     /* --------------------------------------------
        2. LẤY MÃ GIẢM GIÁ (NẾU CÓ)
        -------------------------------------------- */
-    $discount_total = 0;
-    if (isset($_SESSION['coupon'])) {
-        $discount_total = floatval($_SESSION['coupon']['discount']);
-    }
+    $discount_total = $_SESSION['coupon_discount'] ?? 0;
+$coupon_code    = $_SESSION['coupon_code'] ?? null;
+
 
     // Không cho giảm quá tổng
     $discount_total = min($discount_total, $total);
