@@ -53,3 +53,12 @@
             font-weight: 500;
             color: #1A3D64;
         }
+        .strength-weak {
+    background-color: #dc3545; /* đỏ */
+}
+.strength-medium {
+    background-color: #ffc107; /* vàng */
+}
+.strength-strong {
+    background-color: #28a745; /* xanh */
+}
