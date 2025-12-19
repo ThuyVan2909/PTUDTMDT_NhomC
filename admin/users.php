@@ -1,42 +1,73 @@
 <?php
-include "../db.php"; // FIXED: đúng đường dẫn
+include "../db.php";
 
-$users = $conn->query("SELECT * FROM users ORDER BY id DESC");
+$users = $conn->query("
+    SELECT id, fullname, email, role, created_at
+    FROM users
+    ORDER BY id DESC
+");
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-<title>Danh sách người dùng</title>
-<style>
-table { border-collapse: collapse; width: 100%; }
-th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
-</style>
+<meta charset="UTF-8">
+<title>Quản lý người dùng</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
 
-<h2>Danh sách người dùng</h2>
+<body class="bg-light">
+<div class="container py-4">
 
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Họ tên</th>
-        <th>Email</th>
-        <th>Role</th>
-        <th>Ngày tạo</th>
-    </tr>
+<h3 class="mb-4">Quản lý người dùng</h3>
 
-<?php while($u = $users->fetch_assoc()): ?>
-    <tr>
-        <td><?= $u["id"] ?></td>
-        <td><?= $u["fullname"] ?></td>
-        <td><?= $u["email"] ?></td>
-        <td><?= $u["role"] ?></td>
-        <td><?= $u["created_at"] ?></td>
-    </tr>
+<table class="table table-bordered align-middle">
+<thead class="table-dark text-center">
+<tr>
+    <th>ID</th>
+    <th>Họ tên</th>
+    <th>Email</th>
+    <th>Role</th>
+    <th>Ngày tạo</th>
+    <th width="220">Thao tác</th>
+</tr>
+</thead>
+
+<tbody>
+<?php while ($u = $users->fetch_assoc()): ?>
+<tr>
+<form method="POST" action="user_update.php">
+    <td><?= $u['id'] ?><input type="hidden" name="id" value="<?= $u['id'] ?>"></td>
+
+    <td><input class="form-control form-control-sm" name="fullname" value="<?= htmlspecialchars($u['fullname']) ?>" required></td>
+
+    <td><input class="form-control form-control-sm" name="email" value="<?= htmlspecialchars($u['email']) ?>" required></td>
+
+    <td>
+        <select name="role" class="form-select form-select-sm">
+            <option value="customer" <?= $u['role']=='customer'?'selected':'' ?>>Customer</option>
+            <option value="admin" <?= $u['role']=='admin'?'selected':'' ?>>Admin</option>
+        </select>
+    </td>
+
+    <td><?= $u['created_at'] ?></td>
+
+    <td class="text-center">
+        <button class="btn btn-sm btn-primary">Lưu</button>
+
+        <?php if ($u['id'] != $_SESSION['user_id']): ?>
+            <form method="POST" action="user_delete.php" class="d-inline">
+                <input type="hidden" name="id" value="<?= $u['id'] ?>">
+                <button class="btn btn-sm btn-danger"
+                        onclick="return confirm('Xóa user này?')">Xóa</button>
+            </form>
+        <?php endif; ?>
+    </td>
+</form>
+</tr>
 <?php endwhile; ?>
-
+</tbody>
 </table>
 
+</div>
 </body>
 </html>
