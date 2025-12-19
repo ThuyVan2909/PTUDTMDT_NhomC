@@ -23,10 +23,10 @@
       <div class="col-lg-2 col-md-6">
         <h6 class="fw-semibold mb-3">Chính sách</h6>
         <ul class="list-unstyled footer-links">
-          <li><a href="blog\policies.php">Chính sách bảo hành</a></li>
-          <li><a href="#">Chính sách đổi trả</a></li>
-          <li><a href="#">Chính sách vận chuyển</a></li>
-          <li><a href="#">Chính sách thanh toán</a></li>
+          <li><a href="/techzone/blog/policies.php#warranty">Chính sách bảo hành</a></li>
+          <li><a href="/techzone/blog/policies.php#return">Chính sách đổi trả</a></li>
+          <li><a href="/techzone/blog/policies.php#shipping">Chính sách vận chuyển</a></li>
+          <li><a href="/techzone/blog/policies.php#payment">Chính sách thanh toán</a></li>
         </ul>
       </div>
 
@@ -79,9 +79,9 @@
         <div>
           <small class="text-muted d-block mb-2">Phương thức thanh toán</small>
           <div class="d-flex gap-2">
-            <img src="..\assets\images\Zalopay.png" height="26">
-            <img src="..\assets\images\Apple_Pay_logo.svg.png" height="26">
-            <img src="..\assets\images\Logo-VNPAY-QR-1.webp" height="26">
+            <img src="\techzone\assets\images\Zalopay.png" height="26">
+            <img src="\techzone\assets\images\Apple_Pay_logo.svg.png" height="26">
+            <img src="\techzone\assets\images\Logo-VNPAY-QR-1.webp" height="26">
           </div>
         </div>
       </div>

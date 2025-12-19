@@ -3,7 +3,7 @@
 <?php include 'partials/header.php'; ?>
 <?php
 // TRANG PRODUCT DETAIL KHI CLICK VAO 1 SẢN PHẨM
-session_start();
+// session_start();
 include 'db.php';
 $spu_id = isset($_GET['spu_id']) ? intval($_GET['spu_id']) : 0;
 if (!$spu_id) { echo "Product not found"; exit; }
