@@ -15,7 +15,7 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
 
     <!-- LOGO -->
     <a class="navbar-brand d-flex align-items-center fw-bold me-4" href="index.php">
-      <img src="assets/images/logo.png" class="logo-img" alt="TechZone Logo">
+      <img src="/techzone/assets/images/logo.png" class="logo-img" alt="TechZone Logo">
     </a>
 
     <!-- RIGHT -->
@@ -23,7 +23,7 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
 
       <!-- MENU -->
       <ul class="navbar-nav flex-row gap-4 d-none d-lg-flex">
-        <li class="nav-item"><a class="nav-link" href="index.php">Trang chủ</a></li>
+        <li class="nav-item"><a class="nav-link" href="../index.php">Trang chủ</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Danh mục</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Liên hệ</a></li>
         <li class="nav-item"><a class="nav-link" href="account.php?tab=orders">Tra cứu đơn hàng</a></li>

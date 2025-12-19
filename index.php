@@ -518,7 +518,7 @@ input.form-control:focus {
       <div class="col-lg-2 col-md-6">
         <h6 class="fw-semibold mb-3">Chính sách</h6>
         <ul class="list-unstyled footer-links">
-          <li><a href="#">Chính sách bảo hành</a></li>
+          <li><a href="blog\baohanh.php">Chính sách bảo hành</a></li>
           <li><a href="#">Chính sách đổi trả</a></li>
           <li><a href="#">Chính sách vận chuyển</a></li>
           <li><a href="#">Chính sách thanh toán</a></li>
