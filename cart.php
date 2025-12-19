@@ -10,7 +10,7 @@ $breadcrumbs = [
     ["label" => "Giỏ hàng"]
 ];
 
-include "breadcrumb.php";
+// include "breadcrumb.php";
 
 // FIX: Nếu giỏ trống → reset coupon
 if (empty($cart)) {
@@ -29,44 +29,221 @@ if (empty($cart)) {
 <head>
 <meta charset="UTF-8">
 <title>Giỏ hàng</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/header.css">
+<link rel="stylesheet" href="assets/css/footer.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
 <style>
-body { font-family: Arial; background: #f7f7f7; margin:0; padding:0;}
-.container { width: 1000px; margin: 50px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
+body { font-family: Arial; background: #f5f6fa; margin:0; padding:0;}
+.container1 { width: 1000px; margin: 50px auto; background: #f5f6fa; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
 h2 { margin-bottom: 20px; }
-table { width: 100%; border-collapse: collapse; }
+table { width: 100%; border-collapse: collapse; background: #ffff }
 th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; vertical-align: middle;}
-th { background: #fafafa; }
+th { background: #f5f6fa; }
 .product-img { width: 80px; height: 80px; object-fit: cover; border-radius: 5px; }
 .attr-list { font-size: 14px; color: #555; }
 .price-old { text-decoration: line-through; color: gray; font-size: 14px; margin-left:5px; }
 .qty-input { width: 50px; padding:5px; text-align:center; }
 .total-row { font-weight: bold; font-size: 18px; text-align: right; }
-.btn { padding: 12px 20px; background:#e30019; color:#fff; border:none; border-radius:5px; cursor:pointer; font-size:16px; margin-top:20px; text-decoration:none; display:inline-block; }
-.btn:hover { background:#c00; }
+/* .btn { padding: 12px 20px; background:#1A3D64; color:#fff; border:none; border-radius:5px; cursor:pointer; font-size:16px; margin-top:20px; text-decoration:none; display:inline-block; }
+.btn:hover { background:#c00; } */
 
+.btn {
+    --bs-btn-color: #1A3D64;
+    --bs-btn-border-color: #1A3D64;
+    --bs-btn-hover-bg: #1A3D64;
+    --bs-btn-hover-color: #fff;
+}
 .coupon-box { margin-top: 20px; padding: 15px; background:#fafafa; border-radius:6px; }
 .coupon-input { width:200px; padding:8px; }
-.coupon-selector {
-    margin-top:8px;
-    padding:10px 12px;
-    border:1px dashed #e30019;
-    color:#e30019;
-    cursor:pointer;
-    border-radius:6px;
-    width:250px;
+
+
+
+/* ===== ANNOUNCEMENT BAR ===== */
+.announcement-bar {
+    background: #1A3D64; /* xanh TechZone */
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
+.announcement-track {
+    display: inline-flex;
+    align-items: center;
+    gap: 48px;
+    padding: 8px 0;
+    animation: marquee 18s linear infinite;
+}
+
+.announcement-track span {
+    display: inline-block;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f5f6fa;
+}
+
+/* ===== TABLE CARD ===== */
+#cartTable {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+#cartTable th {
+    background: #1A3D64;
+    font-weight: 600;
+    color: #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    
+}
+
+#cartTable td {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+#cartTable tr:last-child td {
+    border-bottom: none;
+}
+
+/* ===== PRODUCT ===== */
+.product-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.attr-list {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* ===== PRICE ===== */
+.price-old {
+    text-decoration: line-through;
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+/* ===== TOTAL ROW ===== */
+.total-row {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+#finalTotal {
+    color: #e30019;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+/* ===== QUANTITY ===== */
+.qty-input {
+    width: 60px;
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+}
+
+/* ===== COUPON + PAYMENT CARD ===== */
+.coupon-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.coupon-box label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.coupon-selector {
+    padding: 12px;
+    border: 1px dashed #1A3D64;
+    border-radius: 8px;
+    color: #1A3D64;
+    cursor: pointer;
+    text-align: center;
+    transition: 0.2s;
+}
+
+.coupon-selector:hover {
+    background: #f0f6ff;
+}
+
+/* ===== BUTTON ===== */
+.btn {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #1A3D64;
+    --bs-btn-border-color: #1A3D64;
+    --bs-btn-hover-bg: #163355;
+    --bs-btn-hover-border-color: #163355;
+    font-weight: 600;
+    border-radius: 10px;
+}
+
+/* ===== PAYMENT BUTTON ===== */
+.payment-btn {
+    margin-top: 16px;
+    padding: 14px;
+    font-size: 18px;
+}
+
+/* ===== EMPTY CART ===== */
+.empty-cart {
+    padding: 40px;
+    text-align: center;
+    color: #6b7280;
+}
 </style>
 </head>
 <body>
 
+<!-- ANNOUNCEMENT BAR -->
+<div class="announcement-bar">
+  <div class="announcement-track">
+    <span>Thu cũ giá ngon – Lên đời tiết kiệm</span>
+    <span>Sản phẩm chính hãng – Xuất VAT đầy đủ</span>
+    <span>Giao nhanh – Miễn phí cho đơn 300k</span>
+
+    <!-- duplicate để chạy mượt -->
+    <span>Thu cũ giá ngon – Lên đời tiết kiệm</span>
+    <span>Sản phẩm chính hãng – Xuất VAT đầy đủ</span>
+    <span>Giao nhanh – Miễn phí cho đơn 300k</span>
+  </div>
+</div>
+
+<?php include 'partials/header.php'; ?>
 
 
+<?php include "breadcrumb.php"; ?>
 
-<div class="container">
-<h2>Giỏ hàng</h2>
+
+<div class="container my-5">
+  <h2 class="mb-4 fw-bold">Giỏ hàng</h2>
+  <!-- <div class="row g-4"> -->
+    <!-- LEFT: CART TABLE -->
+     <!-- <div class="col-lg-8"> -->
+        <div class="row">
+            <div class="col-12">
 <table id="cartTable">
 <tr>
     <th>Ảnh sản phẩm</th>
@@ -143,32 +320,38 @@ th { background: #fafafa; }
 <tr id="finalRow" style="<?= $coupon_discount > 0 ? '' : 'display:none;' ?>">
     <td colspan="4" class="total-row">Tổng thanh toán:</td>
     <td class="total-row" id="finalTotal">
+        
         <?= number_format($total - $coupon_discount) ?> đ
     </td>
 </tr>
 
 </table>
+</div>
+</div>
 
+<div class="row mt-4">
+    <div class="col-md-6 ms-auto">
 <!-- Nhập mã giảm giá -->
+   <!-- <div class="col-lg-4"> -->
     <div class="coupon-box">
     <label>Mã giảm giá:</label>
     <div id="couponSelector" class="coupon-selector" onclick="openCouponPopup()">
         <?= $coupon_code ? htmlspecialchars($coupon_code) : 'Chọn mã giảm giá' ?>
     </div>
-</div>
+    </div>
 
-</div>
+
 
 <?php if (!empty($cart)): ?>
     <?php if (!isset($_SESSION['user_id'])): ?>
-    <button onclick="showNeedLogin()" class="btn">Thanh toán</button>
+    <button onclick="showNeedLogin()" class="btn payment-btn w-100">Thanh toán</button>
 <?php else: ?>
     <a href="checkout.php" class="btn">Thanh toán</a>
 <?php endif; ?>
-
-<?php endif; ?>
-
-
+  
+<!-- <?php endif; ?> -->
+</div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -279,83 +462,8 @@ function openLogin() {
 </script>
 
 
-<div id="couponPopup" style="display:none;
-    position:fixed; inset:0;
-    background:rgba(0,0,0,.5);
-    z-index:9999;
-    justify-content:center; align-items:center;">
 
-<div style="background:#fff; width:420px; max-height:70vh;
-    overflow:auto; border-radius:10px; padding:20px;">
-
-<h3>Chọn mã giảm giá</h3>
-<div id="couponList"></div>
-
-<br>
-<button onclick="closeCouponPopup()" class="btn" style="background:#999">
-    Đóng
-</button>
-</div>
-</div>
-<script>
-function openCouponPopup(){
-    $("#couponPopup").css("display","flex");
-
-    $.getJSON("get_available_coupons.php", function(res){
-        let html = '';
-
-        res.coupons.forEach(c => {
-            let disabled = c.eligible ? '' : 'opacity:0.4; pointer-events:none;';
-            let note = c.eligible ? 'Có thể sử dụng' : c.reason;
-
-            html += `
-            <div style="border:1px solid #eee; padding:12px;
-                border-radius:8px; margin-bottom:10px; ${disabled}">
-                
-                <strong>${c.code}</strong>
-                <div>Giảm ${c.discount.toLocaleString()} đ</div>
-                <small>${note}</small><br>
-
-                ${c.eligible ? 
-                `<button class="btn" style="margin-top:8px"
-                    onclick="selectCoupon('${c.code}')">
-                    Áp dụng
-                </button>` : ''}
-            </div>`;
-        });
-
-        $("#couponList").html(html);
-    });
-}
-
-function closeCouponPopup(){
-    $("#couponPopup").hide();
-}
-
-function selectCoupon(code){
-    $.post("apply_coupon.php", { coupon_code: code }, function(res){
-
-        if(!res.status){
-            alert(res.message);
-            return;
-        }
-
-        $("#couponSelector").text(code);
-
-        $("#discountRow").show();
-        $("#discountDisplay").text("-" + res.discount.toLocaleString() + " đ");
-
-        $("#couponCode").text(code);
-
-        $("#finalRow").show();
-        $("#finalTotal").text(res.total_after_discount.toLocaleString() + " đ");
-
-        closeCouponPopup();
-    }, "json");
-}
-</script>
-
-
+<?php include 'partials/footer.php'; ?>
 
 </body>
 </html>

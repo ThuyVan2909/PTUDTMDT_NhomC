@@ -5,7 +5,20 @@ include 'db.php';
 
 $user_id = $_SESSION['user_id'] ?? null;
 $cart = $_SESSION['cart'] ?? [];
+// ==========================
+// TÍNH TỔNG GIỎ HÀNG (CHO HIỂN THỊ)
+// ==========================
+$total = 0;
+foreach ($cart as $it) {
+    $sku_id = intval($it['sku_id']);
+    $priceRow = $conn->query("SELECT price FROM sku WHERE id=$sku_id");
+    if (!$priceRow) continue;
 
+    $price = (float)$priceRow->fetch_assoc()['price'];
+    $qty = intval($it['quantity']);
+
+    $total += $price * $qty;
+}
 if (!$user_id) {
     // Nếu gọi AJAX → trả JSON cho JS bật popup login
     if (isset($_POST['ajax']) && $_POST['ajax'] == 1) {
@@ -224,66 +237,189 @@ $provinces = $conn->query("SELECT id, name FROM provinces ORDER BY name")->fetch
 ?>
 
 
+
+
 <!doctype html>
-<html>
+<html lang="vi">
 <head>
     <meta charset="utf-8">
     <title>Thanh toán</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f5f6fa;
+        }
+        .checkout-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.05);
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .btn-primary {
+            background: #1A3D64;
+            border-color: #1A3D64;
+        }
+        .btn-primary:hover {
+            background: #143252;
+            border-color: #143252;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .summary-total {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e30019;
+        }
+    </style>
 </head>
+
 <body>
 
-<h2>Thanh toán</h2>
-<form method="POST" id="checkoutForm">
-    <label>Họ tên</label><br>
-    <input type="text" name="fullname" value="<?= htmlspecialchars($default['fullname'] ?? '') ?>" required><br><br>
+<?php include 'partials/header.php'; ?>
 
-    <label>Số điện thoại</label><br>
-    <input type="text" name="phone" value="<?= htmlspecialchars($default['phone'] ?? '') ?>" required><br><br>
 
-    <label>Tỉnh/Thành phố</label><br>
-    <select name="province_id" id="province" required>
-        <option value="">--Chọn tỉnh--</option>
-        <?php foreach ($provinces as $p): ?>
-            <option 
-                value="<?= $p['id'] ?>"
-                <?= (isset($default['province_id']) && $default['province_id'] == $p['id']) ? 'selected' : '' ?>
-            >
-                <?= htmlspecialchars($p['name']) ?>
-            </option>
-        <?php endforeach; ?>
-    </select><br><br>
+<?php include "breadcrumb.php"; ?>
 
-    <label>Quận/Huyện</label><br>
-    <select name="district_id" id="district" required>
-        <option value="">--Chọn quận/huyện--</option>
-    </select><br><br>
 
-    <label>Đường/Số nhà</label><br>
-    <input type="text" name="street" value="<?= htmlspecialchars($default['street'] ?? '') ?>"><br><br>
+<div class="container my-5">
+    <h2 class="fw-bold mb-4">Thanh toán</h2>
 
-    <label>Phương thức thanh toán</label><br>
-    <select name="payment_method">
-        <option value="cod">COD</option>
-        <option value="bank">Chuyển khoản</option>
-    </select><br><br>
+    <form method="POST" id="checkoutForm">
+        <div class="row g-4">
 
-    <label>Vận chuyển</label><br>
-    <select name="shipping_method">
-        <option value="standard">Tiêu chuẩn</option>
-        <option value="express">Hỏa tốc</option>
-    </select><br><br>
+            <!-- LEFT: SHIPPING INFO -->
+            <div class="col-lg-7">
+                <div class="checkout-card p-4 mb-4">
+                    <h5 class="mb-3 fw-bold">Thông tin giao hàng</h5>
 
-    <button type="submit" class="btn">Đặt hàng</button>
-</form>
-<div id="successPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
-    <div style="background:#fff; padding:30px; border-radius:10px; max-width:400px; text-align:center;">
-        <h2 id="popupMessage" style="margin-bottom:40px;"></h2>
-        <p>Đơn hàng của bạn: <span id="popupOrderId"></span></p>
-        <button onclick="window.location='index.php'" class="btn">Về trang chủ</button>
+                    <div class="mb-3">
+                        <label class="form-label">Họ tên</label>
+                        <input type="text" class="form-control" name="fullname"
+                               value="<?= htmlspecialchars($default['fullname'] ?? '') ?>" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="text" class="form-control" name="phone"
+                               value="<?= htmlspecialchars($default['phone'] ?? '') ?>" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tỉnh / Thành phố</label>
+                            <select name="province_id" id="province" class="form-select" required>
+                                <option value="">-- Chọn tỉnh --</option>
+                                <?php foreach ($provinces as $p): ?>
+                                    <option
+                                        value="<?= $p['id'] ?>"
+                                        <?= (isset($default['province_id']) && $default['province_id'] == $p['id']) ? 'selected' : '' ?>
+                                    >
+                                        <?= htmlspecialchars($p['name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Quận / Huyện</label>
+                            <select name="district_id" id="district" class="form-select" required>
+                                <option value="">-- Chọn quận/huyện --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Đường / Số nhà</label>
+                        <input type="text" class="form-control" name="street"
+                               value="<?= htmlspecialchars($default['street'] ?? '') ?>">
+                    </div>
+                </div>
+
+                <div class="checkout-card p-4">
+                    <h5 class="mb-3 fw-bold">Phương thức</h5>
+
+                    <div class="mb-3">
+                        <label class="form-label">Thanh toán</label>
+                        <select name="payment_method" class="form-select">
+                            <option value="cod">Thanh toán khi nhận hàng (COD)</option>
+                            <option value="bank">Chuyển khoản ngân hàng</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Vận chuyển</label>
+                        <select name="shipping_method" class="form-select">
+                            <option value="standard">Tiêu chuẩn</option>
+                            <option value="express">Hỏa tốc</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: ORDER SUMMARY -->
+            <div class="col-lg-5">
+                <div class="checkout-card p-4 sticky-top" style="top:20px;">
+                    <h5 class="fw-bold mb-3">Tóm tắt đơn hàng</h5>
+
+                    <div class="summary-row">
+                        <span>Tạm tính</span>
+                        <strong><?= number_format($total) ?> đ</strong>
+                    </div>
+
+                    <?php if (!empty($_SESSION['coupon']['discount'])): ?>
+                        <div class="summary-row text-success">
+                            <span>Giảm giá</span>
+                            <strong>-<?= number_format($_SESSION['coupon']['discount']) ?> đ</strong>
+                        </div>
+                    <?php endif; ?>
+
+                    <hr>
+
+                    <div class="summary-row">
+                        <span>Tổng thanh toán</span>
+                        <span class="summary-total">
+                            <?= number_format($total - ($_SESSION['coupon']['discount'] ?? 0)) ?> đ
+                        </span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mt-4 py-2">
+                        Đặt hàng
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<!-- SUCCESS POPUP -->
+<div id="successPopup" style="
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,.5);
+    z-index:9999;
+    justify-content:center;
+    align-items:center;">
+    <div class="bg-white p-4 rounded text-center" style="max-width:400px;">
+        <h4 id="popupMessage" class="mb-3"></h4>
+        <p>Đơn hàng của bạn: <strong id="popupOrderId"></strong></p>
+        <button onclick="window.location='index.php'" class="btn btn-primary mt-3">
+            Về trang chủ
+        </button>
     </div>
 </div>
 
-
+<!-- JS GIỮ NGUYÊN -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 function loadDistricts(pid, selectedDistrict = null) {
@@ -291,40 +427,28 @@ function loadDistricts(pid, selectedDistrict = null) {
         $('#district').html('<option value="">--Chọn quận/huyện--</option>');
         return;
     }
-
     $.get('get_districts.php', {province_id: pid}, function(data){
         $('#district').html(data);
-
         if (selectedDistrict) {
             $('#district').val(selectedDistrict);
         }
     });
 }
 
-// Khi chọn tỉnh
 $('#province').change(function(){
     loadDistricts($(this).val());
 });
 
-// Load huyện ngay khi load trang (nếu user có địa chỉ sẵn)
 <?php if (!empty($default['province_id'])): ?>
-    loadDistricts(
-        <?= (int)$default['province_id'] ?>,
-        <?= !empty($default['district_id']) ? (int)$default['district_id'] : 'null' ?>
-    );
+loadDistricts(
+    <?= (int)$default['province_id'] ?>,
+    <?= !empty($default['district_id']) ? (int)$default['district_id'] : 'null' ?>
+);
 <?php endif; ?>
 
-
-</script>
-
-
-
-<script>
 $('#checkoutForm').submit(function(e){
     e.preventDefault();
-
     var formData = $(this).serialize() + '&ajax=1';
-
     $.post('checkout.php', formData, function(res){
         if(res.status){
             $('#popupMessage').text(res.message);
@@ -336,6 +460,8 @@ $('#checkoutForm').submit(function(e){
     }, 'json');
 });
 </script>
+<?php include 'partials/footer.php'; ?>
+
 
 
 </body>

@@ -1,0 +1,233 @@
+
+        .category-btn, .brand-btn { cursor: pointer; }
+        .active-filter { background: #0d6efd !important; color: #fff !important; }
+        /* Login modal */
+        .login-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); justify-content:center; align-items:center; z-index:2000; }
+        .login-box { background:#fff; padding:25px; width:350px; border-radius:8px; position:relative; }
+        .login-box input { width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:5px; }
+        .login-submit { width:100%; padding:10px; background:#135071; color:#fff; border:none; border-radius:6px; cursor:pointer; }
+        .close-btn { position:absolute; right:15px; top:10px; cursor:pointer; font-size:20px; }
+        
+/* Highlight khi scroll đến */
+/* Highlight viền card với fade */
+.product-highlight {
+    position: relative;
+    border: 2px solid #e30019;
+    box-shadow: 0 0 15px rgba(227,0,25,0.5);
+    border-radius: 8px; /* khớp với .card */
+    opacity: 1;
+    transition: opacity 1.5s ease, box-shadow 1.5s ease;
+}
+
+.product-highlight.fade-out {
+    opacity: 0;
+    box-shadow: 0 0 0 rgba(227,0,25,0);
+}
+
+
+
+/* ===== ANNOUNCEMENT BAR ===== */
+.announcement-bar {
+    background: #1A3D64; /* xanh TechZone */
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.announcement-track {
+    display: inline-flex;
+    align-items: center;
+    gap: 48px;
+    padding: 8px 0;
+    animation: marquee 18s linear infinite;
+}
+
+.announcement-track span {
+    display: inline-block;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+
+
+/* ===== HEADER STYLE (TechZone) ===== */
+.navbar {
+    background: linear-gradient(90deg, #EEF4FA, #F8FAFC);
+    border-bottom: 1px solid #D6E0EA;
+}
+
+.navbar .nav-link {
+    color: #0F172A !important;
+    font-weight: 500;
+}
+
+.navbar .nav-link:hover {
+    color: #1A3D64 !important;
+}
+
+.navbar-brand {
+    letter-spacing: 0.5px;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    height: 64px; 
+}
+
+input.form-control:focus {
+    box-shadow: none;
+    border-color: #1A3D64;
+}
+
+.navbar-brand img {
+    object-fit: contain;
+}
+
+.brand-text {
+    font-size: 1.25rem;
+    color: #1A3D64;
+    letter-spacing: 0.5px;
+}
+.logo-img {
+    height: 50px;       /* 28–32 là chuẩn */
+    width: auto;
+    object-fit: contain;
+    display: block;     /* 🔥 chặn baseline */
+}
+.navbar-nav .nav-item {
+    position: relative;
+}
+.navbar-nav .nav-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 18px;
+    background-color: #d0d7e2; /* xám xanh nhẹ */
+}.search-box {
+    width: 200px;
+}
+
+/* Icon box bên trái */
+.search-icon-box {
+    width: 44px;
+    height: 44px;
+    border: 1px solid #dbe3ec;
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1A3D64;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.search-icon-box svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Input */
+.search-input {
+    height: 44px;
+    border-radius: 0 8px 8px 0;
+    border-left: none;
+}
+
+/* Focus */
+.search-input:focus {
+    box-shadow: none;
+    border-color: #1A3D64;
+}
+
+/* Hover icon */
+.search-icon-box:hover {
+    background: #1A3D64;
+    color: #fff;
+}
+.btn-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #dc3545;
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: #1A3D64;
+    --bs-btn-border-color: #1A3D64;
+    --bs-btn-hover-bg: #1A3D64;
+    --bs-btn-hover-color: #fff;
+}
+
+.header-action-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    background: linear-gradient(90deg, #EEF4FA, #F8FAFC);
+    border-top: 1px solid #E2E8F0;
+}
+
+.footer h6 {
+    color: #0F172A;
+}
+
+.footer-links li {
+    margin-bottom: 8px;
+}
+
+.footer-links a {
+    color: #475569;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.footer-links a:hover {
+    color: #1A3D64;
+}
+
+.social-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #E2E8F0;
+    color: #1A3D64;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.social-icon:hover {
+    background: #1A3D64;
+    color: #fff;
+}
+
+
+
+

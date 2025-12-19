@@ -1,5 +1,7 @@
+<?php include 'partials/announcement-bar.php'; ?>
+<?php include 'partials/header.php'; ?>
 <?php
-session_start();
+// session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit;
@@ -41,9 +43,14 @@ $user = $conn->query("SELECT * FROM users WHERE id = $user_id")->fetch_assoc();
     <title>Tài khoản - TechZone</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/account.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
 </head>
 
 <body>
+<!-- MAIN -->
+<div class="flex-grow-1">
+
 
 <div class="d-flex">
 
@@ -480,6 +487,9 @@ $item = $check->get_result()->fetch_assoc();
     </div>
 
 </div>
+</div>
+<?php include 'partials/footer.php'; ?>
+
 
 </body>
 </html>
