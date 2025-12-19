@@ -62,13 +62,14 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <title>Quản lý đơn hàng</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/admin-order.css">
 </head>
 <body class="bg-light">
 
 <div class="container py-4">
     <h3 class="mb-4">Quản lý đơn hàng</h3>
 
-    <table class="table table-bordered table-hover align-middle">
+    <table class="table order-table align-middle">
         <thead class="table-dark text-center">
         <tr>
             <th>ID</th>
@@ -106,10 +107,21 @@ $result = $conn->query($sql);
                     </td>
 
                     <td>
+                        <?php
+$selectClass = '';
+switch ($row['status']) {
+    case 'Đã đặt': $selectClass = 'st-new'; break;
+    case 'Người bán đang chuẩn bị hàng': $selectClass = 'st-preparing'; break;
+    case 'Đơn vị giao hàng đã nhận hàng': $selectClass = 'st-picked'; break;
+    case 'Hàng đang giao đến nhà bạn': $selectClass = 'st-shipping'; break;
+    case 'Đơn hàng đã giao': $selectClass = 'st-done'; break;
+    case 'Đơn bị huỷ': $selectClass = 'st-cancel'; break;
+}
+?>
     <form method="POST" class="d-flex gap-2 align-items-center">
         <input type="hidden" name="order_id" value="<?= $row['id'] ?>">
 
-        <select name="status" class="form-select form-select-sm">
+        <select name="status" class="form-select form-select-sm status-select <?= $selectClass ?>">
             <?php foreach ($statuses as $st): ?>
                 <option value="<?= $st ?>" <?= $st === $row['status'] ? 'selected' : '' ?>>
                     <?= $st ?>
@@ -137,6 +149,35 @@ $result = $conn->query($sql);
         </tbody>
     </table>
 </div>
+<script>
+document.querySelectorAll('.status-select').forEach(select => {
+    select.addEventListener('change', function () {
+
+        // remove toàn bộ class màu cũ
+        this.classList.remove(
+            'st-new',
+            'st-preparing',
+            'st-picked',
+            'st-shipping',
+            'st-done',
+            'st-cancel'
+        );
+
+        // map giá trị -> class
+        const map = {
+            'Đã đặt': 'st-new',
+            'Người bán đang chuẩn bị hàng': 'st-preparing',
+            'Đơn vị giao hàng đã nhận hàng': 'st-picked',
+            'Hàng đang giao đến nhà bạn': 'st-shipping',
+            'Đơn hàng đã giao': 'st-done',
+            'Đơn bị huỷ': 'st-cancel'
+        };
+
+        // add class mới
+        this.classList.add(map[this.value]);
+    });
+});
+</script>
 
 </body>
 </html>

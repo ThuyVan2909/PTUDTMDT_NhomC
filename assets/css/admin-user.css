@@ -1,0 +1,85 @@
+/* ===== ROLE SELECT ===== */
+.role-select {
+    font-weight: 600;
+    border-radius: 8px;
+    transition: background-color .25s ease, color .25s ease;
+}
+
+/* customer */
+.role-customer {
+    background: #e8f5e9;
+    color: #1b5e20;
+}
+
+/* admin */
+.role-admin {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+/* dropdown option luôn readable */
+.role-select option {
+    background: #fff;
+    color: #212529;
+}
+
+.role-select:focus {
+    box-shadow: none;
+}
+/* ===== TABLE STYLE (BOOTSTRAP OVERRIDE) ===== */
+.order-table {
+    --bs-table-bg: #ffffff;
+    --bs-table-striped-bg: #f4f7fb;
+    --bs-table-striped-color: #000;
+    --bs-table-hover-bg: #e6effa;
+    --bs-table-hover-color: #000;
+
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+/* header */
+.order-table thead th {
+    background: #1A3D64 !important;
+    color: #fff !important;
+    border: none;
+}
+
+/* cell */
+.order-table td,
+.order-table th {
+    vertical-align: middle;
+}
+
+/* ===== SAVE BUTTON ===== */
+.btn-save {
+    background: #1A3D64;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 6px 14px;
+    border: none;
+    transition: all .25s ease;
+}
+
+.btn-save:hover {
+    background: #163254;
+    color: #fff;
+}
+/* ===== DELETE BUTTON ===== */
+.btn-delete {
+    background: #d32f2f;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 6px 14px;
+    border: none;
+    transition: all .25s ease;
+}
+
+.btn-delete:hover {
+    background: #b71c1c;
+    color: #fff;
+}
+
