@@ -142,7 +142,7 @@ input.form-control:focus {
     height: 18px;
     background-color: #d0d7e2; /* xám xanh nhẹ */
 }.search-box {
-    width: 360px;
+    width: 200px;
 }
 
 /* Icon box bên trái */
@@ -207,6 +207,10 @@ input.form-control:focus {
     --bs-btn-hover-color: #fff;
 }
 
+.header-action-btn svg {
+    width: 18px;
+    height: 18px;
+}
 
 /* ===== FOOTER ===== */
 .footer {
@@ -329,17 +333,33 @@ input.form-control:focus {
 
     <?php if(!$isLoggedIn): ?>
         <!-- Nếu chưa đăng nhập -->
-        <button class="btn btn-outline-primary" onclick="openLogin()">Đăng nhập</button>
+            <button class="btn btn-outline-primary" onclick="openLogin()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-person" viewBox="0 0 16 16">
+                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                    <path d="M14 13c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4"/>
+            </svg>
+        </button>
 
     <?php else: ?>
         <!-- Nếu đã đăng nhập -->
-        <a href="account.php" class="btn btn-outline-primary">
-            Tài khoản (<?= htmlspecialchars($userName) ?>)
+        <a href="account.php" class="btn btn-outline-primary ">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-person" viewBox="0 0 16 16">
+                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                    <path d="M14 13c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4"/>
+            </svg>
+             (<?= htmlspecialchars($userName) ?>)
         </a>
     <?php endif; ?>
 
     <a href="cart.php" class="btn btn-outline-success position-relative">
-        Giỏ hàng
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                 class="bi bi-bag-check" viewBox="0 0 16 16">
+                <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1"/>
+                <path d="M2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>
+            </svg>
+        
         <span id="cartCount" 
             class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
     </a>
