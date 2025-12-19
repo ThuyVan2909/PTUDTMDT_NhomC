@@ -52,7 +52,6 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
 }
 
 
-
 /* ===== ANNOUNCEMENT BAR ===== */
 .announcement-bar {
     background: #1A3D64; /* xanh TechZone */
@@ -83,7 +82,6 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
         transform: translateX(-50%);
     }
 }
-
 
 
 /* ===== HEADER STYLE (TechZone) ===== */
@@ -124,10 +122,10 @@ input.form-control:focus {
     letter-spacing: 0.5px;
 }
 .logo-img {
-    height: 50px;       /* 28–32 là chuẩn */
+    height: 50px;       
     width: auto;
     object-fit: contain;
-    display: block;     /* 🔥 chặn baseline */
+    display: block;   
 }
 .navbar-nav .nav-item {
     position: relative;
@@ -140,7 +138,7 @@ input.form-control:focus {
     transform: translateY(-50%);
     width: 1px;
     height: 18px;
-    background-color: #d0d7e2; /* xám xanh nhẹ */
+    background-color: #d0d7e2; 
 }.search-box {
     min-width: 350px;
 }
@@ -343,7 +341,7 @@ input.form-control:focus {
   <div class="container d-flex align-items-center">
 
   <!-- LEFT: LOGO -->
-     <a class="navbar-brand d-flex align-items-center fw-bold me-4" href="#">
+     <a class="navbar-brand d-flex align-items-center fw-bold me-4" href="index.php">
         <img 
             src="assets/images/logo.png" 
             class="logo-img"
@@ -516,10 +514,10 @@ input.form-control:focus {
       <div class="col-lg-2 col-md-6">
         <h6 class="fw-semibold mb-3">Chính sách</h6>
         <ul class="list-unstyled footer-links">
-          <li><a href="blog\baohanh.php">Chính sách bảo hành</a></li>
-          <li><a href="#">Chính sách đổi trả</a></li>
-          <li><a href="#">Chính sách vận chuyển</a></li>
-          <li><a href="#">Chính sách thanh toán</a></li>
+          <li><a href="/techzone/blog/policies.php#warranty">Chính sách bảo hành</a></li>
+          <li><a href="/techzone/blog/policies.php#return">Chính sách đổi trả</a></li>
+          <li><a href="/techzone/blog/policies.php#shipping">Chính sách vận chuyển</a></li>
+          <li><a href="/techzone/blog/policies.php#payment">Chính sách thanh toán</a></li>
         </ul>
       </div>
 
