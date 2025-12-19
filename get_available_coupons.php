@@ -25,13 +25,15 @@ while ($c = $res->fetch_assoc()) {
     $eligible = $total >= $c['min_order_total'];
 
     $data[] = [
-        'id' => $c['id'],
-        'code' => $c['code'],
-        'discount' => (int)$c['discount_amount'],
-        'min_order' => (int)$c['min_order_total'],
-        'eligible' => $eligible,
-        'reason' => $eligible ? '' : 'Đơn hàng tối thiểu ' . number_format($c['min_order_total']) . ' đ'
-    ];
+    'id' => $c['id'],
+    'code' => $c['code'],
+    'discount' => (int)$c['discount_amount'],
+    'min_order' => (int)$c['min_order_total'],
+    'expired_at' => date('d/m/Y', strtotime($c['expired_at'])),
+    'eligible' => $eligible,
+    'reason' => $eligible ? '' : 'Đơn hàng tối thiểu ' . number_format($c['min_order_total']) . ' đ'
+];
+
 }
 
 echo json_encode([
