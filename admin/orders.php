@@ -26,9 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'], $_POST['s
 $statuses = [
     'Đã đặt',
     'Người bán đang chuẩn bị hàng',
-    'Đang giao hàng',
-    'Đã giao',
-    'Đã hủy'
+    'Đơn vị giao hàng đã nhận hàng',
+    'Hàng đang giao đến nhà bạn',
+    'Đơn hàng đã giao',
+    'Đơn bị huỷ'
 ];
 
 /*
@@ -105,26 +106,27 @@ $result = $conn->query($sql);
                     </td>
 
                     <td>
-                        <form method="POST" class="d-flex gap-2">
-                            <input type="hidden" name="order_id" value="<?= $row['id'] ?>">
+    <form method="POST" class="d-flex gap-2 align-items-center">
+        <input type="hidden" name="order_id" value="<?= $row['id'] ?>">
 
-                            <select name="status" class="form-select form-select-sm">
-                                <?php foreach ($statuses as $st): ?>
-                                    <option value="<?= $st ?>" <?= $st === $row['status'] ? 'selected' : '' ?>>
-                                        <?= $st ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                    </td>
+        <select name="status" class="form-select form-select-sm">
+            <?php foreach ($statuses as $st): ?>
+                <option value="<?= $st ?>" <?= $st === $row['status'] ? 'selected' : '' ?>>
+                    <?= $st ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+</td>
 
-                    <td><?= $row['created_at'] ?></td>
+<td><?= $row['created_at'] ?></td>
 
-                    <td class="text-center">
-                            <button type="submit" class="btn btn-sm btn-primary">
-                                Cập nhật
-                            </button>
-                        </form>
-                    </td>
+<td class="text-center">
+        <button type="submit" class="btn btn-sm btn-primary">
+            Cập nhật
+        </button>
+    </form>
+</td>
+
                 </tr>
             <?php endwhile; ?>
         <?php else: ?>
