@@ -251,6 +251,58 @@ input.form-control:focus {
     color: #fff;
 }
 
+.search-dropdown {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+    z-index: 99999;
+    display: none;
+    padding: 8px 0;
+}
+
+.search-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background .15s ease;
+}
+
+.search-item:hover {
+    background: #f7f7f7;
+}
+
+.search-thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #eee;
+}
+
+.search-info {
+    flex: 1;
+}
+
+.search-name {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.search-price {
+    color: #e30019;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+</style>
+
 
 
 
@@ -314,6 +366,7 @@ input.form-control:focus {
         </ul>
 
          <!-- SEARCH -->
+          <div class="search-wrapper" style="position:relative;">
         <div class="search-box d-flex align-items-center">
             <div class="search-icon-box">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
@@ -321,11 +374,17 @@ input.form-control:focus {
                 </svg>
             </div>
             <input 
-                type="text"
-                class="form-control search-input"
-                placeholder="Bạn đang tìm gì?"
-            >
-        </div>
+            type="text"
+            id="searchInput"
+            class="form-control search-input"
+            placeholder="Bạn đang tìm gì?"
+            autocomplete="off"
+        >
+    </div>
+
+    <!-- DROPDOWN KẾT QUẢ -->
+    <div id="searchDropdown" class="search-dropdown"></div>
+</div>
 
     <?php if(!$isLoggedIn): ?>
         <!-- Nếu chưa đăng nhập -->
@@ -631,6 +690,69 @@ $(document).ready(function(){
 });
 </script>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+let typingTimer;
+const delay = 300;
+
+$("#searchInput").on("keyup", function () {
+    clearTimeout(typingTimer);
+    let keyword = $(this).val().trim();
+
+    if (keyword.length < 2) {
+        $("#searchDropdown").hide();
+        return;
+    }
+
+    typingTimer = setTimeout(() => {
+        $.getJSON("search_suggest.php", { q: keyword }, function (data) {
+            let html = "";
+
+            if (data.length === 0) {
+                html = `<div class="search-empty">Không tìm thấy sản phẩm</div>`;
+            } else {
+                data.forEach(item => {
+                    html += `
+    <div class="search-item" onclick="goProduct(${item.id})">
+        <img 
+            src="${item.image ?? 'assets/no-image.png'}"
+            class="search-thumb"
+        >
+        <div class="search-info">
+            <div class="search-name">
+                ${highlight(item.name, keyword)}
+            </div>
+            <div class="search-price">
+                ${Number(item.price).toLocaleString('vi-VN')}₫
+            </div>
+        </div>
+    </div>
+`;
+
+                });
+            }
+
+            $("#searchDropdown").html(html).show();
+        });
+    }, delay);
+});
+
+function goProduct(id) {
+    window.location.href = "product.php?id=" + id;
+}
+
+function highlight(text, keyword) {
+    const regex = new RegExp(`(${keyword})`, "gi");
+    return text.replace(regex, "<b>$1</b>");
+}
+
+$(document).click(function (e) {
+    if (!$(e.target).closest(".search-wrapper").length) {
+        $("#searchDropdown").hide();
+    }
+});
+</script>
 
 </body>
 </html>

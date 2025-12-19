@@ -9,7 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone    = trim($_POST['phone']);
     $province = intval($_POST['province_id']);
     $district = intval($_POST['district_id']);
-    $address  = trim($_POST['address']);
+    $street = trim($_POST['street']);
+
 
     // Check email tồn tại
     $stmt = $conn->prepare("SELECT id FROM users WHERE email=?");
@@ -20,8 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Email đã tồn tại!";
     } else {
         // Thêm user mới
-        $stmt = $conn->prepare("INSERT INTO users (fullname,email,password,phone,address,province_id,district_id) VALUES (?,?,?,?,?,?,?)");
-        $stmt->bind_param("ssssiii", $fullname, $email, $password, $phone, $address, $province, $district);
+        $stmt = $conn->prepare("INSERT INTO users (fullname,email,password,phone,street,province_id,district_id) VALUES (?,?,?,?,?,?,?)");
+        $stmt->bind_param("ssssiii", $fullname, $email, $password, $phone, $street, $province, $district);
         if ($stmt->execute()) {
             $_SESSION['user_id']   = $stmt->insert_id;
             $_SESSION['user_name'] = $fullname;
@@ -81,6 +82,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Email</label>
                     <input type="email" name="email" class="form-control rounded-3" required>
+                    <div class="mt-2">
+    <div class="progress" style="height: 6px;">
+        <div id="password-strength-bar"
+             class="progress-bar"
+             style="width: 0%;"></div>
+    </div>
+    <small id="password-strength-text" class="fw-semibold"></small>
+</div>
+
                 </div>
 
                 <div class="mb-3">
@@ -110,10 +120,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label fw-semibold">Địa chỉ cụ thể</label>
-                    <input type="text" name="address" class="form-control rounded-3"
-                           placeholder="Số nhà, đường..." required>
-                </div>
+    <label class="form-label fw-semibold">Số nhà, tên đường</label>
+    <input type="text"
+           name="street"
+           class="form-control rounded-3"
+           placeholder="Ví dụ: 123 Lê Lợi"
+           required>
+</div>
+
 
                 <div class="d-grid">
                     <button type="submit"
@@ -156,6 +170,42 @@ $(document).ready(function(){
 
 });
 </script>
+<script>
+$('#password').on('input', function () {
+    const password = $(this).val();
+    const bar = $('#password-strength-bar');
+    const text = $('#password-strength-text');
+
+    let strength = 0;
+
+    if (password.length >= 8) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+    bar.removeClass('strength-weak strength-medium strength-strong');
+
+    if (password.length === 0) {
+        bar.css('width', '0%');
+        text.text('');
+        return;
+    }
+
+    if (strength <= 1) {
+        bar.addClass('strength-weak').css('width', '33%');
+        text.text('Yếu').css('color', '#dc3545');
+    } 
+    else if (strength <= 3) {
+        bar.addClass('strength-medium').css('width', '66%');
+        text.text('Trung bình').css('color', '#ffc107');
+    } 
+    else {
+        bar.addClass('strength-strong').css('width', '100%');
+        text.text('Mạnh').css('color', '#28a745');
+    }
+});
+</script>
+
 
 
 </body>
