@@ -48,6 +48,9 @@ $sku_res = $conn->query("
 <html>
 <head>
 <title>Edit Product</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
 <style>
 body { 
@@ -142,6 +145,58 @@ img {
     max-height:90%; 
     overflow:auto;
 }
+
+.card {
+    border: none;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+}
+
+pre {
+    background: #f8f9fa;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.table thead th{
+    background:#1A3D64 !important;
+    color:#fff !important;
+    font-weight:700;
+    text-transform: uppercase;
+    border:none;
+    padding:14px 12px;
+    text-align:center;
+}
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+    border: #0f3e57;
+}
+
+.table-bordered > :not(caption) > * > * {
+    border-width: 1px;
+    border-color: #dee2e6;
+}
+
+.spu-card {
+    border-left: 6px solid #1A3D64;
+}
+
+.spu-header h2 {
+    color: #1A3D64;
+    font-weight: 700;
+}
+
+.spu-header i {
+    margin-right: 6px;
+}
+.form-control:focus {
+    border-color: #1A3D64;
+    box-shadow: 0 0 0 0.15rem rgba(26, 61, 100, 0.25);
+}
 </style>
 
 </head>
@@ -149,46 +204,75 @@ img {
 <body>
 
 <!-- ======================== SPU CARD =========================== -->
-<div class="card">
-<h2>Chỉnh sửa SPU sản phẩm</h2>
+<div class="card spu-card">
+    <div class="spu-header mb-4">
+        <h2 class="mb-0">
+            <i class="bi bi-box-seam"></i> Chỉnh sửa SPU sản phẩm
+        </h2>
+        <small class="text-muted">Thông tin chung của sản phẩm</small>
+    </div>
 
-<form method="post">
+    <form method="post" class="row g-3">
 
-    <label>Tên sản phẩm</label><br>
-    <input type="text" name="name" value="<?= $spu['name'] ?>" style="width:350px"><br><br>
+        <div class="col-md-6">
+            <label class="form-label">Tên sản phẩm</label>
+            <input type="text" name="name" class="form-control"
+                   value="<?= htmlspecialchars($spu['name']) ?>">
+        </div>
 
-    <label>Thương hiệu</label><br>
-    <input type="text" name="brand" value="<?= $spu['brand'] ?>" style="width:350px"><br><br>
+        <div class="col-md-6">
+            <label class="form-label">Thương hiệu</label>
+            <input type="text" name="brand" class="form-control"
+                   value="<?= htmlspecialchars($spu['brand']) ?>">
+        </div>
 
-    <label>Category ID</label><br>
-    <input type="number" name="category_id" value="<?= $spu['category_id'] ?>"><br><br>
+        <div class="col-md-4">
+            <label class="form-label">Category ID</label>
+            <input type="number" name="category_id" class="form-control"
+                   value="<?= $spu['category_id'] ?>">
+        </div>
 
-    <label>Mô tả</label><br>
-    <textarea name="description" rows="4" style="width:450px"><?= $spu['description'] ?></textarea><br><br>
+        <div class="col-md-12">
+            <label class="form-label">Mô tả</label>
+            <textarea name="description" rows="4"
+                      class="form-control"><?= htmlspecialchars($spu['description']) ?></textarea>
+        </div>
 
-    <button class="btn" type="submit">Lưu SPU</button>
-</form>
+        <div class="col-md-12">
+            <button class="btn btn-primary px-4">
+                <i class="bi bi-save"></i> Lưu SPU
+            </button>
+        </div>
+
+    </form>
 </div>
-
 <!-- ======================== SKU CARD =========================== -->
 
 <div class="card">
-<h2>Danh sách SKU</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Danh sách SKU</h2>
 
-<a class="btn-small btn" href="sku_add.php?spu_id=<?= $spu_id ?>">+ Thêm SKU</a>
+        <a href="sku_add.php?spu_id=<?= $spu_id ?>"
+           class="btn btn-success btn-sm">
+            <i class="bi bi-plus-circle"></i> Thêm SKU
+        </a>
+    </div>
 
-<table>
-    <tr>
-        <th>Ảnh</th>
-        <th>ID</th>
-        <th>SKU Code</th>
-        <th>Variant</th>
-        <th>Giá</th>
-        <th>Giá ưu đãi</th>
-        <th>Stock</th>
-        <th>Kho</th>
-        <th>Hành động</th>
-    </tr>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Ảnh</th>
+            <th>ID</th>
+            <th>SKU Code</th>
+            <th>Variant</th>
+            <th>Giá</th>
+            <th>Giá ưu đãi</th>
+            <th>Stock</th>
+            <th>Kho</th>
+            <th width="140">Hành động</th>
+        </tr>
+        </thead>
 
 <?php while ($sku = $sku_res->fetch_assoc()) { ?>
     <tr>
@@ -201,9 +285,17 @@ img {
         <td><?= $sku['stock'] ?></td>
         <td><?= $sku['warehouse_location'] ?></td>
         <td>
-            <span class="link-btn" onclick="openModal('sku_edit_popup.php?id=<?= $sku['id'] ?>')">Edit</span> |
-            <span class="link-btn" onclick="openModal('sku_images_popup.php?sku_id=<?= $sku['id'] ?>')">Images</span>
+            <button class="btn btn-sm btn-outline-primary me-1"
+                    onclick="openModal('sku_edit_popup.php?id=<?= $sku['id'] ?>')">
+                <i class="bi bi-pencil"></i>
+            </button>
+
+            <button class="btn btn-sm btn-outline-secondary"
+                    onclick="openModal('sku_images_popup.php?sku_id=<?= $sku['id'] ?>')">
+                <i class="bi bi-images"></i>
+            </button>
         </td>
+
     </tr>
 <?php } ?>
 </table>

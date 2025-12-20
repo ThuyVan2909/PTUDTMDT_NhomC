@@ -27,6 +27,7 @@ $spus = $conn->query("SELECT * FROM spu");
 <head>
 <meta charset="UTF-8">
 <title>Danh sách sản phẩm</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Bootstrap 5 -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -96,14 +97,15 @@ body {
 }
 
 /* Header */
-.table thead th {
-    background: linear-gradient(135deg, #1A3D64, #274f85);
-    color: #fff;
-    font-weight: 600;
+
+.table thead th{
+    background:#1A3D64 !important;
+    color:#fff !important;
+    font-weight:700;
     text-transform: uppercase;
-    font-size: 13px;
-    border: none;
-    vertical-align: middle;
+    border:none;
+    padding:14px 12px;
+    text-align:center;
 }
 
 /* Body */
@@ -159,6 +161,10 @@ body {
     background: #1A3D64;
 }
 
+.btn-action i {
+    font-weight: 900;      /* in đậm */
+    font-size: 15px;       /* to hơn chút */
+}
 </style>
 </head>
 <body>
@@ -184,8 +190,6 @@ body {
 </div>
 
  <!-- TABLE -->
-    <div class="card shadow-sm border-0">
-        <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead>
@@ -222,7 +226,7 @@ body {
                             <td>
                                 <a href="product_detail.php?id=<?= $spu['id'] ?>" 
                                    class="btn btn-sm btn-outline-primary btn-action">
-                                    <i class="bi bi-eye"></i>
+                                    <i class="bi bi-eye "></i>
                                 </a>
 
                                 <a href="product_edit.php?id=<?= $spu['id'] ?>" 

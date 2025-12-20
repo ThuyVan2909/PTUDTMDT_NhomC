@@ -5,29 +5,96 @@ $id = intval($_GET['id']);
 $sku = $conn->query("SELECT * FROM sku WHERE id=$id")->fetch_assoc();
 ?>
 
-<h3>Edit SKU #<?= $id ?></h3>
 
-<form method="post" action="sku_edit.php">
+
+<style>
+/* ===== SKU POPUP FORM ===== */
+.sku-form {
+    font-size: 14px;
+}
+
+.sku-form .form-label {
+    font-weight: 600;
+    color: #1A3D64;
+}
+
+.sku-form .form-control:focus {
+    border-color: #1A3D64;
+    box-shadow: 0 0 0 0.15rem rgba(26, 61, 100, 0.25);
+}
+
+.variant-box {
+    font-family: monospace;
+    background: #f8f9fa;
+}
+
+h3.text-primary {
+    color: #1A3D64 !important;
+    font-weight: 700;
+}
+
+</style>
+<h3 class="mb-3 text-primary">
+    <i class="bi bi-pencil-square"></i> Chỉnh sửa SKU #<?= $id ?>
+</h3>
+
+<form method="post" action="sku_edit.php" class="sku-form">
     <input type="hidden" name="id" value="<?= $id ?>">
 
-    SKU Code:<br>
-    <input type="text" name="sku_code" value="<?= $sku['sku_code'] ?>" style="width:100%"><br><br>
+    <div class="mb-3">
+        <label class="form-label">SKU Code</label>
+        <input type="text" name="sku_code"
+               class="form-control"
+               value="<?= htmlspecialchars($sku['sku_code']) ?>">
+    </div>
 
-    Variant (JSON):<br>
-    <textarea name="variant" style="width:100%;height:80px"><?= $sku['variant'] ?></textarea><br><br>
+    <div class="mb-3">
+        <label class="form-label">Variant (JSON)</label>
+        <textarea name="variant"
+                  class="form-control variant-box"
+                  rows="4"><?= htmlspecialchars($sku['variant']) ?></textarea>
+    </div>
 
-    Price:<br>
-    <input type="number" name="price" value="<?= $sku['price'] ?>"><br><br>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Giá</label>
+            <input type="number" name="price"
+                   class="form-control"
+                   value="<?= $sku['price'] ?>">
+        </div>
 
-    Promo Price:<br>
-    <input type="number" name="promo_price" value="<?= $sku['promo_price'] ?>"><br><br>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Giá ưu đãi</label>
+            <input type="number" name="promo_price"
+                   class="form-control"
+                   value="<?= $sku['promo_price'] ?>">
+        </div>
+    </div>
 
-    Stock:<br>
-    <input type="number" name="stock" value="<?= $sku['stock'] ?>"><br><br>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Tồn kho</label>
+            <input type="number" name="stock"
+                   class="form-control"
+                   value="<?= $sku['stock'] ?>">
+        </div>
 
-    Warehouse:<br>
-    <input type="text" name="warehouse_location" value="<?= $sku['warehouse_location'] ?>" style="width:100%"><br><br>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Kho hàng</label>
+            <input type="text" name="warehouse_location"
+                   class="form-control"
+                   value="<?= htmlspecialchars($sku['warehouse_location']) ?>">
+        </div>
+    </div>
 
-    <button type="submit">Save</button>
-    <button type="button" onclick="closeModal()">Close</button>
+    <div class="d-flex justify-content-end gap-2 mt-4">
+        <button type="button" class="btn btn-outline-secondary"
+                onclick="closeModal()">
+            <i class="bi bi-x-circle"></i> Đóng
+        </button>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save"></i> Lưu SKU
+        </button>
+    </div>
 </form>
