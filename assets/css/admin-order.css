@@ -1,0 +1,136 @@
+
+.order-table{
+    background:#fff;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+}
+
+/* HEADER */
+.order-table thead th{
+    background:#1A3D64 !important;
+    color:#fff !important;
+    font-weight:700;
+    border:none;
+    padding:14px 12px;
+    text-align:center;
+}
+
+/* CELL */
+.order-table tbody td{
+    padding:14px 12px;
+    vertical-align:middle;
+    border-top:1px solid #e9eef5;
+}
+
+/* ===== XEN KẼ ===== */
+.order-table tbody tr:nth-child(odd) td{
+    background:#f4f7fb !important;
+}
+
+.order-table tbody tr:nth-child(even) td{
+    background:#ffffff !important;
+}
+
+/* ===== HOVER ===== */
+.order-table tbody tr:hover td{
+    background:#e6effa !important;
+    transition:background .2s ease;
+}
+
+/* ===============================
+   BUTTON CẬP NHẬT
+================================ */
+
+.order-table .btn-primary{
+    background:#1A3D64 !important;
+    border-color:#1A3D64 !important;
+    font-weight:700 !important;
+    padding:6px 16px;
+    border-radius:10px;
+}
+
+.order-table .btn-primary:hover{
+    background:#163456 !important;
+    border-color:#163456 !important;
+    box-shadow:0 6px 14px rgba(26,61,100,.25);
+}
+/* ===== STATUS FORM ===== */
+.status-form {
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px;
+    border-left: 5px solid #ccc;
+    transition: all .25s ease;
+}
+
+.status-label {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+/* ===== BUTTON ===== */
+.btn-update {
+    background: #1a73e8;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+}
+
+.btn-update:hover {
+    background: #1558b0;
+}
+
+.status-select {
+    font-weight: 600;
+    color: #fff;
+    border-radius: 8px;
+}
+
+/* ===== STATUS COLORS ===== */
+.st-new {
+    background: #e3f2fd;
+    color: #0d47a1;
+}
+
+.st-preparing {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.st-picked {
+    background: #ede7f6;
+    color: #4527a0;
+}
+
+.st-shipping {
+    background: #e0f7fa;
+    color: #006064;
+}
+
+.st-done {
+    background: #e8f5e9;
+    color: #1b5e20;
+}
+
+.st-cancel {
+    background: #fae4e2;
+    color: #b71c1c;
+}
+
+
+/* giữ màu khi focus */
+.status-select {
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.status-select:focus {
+    box-shadow: none;
+    border-color: transparent;
+}
+.status-select option {
+    background: #fff;
+    color: #212529;
+}

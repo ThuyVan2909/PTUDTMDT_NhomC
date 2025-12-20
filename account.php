@@ -56,31 +56,32 @@ $user = $conn->query("SELECT * FROM users WHERE id = $user_id")->fetch_assoc();
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="user-box mb-4 d-flex align-items-center">
-            <div class="user-avatar">
-                <?= strtoupper(substr($user['fullname'], 0, 1)) ?>
-            </div>
-            <div class="ms-3">
-                <div class="user-name"><?= $user['fullname'] ?></div>
-            </div>
-    </div>
+    <div class="user-box mb-4 d-flex align-items-center">
+        <div class="user-avatar">
+            <?= strtoupper(substr($user['fullname'], 0, 1)) ?>
+        </div>
+        <div class="ms-3">
+            <div class="user-name"><?= $user['fullname'] ?></div>
+        </div>
+    </div> <!-- ✅ ĐÓNG user-box -->
 
-       <?php $tabActive = $_GET['tab'] ?? 'profile'; ?>
+    <?php $tabActive = $_GET['tab'] ?? 'profile'; ?>
 
-        <a href="?tab=profile" class="<?= $tabActive=='profile'?'active':'' ?>">
-    Thông tin tài khoản
-        </a>
-        <a href="?tab=address" class="<?= $tabActive=='address'?'active':'' ?>">
-    Địa chỉ
-        </a>
-        <a href="?tab=orders" class="<?= $tabActive=='orders'?'active':'' ?>">
-    Quản lý đơn hàng
-        </a>
-        <a href="?tab=history" class="<?= $tabActive=='history'?'active':'' ?>">
-    Sản phẩm đã xem
-        </a>
-        <a href="logout.php" class="logout">Đăng xuất</a>
-    </div>
+    <a href="?tab=profile" class="<?= $tabActive=='profile'?'active':'' ?>">
+        Thông tin tài khoản
+    </a>
+    <a href="?tab=address" class="<?= $tabActive=='address'?'active':'' ?>">
+        Địa chỉ
+    </a>
+    <a href="?tab=orders" class="<?= $tabActive=='orders'?'active':'' ?>">
+        Quản lý đơn hàng
+    </a>
+    <a href="?tab=history" class="<?= $tabActive=='history'?'active':'' ?>">
+        Sản phẩm đã xem
+    </a>
+    <a href="logout.php" class="logout">Đăng xuất</a>
+</div>
+
 
     <!-- CONTENT -->
     <div class="flex-fill p-4">
@@ -272,13 +273,56 @@ document.getElementById("saveAddress").addEventListener("click",function(){
     }
 
     echo "<h3 class='fw-bold mb-3'>Chi tiết đơn hàng #$order_id</h3>";
+echo "<p><strong>Trạng thái:</strong> " . htmlspecialchars($order['status']) . "</p>";
+echo "<p><strong>Tổng tiền:</strong> " . number_format($order['total']) . "₫</p>";
+echo "<p><strong>Ngày tạo:</strong> {$order['created_at']}</p>";
 
-    echo "<p><strong>Trạng thái:</strong> {$order['status']}</p>";
-    echo "<p><strong>Tổng tiền:</strong> " . number_format($order['total']) . "₫</p>";
-    echo "<p><strong>Ngày tạo:</strong> {$order['created_at']}</p>";
+$statusSteps = [
+    'Đã đặt' => 1,
+    'Người bán đang chuẩn bị hàng' => 2,
+    'Đơn vị giao hàng đã nhận hàng' => 3,
+    'Hàng đang giao đến nhà bạn' => 4,
+    'Đơn hàng đã giao' => 5
+];
 
-    // Lấy danh sách sản phẩm
-    $stmt = $conn->prepare("
+$currentStep = $statusSteps[$order['status']] ?? 1;
+$isCanceled = ($order['status'] === 'Đơn bị huỷ');
+?>
+<?php if ($isCanceled): ?>
+    <div class="alert alert-danger fw-semibold mt-3">
+        Đơn hàng đã bị huỷ
+    </div>
+<?php else: ?>
+    <div class="order-tracking mt-4 mb-4">
+        <div class="tracking-steps">
+            <div class="step <?= $currentStep >= 1 ? 'active' : '' ?>">
+                <div class="circle">1</div>
+                <div class="label">Đã đặt</div>
+            </div>
+            <div class="step <?= $currentStep >= 2 ? 'active' : '' ?>">
+                <div class="circle">2</div>
+                <div class="label">Chuẩn bị hàng</div>
+            </div>
+            <div class="step <?= $currentStep >= 3 ? 'active' : '' ?>">
+                <div class="circle">3</div>
+                <div class="label">Đã giao ĐVVC</div>
+            </div>
+            <div class="step <?= $currentStep >= 4 ? 'active' : '' ?>">
+                <div class="circle">4</div>
+                <div class="label">Đang giao</div>
+            </div>
+            <div class="step <?= $currentStep >= 5 ? 'active' : '' ?>">
+                <div class="circle">5</div>
+                <div class="label">Hoàn tất</div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+
+
+
+<?php
+$stmt = $conn->prepare("
     SELECT 
         oi.*,
         s.variant,
@@ -292,10 +336,10 @@ document.getElementById("saveAddress").addEventListener("click",function(){
     WHERE oi.order_id = ?
 ");
 
+$stmt->bind_param("i", $order_id);
+$stmt->execute();
+$items = $stmt->get_result();
 
-    $stmt->bind_param("i", $order_id);
-    $stmt->execute();
-    $items = $stmt->get_result();
 
     echo "<h5 class='mt-4'>Sản phẩm trong đơn</h5>";
     echo "<table class='table table-bordered'>";
