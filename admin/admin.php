@@ -60,6 +60,8 @@ $view = $_GET['view'] ?? 'dashboard';
     <a href="admin.php?view=orders">Quản lý đơn hàng</a>
     <a href="admin.php?view=users">Quản lý tài khoản</a>
     <a href="admin.php?view=coupons">Quản lý voucher</a>
+    <a href="admin.php?view=banners">Quản lý banner</a>
+
 </div>
 
 <div class="content">
@@ -77,7 +79,9 @@ else if ($view === 'users') {
 else if ($view === 'coupons') {
     include "coupons.php";
 }
-
+else if ($view === 'banners') {
+    include "banner.php";
+}
 else {
 
 
