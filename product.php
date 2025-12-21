@@ -1,9 +1,8 @@
 <?php include 'partials/announcement-bar.php'; ?>
-
 <?php include 'partials/header.php'; ?>
 <?php
 // TRANG PRODUCT DETAIL KHI CLICK VAO 1 SẢN PHẨM
-session_start();
+
 include 'db.php';
 $spu_id = isset($_GET['spu_id']) ? intval($_GET['spu_id']) : 0;
 if (!$spu_id) { echo "Product not found"; exit; }
@@ -11,6 +10,34 @@ if (!$spu_id) { echo "Product not found"; exit; }
 $spu = $conn->query("SELECT * FROM spu WHERE id = $spu_id LIMIT 1")->fetch_assoc();
 if (!$spu) { echo "SPU không tồn tại"; exit; }
 
+// ===============================
+// RATING DATA
+// ===============================
+$ratingSummary = $conn->query("
+    SELECT 
+        COUNT(*) AS total_reviews,
+        ROUND(AVG(rating), 1) AS avg_rating
+    FROM product_reviews
+    WHERE spu_id = $spu_id
+")->fetch_assoc();
+
+$totalReviews = (int)$ratingSummary['total_reviews'];
+$avgRating    = $ratingSummary['avg_rating'] ?? 0;
+
+// distribution 1–5 sao
+$ratingDist = [];
+$res = $conn->query("
+    SELECT rating, COUNT(*) cnt
+    FROM product_reviews
+    WHERE spu_id = $spu_id
+    GROUP BY rating
+");
+while ($r = $res->fetch_assoc()) {
+    $ratingDist[(int)$r['rating']] = (int)$r['cnt'];
+}
+for ($i = 1; $i <= 5; $i++) {
+    if (!isset($ratingDist[$i])) $ratingDist[$i] = 0;
+}
 
 // ===============================
 // GHI LỊCH SỬ SẢN PHẨM ĐÃ XEM
@@ -257,6 +284,101 @@ body { font-family: Arial; background: #f7f7f7; margin: 0; }
     font-weight: 500;
 }
 
+:root {
+    --primary-blue: #0d6efd;
+    --primary-blue-dark: #0b5ed7;
+}
+
+/* ========================= */
+/* BUY BUTTON                */
+/* ========================= */
+#buyNowBtn {
+    background: var(--primary-blue);
+}
+#buyNowBtn:hover {
+    background: var(--primary-blue-dark);
+}
+
+/* ========================= */
+/* RATING FULL WIDTH         */
+/* ========================= */
+.rating-full {
+    width: 100%;
+    background: #f8f9fa;
+    padding: 40px 0;
+    margin-top: 50px;
+}
+
+.rating-inner {
+    width: 1200px;
+    margin: auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+}
+
+/* TITLE */
+.rating-inner h3 {
+    color: var(--primary-blue);
+    font-weight: 700;
+}
+
+/* SUMMARY */
+.rating-score {
+    font-size: 48px;
+    font-weight: bold;
+    color: var(--primary-blue);
+}
+
+.rating-sub {
+    color: #555;
+}
+
+/* DISTRIBUTION BAR */
+.rating-bar {
+    background: #e9ecef;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.rating-bar-fill {
+    height: 100%;
+    background: var(--primary-blue);
+}
+
+/* STAR COLOR */
+.star {
+    color: var(--primary-blue);
+}
+
+/* REVIEW ITEM */
+.review-item {
+    padding: 18px 0;
+    border-bottom: 1px solid #eee;
+}
+.review-user {
+    font-weight: 600;
+}
+.review-date {
+    color: #999;
+    font-size: 13px;
+}
+
+/* ADD REVIEW BUTTON */
+.add-review-btn {
+    background: var(--primary-blue);
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+.add-review-btn:hover {
+    background: var(--primary-blue-dark);
+}
+
+
+
 </style>
 
 </head>
@@ -364,6 +486,90 @@ $fixedImages = array_map(function($p) {
     </div>
 
 </div>
+
+<!-- =============================== -->
+<!-- PRODUCT RATING SECTION         -->
+<!-- =============================== -->
+<div class="rating-full">
+    <div class="rating-inner">
+        <h3>Đánh giá <?= htmlspecialchars($spu['name']) ?></h3>
+
+        <!-- SUMMARY -->
+        <div style="display:flex; align-items:center; gap:15px; margin:15px 0;">
+            <div style="font-size:42px; font-weight:bold;">
+                <?= number_format($avgRating,1) ?>
+            </div>
+            <div>
+                <div style="font-size:18px;">/5</div>
+                <div style="color:#666;">
+                    <?= $totalReviews ?> lượt đánh giá
+                </div>
+            </div>
+        </div>
+
+        <!-- DISTRIBUTION -->
+        <?php for ($i = 5; $i >= 1; $i--): ?>
+            <div style="display:flex; align-items:center; gap:10px; margin:8px 0;">
+                <div style="width:45px;"><?= $i ?> ⭐</div>
+                <div style="flex:1; background:#eee; height:8px; border-radius:4px;">
+                    <?php
+                    $percent = $totalReviews > 0
+                        ? ($ratingDist[$i] / $totalReviews) * 100
+                        : 0;
+                    ?>
+                    <div style="width:<?= $percent ?>%; height:100%; background:#ffc107;"></div>
+                </div>
+
+                <div style="width:100px; text-align:right;">
+                    <?= $ratingDist[$i] ?> đánh giá
+                </div>
+            </div>
+        <?php endfor; ?>
+
+        <!-- REVIEW LIST -->
+        <div style="margin-top:30px;">
+            <div style="display:flex; justify-content:flex-end; margin-bottom:15px;">
+    <button class="add-review-btn">
+        + Thêm nhận xét
+    </button>
+</div>
+
+            <h4>Nhận xét của khách hàng</h4>
+
+            <?php
+            $reviews = $conn->query("
+                SELECT r.*, u.fullname
+                FROM product_reviews r
+                LEFT JOIN users u ON r.user_id = u.id
+                WHERE r.spu_id = $spu_id
+                ORDER BY r.created_at DESC
+            ");
+            ?>
+
+            <?php while ($rv = $reviews->fetch_assoc()): ?>
+                <div style="border-bottom:1px solid #eee; padding:18px 0;">
+                    <strong><?= htmlspecialchars($rv['fullname'] ?? 'Khách hàng') ?></strong>
+                    <div style="color:#ffc107;">
+                        <span class="star">
+    <?= str_repeat('★', $rv['rating']) ?>
+</span>
+
+                    </div>
+                    <p style="margin:8px 0;">
+                        <?= nl2br(htmlspecialchars($rv['comment'])) ?>
+                    </p>
+                    <small style="color:#999;">
+                        Đánh giá đã đăng vào <?= date("d/m/Y", strtotime($rv['created_at'])) ?>
+                    </small>
+                </div>
+            <?php endwhile; ?>
+
+        </div>
+
+    </div>
+</div>
+
+
 
 <script>
 const DEFAULT_SKU_ID = <?= (int)$defaultSkuId ?>;

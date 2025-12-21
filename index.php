@@ -306,7 +306,30 @@ input.form-control:focus {
 }
 
 
-</style>
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #e30019;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    z-index: 2;
+}
+
+.rating-box {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: #fff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+
 
 
 
