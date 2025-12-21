@@ -1,8 +1,24 @@
 <?php
 $conn = new mysqli("localhost","root","","lendly_db");
+// LEFT BANNERS (3 fixed)
+$leftBanners = $conn->query("
+    SELECT * FROM banners
+    WHERE is_active = 1 AND position = 'left'
+    ORDER BY sort_order ASC
+    LIMIT 3
+");
+
+// TOP BANNERS (slider)
+$topBanners = $conn->query("
+    SELECT * FROM banners
+    WHERE is_active = 1 AND position = 'top'
+    ORDER BY sort_order ASC
+");
+
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
 $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
+// LOAD LEFT BANNERS
 
 
 
@@ -37,6 +53,12 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
         
 /* Highlight khi scroll đến */
 /* Highlight viền card với fade */
+.product-img {
+    height: 240px;           /* 👈 tăng chiều cao */
+    object-fit: contain;
+    padding: 12px;
+}
+
 .product-highlight {
     position: relative;
     border: 2px solid #e30019;
@@ -321,8 +343,8 @@ input.form-control:focus {
 
 .rating-box {
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: 14px;
+    right: 14px;
     background: #fff;
     padding: 4px 8px;
     border-radius: 6px;
@@ -330,16 +352,130 @@ input.form-control:focus {
     box-shadow: 0 2px 8px rgba(0,0,0,.15);
 }
 
+body {
+    font-family: Arial;
+}
+
+/* LOGIN POPUP */
+.login-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.login-box {
+    background: white;
+    padding: 25px;
+    width: 350px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.login-box input {
+    width: 100%;
+    margin: 8px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.login-submit {
+    width: 100%;
+    padding: 10px;
+    background: #135071;
+    color: white;
+    border: none;
+    border-radius: 6px;
+}
+
+.close-btn {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+/* ===== LEFT FIXED BANNERS ===== */
+.left-fixed-banners {
+    position: sticky;
+    top: 90px; /* dính dưới header */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.left-fixed-banners a {
+    display: block;
+    width: 100%;
+    height: 550px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,.15);
+}
+
+
+.left-fixed-banners img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+/* ===== TOP BANNER SLIDER ===== */
+.top-banner-slider {
+    position: relative;
+    height: 380px;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.top-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity .8s ease;
+}
+
+.top-slide.active {
+    opacity: 1;
+    z-index: 2;
+}
+
+.top-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.product-card {
+    min-height: 320px;      /* 👈 chỉnh cao tại đây */
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+}   
+
+.product-card .card-body {
+    flex: 1;
+}
+.product-img {
+    height: 200px;
+    width: 200px;
+    object-fit: contain;
+    display: block;        /* 👈 bắt buộc */
+    margin: 0 auto;        /* 👈 CĂN GIỮA NGANG */
+    padding: 5px;
+}
 
 
 
 
 </style>
 
-
-
-
-    
 </head>
 <body class="bg-light">
 
@@ -358,7 +494,6 @@ input.form-control:focus {
   </div>
 </div>
 
-
 <!-- HEADER -->
 <nav class="navbar navbar-expand-lg border-bottom">
   <div class="container d-flex align-items-center">
@@ -371,8 +506,6 @@ input.form-control:focus {
             alt="TechZone Logo"
         >
     </a>
-
-
 
     <!-- RIGHT: MENU + SEARCH + ACTIONS -->
     <div class="d-flex align-items-center gap-4 ms-auto">
@@ -446,52 +579,75 @@ input.form-control:focus {
 
   </div>
 </nav>
+<!-- ===== TOP BANNER SLIDER ===== -->
+<div class="container my-3">
+    <div class="top-banner-slider">
+
+        <?php while($b = $topBanners->fetch_assoc()): ?>
+            <a href="<?= $b['link'] ?>" class="top-slide">
+                <img src="<?= $b['image_url'] ?>" alt="<?= $b['title'] ?>">
+            </a>
+        <?php endwhile; ?>
+
+    </div>
+</div>
+
 
 
 
 <div class="container py-4">
+  <div class="row">
 
-  <!-- LAPTOP -->
-<section id="laptop-section">
-    <h2 class="fw-bold mb-3">Laptop</h2>
-    <div class="d-flex gap-2 mb-2">
-        <button class="btn btn-outline-primary laptop-cat active-filter" data-id="">Tất cả</button>
-        <?php while($c=$laptop_categories->fetch_assoc()): ?>
-            <button class="btn btn-outline-primary laptop-cat" data-id="<?= $c['id'] ?>"><?= $c['name'] ?></button>
-        <?php endwhile; ?>
-    </div>
-    
-    <div id="laptop-products" class="row g-3"></div>
-</section>
-
-
-
-
-<!-- ĐIỆN THOẠI -->
-<section id="phone-section">
-    <h2 class="fw-bold mt-5 mb-3">Điện thoại</h2>
-
-    <!-- Category cha + con -->
-    <div class="d-flex gap-2 mb-4">
-        <button class="btn btn-outline-primary phone-cat phone-cat-all" data-id="">Điện thoại</button>
-
-
-        <?php while($c=$phone_categories->fetch_assoc()): ?>
-            <button class="btn btn-outline-primary phone-cat" data-id="<?= $c['id'] ?>">
-                <?= $c['name'] ?>
-            </button>
-        <?php endwhile; ?>
+    <!-- LEFT FIXED BANNERS -->
+    <div class="col-lg-2 d-none d-lg-block left-col">
+        <div class="left-fixed-banners">
+            <?php while($b = $leftBanners->fetch_assoc()): ?>
+                <a href="<?= $b['link'] ?>" class="left-banner">
+                    <img src="<?= $b['image_url'] ?>" alt="<?= $b['title'] ?>">
+                </a>
+            <?php endwhile; ?>
+        </div>
     </div>
 
-    <!-- XOÁ PHẦN BRAND (không dùng nữa) -->
+    <!-- MAIN CONTENT -->
+    <div class="col-lg-10">
+            <!-- LAPTOP -->
+            <section id="laptop-section">
+                <h2 class="fw-bold mb-3">Laptop</h2>
+                <div class="d-flex gap-2 mb-2">
+                    <button class="btn btn-outline-primary laptop-cat active-filter" data-id="">Tất cả</button>
+                    <?php while($c=$laptop_categories->fetch_assoc()): ?>
+                        <button class="btn btn-outline-primary laptop-cat" data-id="<?= $c['id'] ?>">
+                            <?= $c['name'] ?>
+                        </button>
+                    <?php endwhile; ?>
+                </div>
 
-    <div id="phone-products" class="row g-3"></div>
-</section>
+                <div id="laptop-products" class="row g-3"></div>
+            </section>
 
+            <!-- ĐIỆN THOẠI -->
+            <section id="phone-section">
+                <h2 class="fw-bold mt-5 mb-3">Điện thoại</h2>
 
+                <div class="d-flex gap-2 mb-4">
+                    <button class="btn btn-outline-primary phone-cat phone-cat-all" data-id="">
+                        Điện thoại
+                    </button>
+                    <?php while($c=$phone_categories->fetch_assoc()): ?>
+                        <button class="btn btn-outline-primary phone-cat" data-id="<?= $c['id'] ?>">
+                            <?= $c['name'] ?>
+                        </button>
+                    <?php endwhile; ?>
+                </div>
 
+                <div id="phone-products" class="row g-3"></div>
+            </section>
 
+        </div>
+    </div>
 </div>
+
 
 <!-- LOGIN MODAL -->
 <div id="loginModal" class="login-modal">
@@ -790,6 +946,21 @@ $(document).click(function (e) {
     if (!$(e.target).closest(".search-wrapper").length) {
         $("#searchDropdown").hide();
     }
+});
+</script>
+<script>
+$(document).ready(function(){
+    let slides = $(".top-slide");
+    if (slides.length <= 1) return;
+
+    let i = 0;
+    slides.eq(0).addClass("active");
+
+    setInterval(() => {
+        slides.eq(i).removeClass("active");
+        i = (i + 1) % slides.length;
+        slides.eq(i).addClass("active");
+    }, 4000);
 });
 </script>
 

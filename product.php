@@ -554,7 +554,7 @@ $fixedImages = array_map(function($p) {
         <div style="margin-top:30px;">
             <div style="display:flex; justify-content:flex-end; margin-bottom:15px;">
     <button class="add-review-btn" id="openReviewModal">
-    + Thêm nhận xét
+    Thêm đánh giá
 </button>
 
 </div>
@@ -568,9 +568,6 @@ $fixedImages = array_map(function($p) {
 </div>
 
 <div id="reviewList"></div>
-
-            <h4>Nhận xét của khách hàng</h4>
-
             <?php
             $reviews = $conn->query("
                 SELECT r.*, u.fullname

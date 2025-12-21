@@ -2,7 +2,6 @@
 <?php include 'partials/header.php'; ?>
 <?php
 // TRANG BLOG DETAIL KHI CLICK VAO 1 BAI VIET
-session_start();
 include 'db.php';
 $blog_id = isset($_GET['blog_id']) ? intval($_GET['blog_id']) : 0;
 if (!$blog_id) { echo "Blog post not found"; exit; }

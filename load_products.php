@@ -109,16 +109,13 @@ if ($origin > 0 && $final < $origin) {
     // HTML hiển thị sản phẩm
     // THÊM ID CHO MỖI PRODUCT → scroll chính xác
     $html .= "
-    <div class='col-md-3 mb-4' id='product-{$spu['id']}'>
+    <div class='col-md-3 mb-4 product-col' id='product-{$spu['id']}'>
         <a href='product.php?spu_id={$spu['id']}' class='text-decoration-none text-dark'>
-            <div class='card h-100 shadow-sm position-relative'>
-
+            <div class='card product-card h-100 shadow-sm position-relative'>
                 ".($discountPercent > 0 ? "
                     <div class='discount-badge'>-{$discountPercent}%</div>
                 " : "")."
-
-                <img src='{$img}' class='card-img-top' style='height:180px;object-fit:contain'>
-
+                <img src='{$img}' class='card-img-top product-img'>
                 <div class='card-body'>
                     <h6 class='card-title'>{$spu['brand']} {$spu['name']}</h6>
 
