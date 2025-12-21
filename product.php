@@ -9,6 +9,28 @@ if (!$spu_id) { echo "Product not found"; exit; }
 
 $spu = $conn->query("SELECT * FROM spu WHERE id = $spu_id LIMIT 1")->fetch_assoc();
 if (!$spu) { echo "SPU không tồn tại"; exit; }
+$canReview = false;
+
+if (isset($_SESSION['user_id'])) {
+    $uid = (int)$_SESSION['user_id'];
+
+    $stmt = $conn->prepare("
+        SELECT 1
+        FROM orders o
+        JOIN order_items oi ON oi.order_id = o.id
+        JOIN sku s ON s.id = oi.sku_id
+        WHERE o.user_id = ?
+          AND s.spu_id = ?
+        LIMIT 1
+    ");
+    $stmt->bind_param("ii", $uid, $spu_id);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows > 0) {
+        $canReview = true;
+    }
+}
 
 // ===============================
 // RATING DATA
@@ -509,30 +531,43 @@ $fixedImages = array_map(function($p) {
 
         <!-- DISTRIBUTION -->
         <?php for ($i = 5; $i >= 1; $i--): ?>
-            <div style="display:flex; align-items:center; gap:10px; margin:8px 0;">
-                <div style="width:45px;"><?= $i ?> ⭐</div>
-                <div style="flex:1; background:#eee; height:8px; border-radius:4px;">
-                    <?php
-                    $percent = $totalReviews > 0
-                        ? ($ratingDist[$i] / $totalReviews) * 100
-                        : 0;
-                    ?>
-                    <div style="width:<?= $percent ?>%; height:100%; background:#ffc107;"></div>
-                </div>
+    <?php
+        $percent = $totalReviews > 0
+            ? round(($ratingDist[$i] / $totalReviews) * 100)
+            : 0;
+    ?>
+    <div style="display:flex; align-items:center; gap:12px; margin:10px 0;">
+        <div style="width:50px;"><?= $i ?> ⭐</div>
 
-                <div style="width:100px; text-align:right;">
-                    <?= $ratingDist[$i] ?> đánh giá
-                </div>
-            </div>
-        <?php endfor; ?>
+        <div class="rating-bar" style="flex:1;">
+            <div class="rating-bar-fill" style="width:<?= $percent ?>%;"></div>
+        </div>
+
+        <div style="width:110px; text-align:right;">
+            <?= $ratingDist[$i] ?> đánh giá
+        </div>
+    </div>
+<?php endfor; ?>
+
 
         <!-- REVIEW LIST -->
         <div style="margin-top:30px;">
             <div style="display:flex; justify-content:flex-end; margin-bottom:15px;">
-    <button class="add-review-btn">
-        + Thêm nhận xét
-    </button>
+    <button class="add-review-btn" id="openReviewModal">
+    + Thêm nhận xét
+</button>
+
 </div>
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+    <button class="btn btn-outline-primary filter-star" data-star="0">Tất cả</button>
+    <?php for ($i=5;$i>=1;$i--): ?>
+        <button class="btn btn-outline-primary filter-star" data-star="<?= $i ?>">
+            <?= $i ?> sao
+        </button>
+    <?php endfor; ?>
+</div>
+
+<div id="reviewList"></div>
 
             <h4>Nhận xét của khách hàng</h4>
 
@@ -546,29 +581,29 @@ $fixedImages = array_map(function($p) {
             ");
             ?>
 
-            <?php while ($rv = $reviews->fetch_assoc()): ?>
-                <div style="border-bottom:1px solid #eee; padding:18px 0;">
-                    <strong><?= htmlspecialchars($rv['fullname'] ?? 'Khách hàng') ?></strong>
-                    <div style="color:#ffc107;">
-                        <span class="star">
-    <?= str_repeat('★', $rv['rating']) ?>
-</span>
-
-                    </div>
-                    <p style="margin:8px 0;">
-                        <?= nl2br(htmlspecialchars($rv['comment'])) ?>
-                    </p>
-                    <small style="color:#999;">
-                        Đánh giá đã đăng vào <?= date("d/m/Y", strtotime($rv['created_at'])) ?>
-                    </small>
-                </div>
-            <?php endwhile; ?>
-
         </div>
 
     </div>
 </div>
 
+<script>
+function loadReviews(star = 0) {
+    fetch(`get_reviews.php?spu_id=<?= $spu_id ?>&star=${star}`)
+        .then(r => r.text())
+        .then(html => {
+            document.getElementById("reviewList").innerHTML = html;
+        });
+}
+
+document.querySelectorAll(".filter-star").forEach(btn => {
+    btn.addEventListener("click", () => {
+        loadReviews(btn.dataset.star);
+    });
+});
+
+// load mặc định
+loadReviews();
+</script>
 
 
 <script>
@@ -698,6 +733,54 @@ document.getElementById("buyNowBtn").addEventListener("click", () => {
 updateBuyButtons();
 </script>
 
+<script>
+function submitReview() {
+    fetch("submit_review.php", {
+        method: "POST",
+        headers: {"Content-Type":"application/x-www-form-urlencoded"},
+        body: new URLSearchParams({
+            spu_id: <?= $spu_id ?>,
+            rating: document.getElementById("reviewRating").value,
+            comment: document.getElementById("reviewComment").value
+        })
+    })
+    .then(r => r.text())
+    .then(res => {
+        if (res === "OK") {
+            alert("Đánh giá đã được gửi");
+            location.reload();
+        } else if (res === "NOT_LOGIN") {
+            alert("Vui lòng đăng nhập");
+        } else if (res === "NOT_PURCHASED") {
+            alert("Bạn chưa mua sản phẩm này");
+        } else {
+            alert("Lỗi gửi đánh giá");
+        }
+    });
+}
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const btn = document.getElementById("openReviewModal");
+    if (!btn) return;
+
+    btn.addEventListener("click", () => {
+        <?php if (!isset($_SESSION['user_id'])): ?>
+            alert("Vui lòng đăng nhập để đánh giá");
+            return;
+        <?php endif; ?>
+
+        <?php if (!$canReview): ?>
+            alert("Chỉ khách hàng đã mua sản phẩm mới được đánh giá");
+            return;
+        <?php endif; ?>
+
+        new bootstrap.Modal(document.getElementById("reviewModal")).show();
+    });
+});
+</script>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -734,6 +817,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 <?php include 'partials/footer.php'; ?>
+
+
+<!-- REVIEW MODAL -->
+<div class="modal fade" id="reviewModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Thêm nhận xét</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="mb-3">
+          <label>Đánh giá</label>
+          <select id="reviewRating" class="form-select">
+            <option value="5">★★★★★ - Rất tốt</option>
+            <option value="4">★★★★☆ - Tốt</option>
+            <option value="3">★★★☆☆ - Bình thường</option>
+            <option value="2">★★☆☆☆ - Kém</option>
+            <option value="1">★☆☆☆☆ - Rất kém</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label>Nhận xét</label>
+          <textarea id="reviewComment" class="form-control" rows="4"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button class="btn btn-primary" onclick="submitReview()">Gửi đánh giá</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
