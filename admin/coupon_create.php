@@ -1,38 +1,22 @@
 <?php
 include "../db.php";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if($_SERVER['REQUEST_METHOD']==='POST'){
+    $code = $_POST['code'];
+    $discount = (float)$_POST['discount_amount'];
+    $minOrder = (float)$_POST['min_order_total'];
+    $expired = $_POST['expired_at'];
+
     $stmt = $conn->prepare("
         INSERT INTO coupons (code, discount_amount, min_order_total, expired_at)
         VALUES (?, ?, ?, ?)
     ");
-    $stmt->bind_param(
-        "siis",
-        $_POST['code'],
-        $_POST['discount_amount'],
-        $_POST['min_order_total'],
-        $_POST['expired_at']
-    );
-    $stmt->execute();
+    $stmt->bind_param("sdds", $code, $discount, $minOrder, $expired);
 
-    header("Location: admin.php?view=coupons");
-    exit;
+    if($stmt->execute()){
+        echo json_encode(['success'=>true]);
+    } else {
+        echo json_encode(['success'=>false,'error'=>$conn->error]);
+    }
 }
 ?>
-
-<h3>Thêm Coupon</h3>
-<form method="post">
-    Code:<br>
-    <input name="code" required><br>
-
-    Giảm giá (₫):<br>
-    <input type="number" name="discount_amount" required><br>
-
-    Đơn tối thiểu (₫):<br>
-    <input type="number" name="min_order_total" required><br>
-
-    Hết hạn:<br>
-    <input type="datetime-local" name="expired_at" required><br><br>
-
-    <button>Lưu</button>
-</form>

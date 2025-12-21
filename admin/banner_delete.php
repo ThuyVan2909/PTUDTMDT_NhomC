@@ -1,9 +1,17 @@
 <?php
 include "../db.php";
 
-$id = intval($_GET['id']);
+$id = intval($_GET['id'] ?? 0);
 
-$conn->query("DELETE FROM banners WHERE id = $id");
+if($id > 0){
+    // Kiểm tra tồn tại trước khi xóa
+    $banner = $conn->query("SELECT id FROM banners WHERE id = $id")->fetch_assoc();
+    if($banner){
+        $conn->query("DELETE FROM banners WHERE id = $id");
+    }
+}
 
-header("Location: banners.php");
+// Quay lại trang banner
+header("Location: admin.php?view=banners");
 exit;
+?>

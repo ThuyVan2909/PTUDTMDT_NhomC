@@ -31,13 +31,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <h3>Sửa Coupon</h3>
 <form method="post">
-    Code:<br>
+    Mã coupon:<br>
     <input name="code" value="<?= $coupon['code'] ?>"><br>
 
-    Giảm giá (₫):<br>
+    Giảm giá (đ):<br>
     <input name="discount_amount" value="<?= $coupon['discount_amount'] ?>"><br>
 
-    Đơn tối thiểu (₫):<br>
+    Đơn tối thiểu (đ):<br>
     <input name="min_order_total" value="<?= $coupon['min_order_total'] ?>"><br>
 
     Hết hạn:<br>
