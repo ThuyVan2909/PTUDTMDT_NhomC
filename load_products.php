@@ -82,40 +82,41 @@ $html = "";
 // 3) Render mỗi SPU
 // -----------------------
 while ($spu = $res->fetch_assoc()) {
+
     $imgRow = $conn->query("
-    SELECT image_url
-    FROM sku_images
-    WHERE sku_id = (
-        SELECT id FROM sku WHERE spu_id = {$spu['id']} LIMIT 1
-    )
-    ORDER BY is_primary DESC, id ASC
+    SELECT si.image_url
+    FROM sku s
+    JOIN sku_images si ON si.sku_id = s.id
+    WHERE s.spu_id = {$spu['id']}
+    ORDER BY 
+        si.is_primary DESC,
+        s.promo_price IS NULL,
+        COALESCE(s.promo_price, s.price) ASC
     LIMIT 1
 ")->fetch_assoc();
 
-$img = $imgRow['image_url'] ?? "assets/images/no-image.png";
-$origin = (float)$spu['original_price'];
-$final  = (float)$spu['final_price'];
-
-$discountPercent = 0;
-if ($origin > 0 && $final < $origin) {
-    $discountPercent = round((($origin - $final) / $origin) * 100);
-}
+$img = $imgRow['image_url'] ?? 'assets/images/no-image.png';
 
 
-    // Lấy ảnh SKU chính
-    
+    $origin = (float)$spu['original_price'];
+    $final  = (float)$spu['final_price'];
 
+    $discountPercent = 0;
+    if ($origin > 0 && $final < $origin) {
+        $discountPercent = round((($origin - $final) / $origin) * 100);
+    }
 
-    // HTML hiển thị sản phẩm
-    // THÊM ID CHO MỖI PRODUCT → scroll chính xác
     $html .= "
-    <div class='col-md-3 mb-4 product-col' id='product-{$spu['id']}'>
+    <div class='col product-col' id='product-{$spu['id']}'>
         <a href='product.php?spu_id={$spu['id']}' class='text-decoration-none text-dark'>
             <div class='card product-card h-100 shadow-sm position-relative'>
+
                 ".($discountPercent > 0 ? "
                     <div class='discount-badge'>-{$discountPercent}%</div>
                 " : "")."
+
                 <img src='{$img}' class='card-img-top product-img'>
+
                 <div class='card-body'>
                     <h6 class='card-title'>{$spu['brand']} {$spu['name']}</h6>
 
@@ -137,10 +138,9 @@ if ($origin > 0 && $final < $origin) {
 
             </div>
         </a>
-    </div>
-";
-
+    </div>";
 }
+
 
 // output
 echo $html !== "" 

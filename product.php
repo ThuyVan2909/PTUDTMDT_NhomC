@@ -32,6 +32,48 @@ if (isset($_SESSION['user_id'])) {
     }
 }
 
+// ===========================
+// SẢN PHẨM CÓ THỂ BẠN CŨNG THÍCH
+// ===========================
+$relatedProducts = [];
+
+// Lấy sản phẩm cùng brand trước
+$brand_id = $spu['brand_id'] ?? 0;
+
+if ($brand_id) {
+    $res = $conn->query("
+        SELECT 
+            s.id AS spu_id,
+            s.name,
+            (SELECT image_url FROM sku_images WHERE sku_id=(SELECT id FROM sku WHERE spu_id=s.id LIMIT 1) LIMIT 1) AS image,
+            (SELECT price FROM sku WHERE spu_id=s.id LIMIT 1) AS price,
+            (SELECT promo_price FROM sku WHERE spu_id=s.id LIMIT 1) AS promo_price,
+            (SELECT ROUND(AVG(rating),1) FROM product_reviews WHERE spu_id=s.id) AS avg_rating
+        FROM spu s
+        WHERE s.brand_id = $brand_id AND s.id != $spu_id
+        LIMIT 8
+    ");
+    while ($r = $res->fetch_assoc()) $relatedProducts[] = $r;
+}
+
+// Nếu chưa đủ 8 sản phẩm, lấy thêm theo category
+if (count($relatedProducts) < 8) {
+    $res = $conn->query("
+        SELECT 
+            s.id AS spu_id,
+            s.name,
+            (SELECT image_url FROM sku_images WHERE sku_id=(SELECT id FROM sku WHERE spu_id=s.id LIMIT 1) LIMIT 1) AS image,
+            (SELECT price FROM sku WHERE spu_id=s.id LIMIT 1) AS price,
+            (SELECT promo_price FROM sku WHERE spu_id=s.id LIMIT 1) AS promo_price,
+            (SELECT ROUND(AVG(rating),1) FROM product_reviews WHERE spu_id=s.id) AS avg_rating
+        FROM spu s
+        WHERE s.category_id = {$spu['category_id']} AND s.id != $spu_id
+        LIMIT " . (8 - count($relatedProducts))
+    );
+    while ($r = $res->fetch_assoc()) $relatedProducts[] = $r;
+}
+
+
 // ===============================
 // RATING DATA
 // ===============================
@@ -399,6 +441,112 @@ body { font-family: Arial; background: #f7f7f7; margin: 0; }
     background: var(--primary-blue-dark);
 }
 
+.related-products h3 {
+    margin-bottom: 28px;
+    font-size: 26px;
+    font-weight: 600;
+    color: #0d6efd;
+    text-align: center;
+    position: relative;
+}
+
+.related-products h3::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: #0d6efd;
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+
+
+.related-products-list {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    
+}
+
+.product-card {
+    width: 180px;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+.product-card a {
+    text-decoration: none;
+    color: #000;
+}
+
+.product-img {
+    position: relative;
+    width: 100%;
+    height: 180px;
+}
+
+.product-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.discount-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #e30019;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.product-info {
+    padding: 10px;
+    text-align: center;
+}
+
+.product-name {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    height: 40px;
+    overflow: hidden;
+}
+
+.product-price {
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.price-sale {
+    color: #e30019;
+    font-weight: bold;
+}
+
+.price-old {
+    text-decoration: line-through;
+    color: #888;
+    margin-left: 6px;
+    font-size: 12px;
+}
+
+.product-rating {
+    color: #f6b01e;
+    font-size: 12px;
+}
 
 
 </style>
@@ -508,6 +656,52 @@ $fixedImages = array_map(function($p) {
     </div>
 
 </div>
+
+<?php if (!empty($relatedProducts)): ?>
+<div id="relatedProducts" class="related-products">
+    <h3>Có thể bạn cũng thích</h3>
+    <div class="related-products-list">
+        <?php foreach($relatedProducts as $p): ?>
+        <?php 
+            $discount = ($p['price'] > $p['promo_price'] && $p['promo_price'] > 0)
+                        ? round((($p['price'] - $p['promo_price'])/$p['price'])*100)
+                        : 0;
+        ?>
+        <div class="product-card">
+            <a href="product.php?spu_id=<?= $p['spu_id'] ?>">
+                <div class="product-img">
+                    <img src="<?= htmlspecialchars($p['image'] ?? '/techzone/assets/images/no-image.png') ?>" alt="<?= htmlspecialchars($p['name']) ?>">
+                    <?php if($discount): ?>
+                        <div class="discount-badge">-<?= $discount ?>%</div>
+                    <?php endif; ?>
+                </div>
+                <div class="product-info">
+                    <div class="product-name"><?= htmlspecialchars($p['name']) ?></div>
+                    <div class="product-price">
+                        <?php if($p['promo_price'] && $p['promo_price'] < $p['price']): ?>
+                            <span class="price-sale"><?= number_format($p['promo_price']) ?> đ</span>
+                            <span class="price-old"><?= number_format($p['price']) ?> đ</span>
+                        <?php else: ?>
+                            <span class="price-sale"><?= number_format($p['price']) ?> đ</span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="product-rating">
+                        <?php 
+                            $fullStars = floor($p['avg_rating'] ?? 0);
+                            $halfStar = ($p['avg_rating'] - $fullStars) >= 0.5 ? 1 : 0;
+                        ?>
+                        <?php for($i=0;$i<$fullStars;$i++): ?><span>★</span><?php endfor; ?>
+                        <?php if($halfStar): ?><span>☆</span><?php endif; ?>
+                        <?php for($i=$fullStars+$halfStar;$i<5;$i++): ?><span>☆</span><?php endfor; ?>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<?php endif; ?>
+
 
 <!-- =============================== -->
 <!-- PRODUCT RATING SECTION         -->

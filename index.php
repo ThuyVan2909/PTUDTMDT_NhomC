@@ -1,5 +1,6 @@
 <?php
 $conn = new mysqli("localhost","root","","lendly_db");
+
 // LEFT BANNERS (3 fixed)
 $leftBanners = $conn->query("
     SELECT * FROM banners
@@ -18,6 +19,7 @@ $topBanners = $conn->query("
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
 $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
+
 // LOAD LEFT BANNERS
 
 
@@ -54,7 +56,7 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
 /* Highlight khi scroll đến */
 /* Highlight viền card với fade */
 .product-img {
-    height: 240px;           /* 👈 tăng chiều cao */
+    height: 220px;           /* 👈 tăng chiều cao */
     object-fit: contain;
     padding: 12px;
 }
@@ -453,23 +455,81 @@ body {
     object-fit: cover;
 }
 .product-card {
-    min-height: 320px;      /* 👈 chỉnh cao tại đây */
+    height: 100%;
+    min-height: 330px;   /* 👈 tăng chiều cao tổng */
     display: flex;
     flex-direction: column;
-    border-radius: 15px;
-}   
+    border-radius: 16px;
+    overflow: hidden;
+}
 
+.product-img-wrapper {
+    height: 260px;       /* 👈 ảnh cao hơn */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+}
+
+.product-img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+}
 .product-card .card-body {
     flex: 1;
+    padding: 14px;
 }
-.product-img {
-    height: 200px;
-    width: 200px;
-    object-fit: contain;
-    display: block;        /* 👈 bắt buộc */
-    margin: 0 auto;        /* 👈 CĂN GIỮA NGANG */
-    padding: 5px;
+
+/* ===== PRODUCT SLIDER ===== */
+.product-slider-wrapper {
+    position: relative;
 }
+
+.product-slider {
+    overflow: hidden;
+    width: 100%;
+}
+
+.product-track {
+    display: grid;
+    grid-template-rows: repeat(2, auto); /* 2 hàng */
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 48px) / 4); 
+    /* 👆 4 cột / hàng, trừ gap */
+    gap: 16px;
+    transition: transform .4s ease;
+}
+
+
+/* Card giữ nguyên Bootstrap col */
+.product-track .col {
+    width: 100%;
+}
+
+/* Nút slide */
+.slide-btn {
+    position: absolute;
+    top: 50%;                 /* ↓ hạ xuống so với 45% */
+    transform: translateY(-50%);
+    width: 40px;              /* ↓ nhỏ hơn */
+    height: 40px;             /* ↓ nhỏ hơn */
+    border-radius: 50%;
+    border: none;
+    background: #1A3D64;
+    color: #fff;
+    font-size: 20px;          /* ↓ icon nhỏ lại */
+    cursor: pointer;
+    z-index: 10;
+    opacity: .85;
+}
+
+.slide-btn:hover {
+    opacity: 1;
+}
+
+.slide-btn.prev { left: -24px; }
+.slide-btn.next { right: -40px; }
 
 
 
@@ -522,8 +582,13 @@ body {
                 <a class="nav-link" href="#">Liên hệ</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="account.php?tab=orders">Tra cứu đơn hàng</a>
-            </li>
+    <?php if($isLoggedIn): ?>
+        <a class="nav-link" href="account.php?tab=orders">Tra cứu đơn hàng</a>
+    <?php else: ?>
+        <a class="nav-link" href="javascript:void(0);" onclick="promptLogin()">Tra cứu đơn hàng</a>
+    <?php endif; ?>
+</li>
+
         </ul>
 
          <!-- SEARCH -->
@@ -623,7 +688,16 @@ body {
                     <?php endwhile; ?>
                 </div>
 
-                <div id="laptop-products" class="row g-3"></div>
+                <div class="product-slider-wrapper">
+    <button class="slide-btn prev" data-target="laptop">‹</button>
+
+    <div class="product-slider">
+        <div id="laptop-products" class="product-track"></div>
+    </div>
+
+    <button class="slide-btn next" data-target="laptop">›</button>
+</div>
+
             </section>
 
             <!-- ĐIỆN THOẠI -->
@@ -641,7 +715,16 @@ body {
                     <?php endwhile; ?>
                 </div>
 
-                <div id="phone-products" class="row g-3"></div>
+                <div class="product-slider-wrapper">
+    <button class="slide-btn prev" data-target="phone">‹</button>
+
+    <div class="product-slider">
+        <div id="phone-products" class="product-track"></div>
+    </div>
+
+    <button class="slide-btn next" data-target="phone">›</button>
+</div>
+
             </section>
 
         </div>
@@ -663,6 +746,13 @@ body {
         <small>
             Bạn chưa có tài khoản? 
             <a href="register.php" class="fw-bold text-primary">Đăng ký ngay</a>
+        </small>
+    </div>
+
+    <!-- Link quên mật khẩu -->
+    <div class="text-center mt-2">
+        <small>
+            <a href="reset_password.php" class="fw-bold text-danger">Bạn quên mật khẩu?</a>
         </small>
     </div>
   </div>
@@ -773,10 +863,42 @@ function loadSection(section, category=null, brand=null){
     });
 }
 
+const sliderState = {
+    laptop: 0,
+    phone: 0
+};
+
+function slide(section, dir) {
+    const track = document.querySelector(`#${section}-products`);
+    if (!track) return;
+
+    const colsPerView = 4;
+    const totalCols = track.children.length / 2;
+
+    sliderState[section] += dir;
+
+    if (sliderState[section] < 0) sliderState[section] = 0;
+    if (sliderState[section] > totalCols - colsPerView)
+        sliderState[section] = totalCols - colsPerView;
+
+    const percent = (sliderState[section] * 100) / colsPerView;
+    track.style.transform = `translateX(-${percent}%)`;
+}
+
+
+document.querySelectorAll(".slide-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const section = btn.dataset.target;
+        slide(section, btn.classList.contains("next") ? 1 : -1);
+    });
+});
+
+
 // Laptop
 let laptopCat="", laptopBrand="";
 $(".laptop-cat").click(function(){
     laptopCat=$(this).data("id");
+    sliderState.laptop = 0;
     loadSection("laptop", laptopCat, laptopBrand);
     $(".laptop-cat").removeClass("active-filter"); $(this).addClass("active-filter");
 });
@@ -797,6 +919,7 @@ $(".phone-cat").click(function(){
 // Reset filter khi click "Tất cả điện thoại"
 $(".phone-cat-all").click(function(){
     phoneCat = ""; // reset biến
+    sliderState.phone = 0;
     loadSection("phone", phoneCat, ""); // load tất cả điện thoại
     $(".phone-cat").removeClass("active-filter"); 
     $(this).addClass("active-filter");
@@ -964,5 +1087,12 @@ $(document).ready(function(){
 });
 </script>
 
+
+<script>
+function promptLogin() {
+    alert("Hãy đăng nhập để tra cứu đơn hàng"); // thông báo
+    openLogin(); // mở popup đăng nhập
+}
+</script>
 </body>
 </html>

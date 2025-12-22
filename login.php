@@ -92,6 +92,10 @@ else {
             <a href="register.php" class="register-link">Đăng ký ngay</a>
         </em>
     </small>
+    <div class="text-center mt-2">
+    <a href="reset_password.php" class="text-decoration-none">Bạn quên mật khẩu?</a>
+</div>
+
 </div>
 
 
