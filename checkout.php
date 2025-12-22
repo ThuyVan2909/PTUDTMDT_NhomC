@@ -55,6 +55,8 @@ if ($user_id) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $conn->begin_transaction();
+    try {
 
     $fullname = trim($_POST['fullname']);
     $phone = trim($_POST['phone']);
@@ -65,8 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $shipping_method = $_POST['shipping_method'] ?? 'standard';
 
     if (!$fullname || !$phone || !$province_id || !$district_id) {
-        echo "Vui lòng điền đầy đủ thông tin giao hàng";
-        exit;
+        throw new Exception("Vui lòng điền đầy đủ thông tin giao hàng");
     }
 
     /* --------------------------------------------
@@ -86,8 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($total <= 0) {
-        echo "Lỗi giỏ hàng";
-        exit;
+        throw new Exception("Lỗi giỏ hàng");
     }
 
     /* --------------------------------------------
@@ -182,9 +182,32 @@ $order_id = $stmt->insert_id;
         $stmt2->execute();
 
         /* Trừ tồn kho */
-        $stmt3 = $conn->prepare("UPDATE sku SET stock = stock - ? WHERE id = ?");
-        $stmt3->bind_param("ii", $qty, $skuId);
-        $stmt3->execute();
+        // LOCK + CHECK tồn kho
+        $stmtCheck = $conn->prepare("
+        SELECT stock 
+        FROM sku 
+        WHERE id = ? 
+        FOR UPDATE
+        ");
+        $stmtCheck->bind_param("i", $skuId);
+        $stmtCheck->execute();
+        $row = $stmtCheck->get_result()->fetch_assoc();
+
+if (!$row) {
+    throw new Exception("SKU không tồn tại");
+}
+
+if ($row['stock'] < $qty) {
+    throw new Exception("Sản phẩm không đủ tồn kho");
+}
+$stmtStock = $conn->prepare("
+    UPDATE sku 
+    SET stock = stock - ? 
+    WHERE id = ?
+");
+$stmtStock->bind_param("ii", $qty, $skuId);
+$stmtStock->execute();
+
     }
 
 
@@ -212,6 +235,9 @@ $order_id = $stmt->insert_id;
     unset($_SESSION['cart']);
     unset($_SESSION['coupon']);
 
+
+    $conn->commit();
+
     // Trả về JSON nếu là AJAX
     if(isset($_POST['ajax']) && $_POST['ajax'] == 1){
         echo json_encode([
@@ -224,6 +250,19 @@ $order_id = $stmt->insert_id;
 
     // Nếu không phải AJAX, vẫn redirect bình thường
     header("Location: order_success.php?id=$order_id");
+    exit;
+}
+} catch (Exception $e) {
+    $conn->rollback();
+
+    if (isset($_POST['ajax']) && $_POST['ajax'] == 1) {
+        echo json_encode([
+            'status' => false,
+            'message' => $e->getMessage()
+        ]);
+    } else {
+        echo $e->getMessage();
+    }
     exit;
 }
 

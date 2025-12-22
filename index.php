@@ -53,14 +53,6 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
         .login-submit { width:100%; padding:10px; background:#135071; color:#fff; border:none; border-radius:6px; cursor:pointer; }
         .close-btn { position:absolute; right:15px; top:10px; cursor:pointer; font-size:20px; }
         
-/* Highlight khi scroll đến */
-/* Highlight viền card với fade */
-.product-img {
-    height: 220px;           /* 👈 tăng chiều cao */
-    object-fit: contain;
-    padding: 12px;
-}
-
 .product-highlight {
     position: relative;
     border: 2px solid #e30019;
@@ -455,16 +447,31 @@ body {
     object-fit: cover;
 }
 .product-card {
-    height: 100%;
-    min-height: 330px;   /* 👈 tăng chiều cao tổng */
-    display: flex;
-    flex-direction: column;
-    border-radius: 16px;
+    border-radius: 14px;
     overflow: hidden;
+    background: #fff;
+    transition: transform .25s ease, box-shadow .25s ease;
 }
 
+/* Lift card */
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 14px 30px rgba(0,0,0,.15);
+}
+
+/* ===== IMAGE ZOOM SAFE ===== */
+.product-card .product-img {
+    overflow: hidden;
+    position: relative;
+}
+.product-card .product-img img {
+    transition: transform .35s ease;
+    will-change: transform;
+}
+
+
 .product-img-wrapper {
-    height: 260px;       /* 👈 ảnh cao hơn */
+    height: 290px;       /* 👈 ảnh cao hơn */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -472,10 +479,17 @@ body {
 }
 
 .product-img {
-    max-width: 90%;
+    max-width: 100%;
     max-height: 90%;
-    object-fit: contain;
+    object-fit: cover;
 }
+
+.product-card img[src*="iphone14"],
+.product-card img[src*="iphone15"] {
+    height: 250px;
+    object-fit: cover;
+}
+
 .product-card .card-body {
     flex: 1;
     padding: 14px;
@@ -531,7 +545,9 @@ body {
 .slide-btn.prev { left: -24px; }
 .slide-btn.next { right: -40px; }
 
-
+.product-slider-wrapper {
+    padding-left: 16px;   /* đẩy nội dung qua phải */
+}
 
 
 </style>
