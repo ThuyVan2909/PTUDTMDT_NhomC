@@ -188,6 +188,7 @@ include "breadcrumb.php";
 // lấy SKU list
 $skus = $conn->query("SELECT id, sku_code, price, promo_price, stock FROM sku WHERE spu_id = $spu_id");
 
+
 // lấy attribute + value
 $attr_sql = "
 SELECT 
@@ -298,7 +299,7 @@ body { font-family: Arial; background: #f7f7f7; margin: 0; }
     cursor: pointer;
 }
 .attr-values button.active {
-    background: #e30019;
+    background: #d1061eff;
     color: white;
     border-color: #e30019;
 }
@@ -582,6 +583,13 @@ body { font-family: Arial; background: #f7f7f7; margin: 0; }
     line-height: 1.4;
     color: #333;
 }
+.attr-values button.active {
+    background: #e30019;
+    color: white;
+    border-color: #e30019;
+    font-weight: 600; /* 👈 IN ĐẬM GIÁ TRỊ ĐANG CHỌN */
+}
+
 
 </style>
 
@@ -666,21 +674,29 @@ $fixedImages = array_map(function($p) {
     <!-- RIGHT COLUMN: PRODUCT INFO -->
     <div class="info">
 
-        <h1><?= $spu['name'] ?></h1>
-
+        <h1 style="font-weight:700;"><?= htmlspecialchars($spu['name']) ?></h1>
         <!-- PRICE BOX -->
          <?php
-        $firstSku = $conn->query("SELECT price, promo_price FROM sku WHERE spu_id = $spu_id LIMIT 1")->fetch_assoc();
+        $firstSku = $conn->query("SELECT price, promo_price, stock FROM sku WHERE spu_id = $spu_id LIMIT 1")->fetch_assoc();
         ?>
         <div class="price-box">
-    <span id="promo_price"><?= number_format($firstSku['promo_price']) ?> đ</span><br>
-    <span id="normal_price" class="price-old"><?= number_format($firstSku['price']) ?> đ</span>
+        <span id="promo_price"><?= number_format($firstSku['promo_price']) ?> đ</span><br>
+        <span id="normal_price" class="price-old"><?= number_format($firstSku['price']) ?> đ</span>
+        <div id="stockInfo" class="small mt-1 <?= ($firstSku['stock'] > 0 ? 'text-success' : 'text-danger') ?>">
+    <?= $firstSku['stock'] > 0 
+        ? 'Còn ' . (int)$firstSku['stock'] . ' sản phẩm'
+        : 'Hết hàng'
+    ?>
+
+
+    </div>
+
 </div>
 
         <!-- ATTRIBUTES -->
 <?php foreach ($attributes as $attrId => $attr): ?>
     <div class="attr-group">
-        <h3><?= $attr['name'] ?></h3>
+        <h3 style="font-weight:500;"><?= htmlspecialchars($attr['name']) ?></h3>
         <div class="attr-values">
             <?php foreach ($attr['values'] as $v): ?>
                 <button 
@@ -697,7 +713,7 @@ $fixedImages = array_map(function($p) {
 
         <!-- BUY BUTTONS -->
 <div style="display:flex; gap:12px; margin-top:20px;">
-    <button class="buy-btn" id="addToCartBtn" style="background:#ff9900;">THÊM VÀO GIỎ</button>
+    <button class="buy-btn" id="addToCartBtn" style="background:#e30019;">THÊM VÀO GIỎ</button>
     <button class="buy-btn" id="buyNowBtn">MUA NGAY</button>
 </div>
 

@@ -11,11 +11,23 @@ if (!$sku_id || $qty < 1) {
 }
 
 // Lấy SKU + SPU
-$sku = $conn->query("SELECT s.id, s.price, s.promo_price, s.spu_id, spu.name AS spu_name
-                     FROM sku s
-                     JOIN spu ON s.spu_id = spu.id
-                     WHERE s.id=$sku_id")->fetch_assoc();
-if (!$sku) { echo "Sản phẩm không tồn tại"; exit; }
+$sku = $conn->query("
+    SELECT s.id, s.price, s.promo_price, s.stock, s.spu_id, spu.name AS spu_name
+    FROM sku s
+    JOIN spu ON s.spu_id = spu.id
+    WHERE s.id = $sku_id
+")->fetch_assoc();
+
+if (!$sku) {
+    echo "Sản phẩm không tồn tại";
+    exit;
+}
+
+if ($sku['stock'] <= 0) {
+    echo "Sản phẩm đã hết hàng";
+    exit;
+}
+
 
 // Lấy thuộc tính
 $attrs_res = $conn->query("
@@ -42,9 +54,21 @@ $item = [
 
 // Khởi tạo cart
 if(!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
+$currentQtyInCart = 0;
+foreach ($_SESSION['cart'] as $c) {
+    if ($c['sku_id'] == $sku_id) {
+        $currentQtyInCart = $c['quantity'];
+        break;
+    }
+}
+
+if ($currentQtyInCart + $qty > $sku['stock']) {
+    echo "Số lượng vượt quá tồn kho";
+    exit;
+}
 
 // Nếu SKU đã có trong cart → cộng quantity
-$found = false;
+$found = false; 
 foreach($_SESSION['cart'] as &$c){
     if($c['sku_id'] == $sku_id && $c['attributes'] == $attrs){
         $c['quantity'] += $qty;

@@ -1,5 +1,5 @@
 <?php if (!empty($breadcrumbs) && is_array($breadcrumbs)): ?>
-<nav class="breadcrumb-container" style="font-size:14px; margin: 10px 0;">
+<nav class="breadcrumb-container" style="font-size:16px; margin: 10px 0 10px 40px;">
     <?php
     $count_breadcrumbs = count($breadcrumbs);
     $breadcrumb_index = 0;

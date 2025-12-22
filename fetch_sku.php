@@ -16,12 +16,12 @@ $vals = array_map('intval', $values);
 $vals_list = implode(',', $vals);
 
 $sql = "
-SELECT s.id AS sku_id, s.price, s.promo_price
+SELECT s.id AS sku_id, s.price, s.promo_price, s.stock
 FROM sku s
 JOIN sku_attribute_values sav ON sav.sku_id = s.id
 WHERE s.spu_id = $spu_id
   AND sav.attribute_value_id IN ($vals_list)
-GROUP BY s.id, s.price, s.promo_price
+GROUP BY s.id, s.price, s.promo_price, s.stock
 HAVING COUNT(DISTINCT sav.attribute_value_id) = ".count($vals)."
 LIMIT 1
 ";
