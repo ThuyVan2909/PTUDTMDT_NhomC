@@ -33,13 +33,13 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY id DESC");
         <h3>Thêm coupon mới</h3>
 
         <form id="addCouponForm" style="display:flex; flex-direction:column; gap:10px;">
-            Code:
+            Mã coupon:
             <input type="text" name="code" required>
 
-            Giảm giá (₫):
+            Giảm giá (đ):
             <input type="number" name="discount_amount" required>
 
-            Đơn tối thiểu (₫):
+            Đơn tối thiểu (đ):
             <input type="number" name="min_order_total" required>
 
             Hết hạn:
@@ -60,9 +60,9 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY id DESC");
     <table id="couponTable">
         <tr>
             <th>ID</th>
-            <th>Code</th>
-            <th>Giảm (₫)</th>
-            <th>Đơn tối thiểu (₫)</th>
+            <th>Mã coupon</th>
+            <th>Giảm (đ)</th>
+            <th>Đơn tối thiểu (đ)</th>
             <th>Hết hạn</th>
             <th>Hành động</th>
         </tr>
