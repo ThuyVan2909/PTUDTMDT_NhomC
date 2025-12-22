@@ -35,16 +35,12 @@ $spus = $conn->query("SELECT * FROM spu");
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
 <style>
-body { font-family: Arial; padding: 20px; }
+body { padding: 20px; }
 .card { background: #fff; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
 table { border-collapse: collapse; width: 100%; margin-top: 20px; }
 th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
 img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
 
-body {
-    background: #f4f6f9;
-    font-size: 14px;
-}
 
 .dashboard-card {
     background: #1A3D64;
