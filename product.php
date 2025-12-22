@@ -548,6 +548,40 @@ body { font-family: Arial; background: #f7f7f7; margin: 0; }
     font-size: 12px;
 }
 
+/* ============================= */
+/* TECHZONE COMMITMENT CARDS     */
+/* ============================= */
+
+.techzone-commitment {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    font-size: 16px;
+}
+
+.commit-card {
+    background: #d3d2d2ff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    padding: 10px;
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+}
+
+.commit-card i {
+    color: #0d6efd;
+    font-size: 18px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.commit-card p {
+    margin: 0;
+    line-height: 1.4;
+    color: #333;
+}
 
 </style>
 
@@ -582,6 +616,46 @@ $fixedImages = array_map(function($p) {
              onclick="document.getElementById('mainImg').src='<?= htmlspecialchars($img) ?>'">
     <?php endforeach; ?>
 </div>
+
+
+<!-- TECHZONE COMMITMENT -->
+<div class="techzone-commitment">
+
+    <div class="commit-card">
+        <i class="bi bi-patch-check-fill"></i>
+        <p>
+            Máy mới 100%, chính hãng Việt Nam.  
+            TechZone là đại lý bán lẻ uỷ quyền chính hãng.
+        </p>
+    </div>
+
+    <div class="commit-card">
+        <i class="bi bi-shield-check"></i>
+        <p>
+            1 đổi 1 trong 30 ngày nếu lỗi phần cứng.  
+            Bảo hành 12 tháng tại TTBH chính hãng.
+        </p>
+    </div>
+
+    <div class="commit-card">
+        <i class="bi bi-box-seam"></i>
+        <p>
+            Hộp, Sách hướng dẫn,  
+            Cây lấy sim, Cáp Type-C đi kèm.
+        </p>
+    </div>
+
+    <div class="commit-card">
+        <i class="bi bi-receipt"></i>
+        <p>
+            Giá đã bao gồm VAT.  
+            Hỗ trợ hoàn thuế VAT (Tax Refund).
+        </p>
+    </div>
+
+</div>
+
+
 
 </div>
 

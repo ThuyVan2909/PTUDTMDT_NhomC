@@ -447,13 +447,28 @@ body {
     object-fit: cover;
 }
 .product-card {
-    height: 100%;
-    min-height: 330px;   /* 👈 tăng chiều cao tổng */
-    display: flex;
-    flex-direction: column;
-    border-radius: 16px;
+    border-radius: 14px;
     overflow: hidden;
+    background: #fff;
+    transition: transform .25s ease, box-shadow .25s ease;
 }
+
+/* Lift card */
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 14px 30px rgba(0,0,0,.15);
+}
+
+/* ===== IMAGE ZOOM SAFE ===== */
+.product-card .product-img {
+    overflow: hidden;
+    position: relative;
+}
+.product-card .product-img img {
+    transition: transform .35s ease;
+    will-change: transform;
+}
+
 
 .product-img-wrapper {
     height: 290px;       /* 👈 ảnh cao hơn */
@@ -468,6 +483,7 @@ body {
     max-height: 90%;
     object-fit: cover;
 }
+
 .product-card img[src*="iphone14"],
 .product-card img[src*="iphone15"] {
     height: 250px;
