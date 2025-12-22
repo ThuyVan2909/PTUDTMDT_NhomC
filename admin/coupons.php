@@ -13,52 +13,52 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY id DESC");
 </div>
 
 <!-- MODAL ADD COUPON -->
-<div id="addCouponModal" style="
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.7);
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-">
-    <div style="
-        background:#fff;
-        padding:20px;
-        border-radius:10px;
-        width:350px;
-        position:relative;
-    ">
+<link rel="stylesheet" href="../assets/css/coupon_update.css">
+<div id="addCouponModal" class="modal-overlay">
+    <div class="modal-box">
         <span id="closeAddCoupon" style="
             position:absolute; top:10px; right:14px;
             cursor:pointer; font-weight:bold; font-size:20px;">&times;</span>
 
-        <h3>Thêm coupon mới</h3>
+        <div class="modal-header"><h3>THÊM COUPON MỚI</h3></div>
 
-        <form id="addCouponForm" style="display:flex; flex-direction:column; gap:10px;">
-            Mã coupon:
-            <input type="text" name="code" required>
+        <div class="modal-body">
+        <form id="addCouponForm">
+            <div class="form-group">
+            <label>Mã coupon</label>
+                <input type="text" name="code" required>
+            </div>
 
-            Giảm giá (đ):
-            <input type="number" name="discount_amount" required>
+            <div class="form-group">
+            <label>Giảm giá (đ)</label>
+            <input type="number" name="discount_amount" placeholder="0" required>
+            </div>
 
-            Đơn tối thiểu (đ):
-            <input type="number" name="min_order_total" required>
+            <div class="form-group">
+            <label>Đơn tối thiểu (đ)</label>
+            <input type="number" name="min_order_total" placeholder="0" required>
+            </div>
 
-            Hết hạn:
+            <div class="form-group">
+            <label>Ngày hết hạn</label>
             <input type="datetime-local" name="expired_at" required>
+            </div>
 
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button type="submit" style="background:#135071;color:#fff;padding:6px 12px;border:none;border-radius:5px;cursor:pointer;">
+            <div class="modal-footer">
+                <button type="submit" class="btn-update-confirm">
                     Lưu
                 </button>
-                <button type="button" id="cancelAddCoupon" style="background:#ccc;color:#333;padding:6px 12px;border:none;border-radius:5px;cursor:pointer;">
+                <button type="button" class="btn-close-popup" id="cancelAddCoupon" style="background:#ccc;color:#333;padding:6px 12px;border:none;border-radius:5px;cursor:pointer;">
                     Hủy
                 </button>
             </div>
         </form>
     </div>
+    </div>
+    </div>
 </div>
+
+
 
     <table id="couponTable" class="order-table coupon-table">
         <tr>
@@ -85,10 +85,9 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY id DESC");
         </tr>
         <?php endwhile; ?>
     </table>
-</div>
+
 
 <!-- MODAL -->
-<link rel="stylesheet" href="../assets/css/coupon_update.css">
 <div id="editModal" class="modal-overlay">
     <div class="modal-box">
         <div class="modal-header">
