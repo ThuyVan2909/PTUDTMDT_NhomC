@@ -21,40 +21,24 @@ $banners = $conn->query("
     ORDER BY position ASC, sort_order ASC
 ");
 ?>
-
-<h2>Quản lý Banner</h2>
-
-<a href="banner_add.php" class="btn btn-primary" style="margin-bottom:12px;">
-    Thêm banner
+<div class="main-content-wrapper">
+    <link rel="stylesheet" href="../assets/css/banner.css">
+    <h2 class="page-title">Quản lý Banner</h2>
+<a href="banner_add.php" class="btn-add-banner">
+    + Thêm banner
 </a>
 <!-- ================= ADD BANNER MODAL ================= -->
-<div id="bannerModal" style="
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.7);
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-">
-    <div style="
-        background:#fff;
-        padding:20px;
-        border-radius:10px;
-        max-width:600px;
-        width:100%;
-        position:relative;
-    ">
-        <span id="closeBannerModal" style="
-            position:absolute; top:10px; right:14px;
-            cursor:pointer; font-weight:bold; font-size:20px;">&times;</span>
+<div id="bannerModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 600px; width: 100%;">
+        <span id="closeBannerModal" class="close-btn">&times;</span>
 
         <div id="bannerModalContent">Loading...</div> <!-- Form load ở đây -->
     </div>
 </div>
 
 
-<table id="bannerTable">
+<table id="bannerTable"class="banner-table">
+    <thead>
     <tr>
         <th>ID</th>
         <th>Tiêu đề</th>
@@ -65,7 +49,8 @@ $banners = $conn->query("
         <th>Hiển thị</th>
         <th>Hành động</th>
     </tr>
-
+    </thead>
+    <tbody>
 <?php while ($b = $banners->fetch_assoc()): ?>
 <?php $spuName = getSpuNameFromLink($conn, $b['link']); ?>
 
@@ -96,8 +81,8 @@ $banners = $conn->query("
     <td><?= $b['is_active'] ? 'ON' : 'OFF' ?></td>
 
     <td>
-        <a href="banner_edit.php?id=<?= $b['id'] ?>">Sửa</a> |
-        <a href="banner_delete.php?id=<?= $b['id'] ?>" 
+        <a href="banner_edit.php?id=<?= $b['id'] ?>" button class="btn-edit-small">Sửa</a> |
+        <a href="banner_delete.php?id=<?= $b['id'] ?>" button class="btn-delete-small"
         onclick="return confirm('Bạn có chắc muốn xóa banner này?')">
    Xóa
 </a>
@@ -105,42 +90,16 @@ $banners = $conn->query("
     </td>
 </tr>
 <?php endwhile; ?>
+</tbody>
 </table>
 
 <!-- ================= PREVIEW MODAL ================= -->
-<div id="imageModal" style="
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.7);
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-">
-    <div style="
-        position:relative;
-        background:#fff;
-        padding:12px;
-        border-radius:6px;
-        max-width:90%;
-        max-height:90%;
-    ">
+<div id="imageModal" class="modal-overlay">
+    <div class="modal-box preview-box">
         <!-- Nút thoát -->
-        <button onclick="closePreview()" style="
-            position:absolute;
-            top:6px;
-            right:8px;
-            border:none;
-            background:transparent;
-            font-size:22px;
-            cursor:pointer;
-        ">✕</button>
+        <button onclick="closePreview()" class="close-btn">✕</button>
 
-        <img id="modalImg" style="
-            max-width:100%;
-            max-height:80vh;
-            display:block;
-        ">
+        <img id="modalImg" class="preview-img">
     </div>
 </div>
 
@@ -191,7 +150,7 @@ function updateOrder() {
 }
 
 
-const addBtn = document.querySelector("a.btn.btn-primary"); // nút + Thêm banner
+const addBtn = document.querySelector("a.btn-add-banner"); // nút + Thêm banner
 const bannerModal = document.getElementById("bannerModal");
 const bannerContent = document.getElementById("bannerModalContent");
 const closeBannerBtn = document.getElementById("closeBannerModal");
@@ -246,5 +205,4 @@ bannerModal.addEventListener("click", e => {
 
 
 </script>
-
 
