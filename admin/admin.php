@@ -14,6 +14,9 @@ $view = $_GET['view'] ?? 'dashboard';
 <head>
     <title>Trang quản lý TechZone</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         body { font-family: Arial; margin: 0; background: #f4f4f4; }
         .sidebar {
@@ -26,12 +29,45 @@ $view = $_GET['view'] ?? 'dashboard';
         }
         .sidebar h2 { text-align: center; padding: 20px 0; margin: 0; }
         .sidebar a {
-            display: block;
+            position: relative;
+            display: flex;
+            align-items: center;
             padding: 14px 20px;
+            gap: 12px;              /* 👈 icon cách chữ */
             color: #fff;
             text-decoration: none;
+            font-size: 15px;
+        }
+        .sidebar a::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: #f7f0e0ff;         /* màu thanh */
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+.sidebar a:hover::before {
+    opacity: 1;
+}
+.sidebar a.active::before {
+    opacity: 1;
+}
+        .sidebar a i {
+            width: 20px;            /* cố định chiều rộng icon */
+            text-align: center;
+            font-size: 16px;
         }
         .sidebar a:hover { background: #0d3a54; }
+        .sidebar a.active {
+    background: #0d3a54;     /* giống hover */
+    font-weight: 600;
+}
+.sidebar a.active:hover {
+    background: #0d3a54;
+}
 
         .content {
             margin-left: 230px;
@@ -54,16 +90,45 @@ $view = $_GET['view'] ?? 'dashboard';
 <body>
 
 <div class="sidebar">
-    <h2>ADMIN</h2>
-    <a href="admin.php?view=dashboard">Trang chính</a>
-    <a href="admin.php?view=products">Quản lý sản phẩm</a>
-    <a href="admin.php?view=orders">Quản lý đơn hàng</a>
-    <a href="admin.php?view=users">Quản lý tài khoản</a>
-    <a href="admin.php?view=coupons">Quản lý voucher</a>
-    <a href="admin.php?view=banners">Quản lý banner</a>
-    
+    <h2><i class="fa-solid fa-user-shield"></i> ADMIN</h2>
 
+    <a href="admin.php?view=dashboard"
+       class="<?= $view === 'dashboard' ? 'active' : '' ?>">
+        <i class="fa-solid fa-gauge-high"></i>
+        Trang chính
+    </a>
+
+    <a href="admin.php?view=products"
+       class="<?= $view === 'products' ? 'active' : '' ?>">
+        <i class="fa-solid fa-box"></i>
+        Quản lý sản phẩm
+    </a>
+
+    <a href="admin.php?view=orders"
+       class="<?= $view === 'orders' ? 'active' : '' ?>">
+        <i class="fa-solid fa-receipt"></i>
+        Quản lý đơn hàng
+    </a>
+
+    <a href="admin.php?view=users"
+       class="<?= $view === 'users' ? 'active' : '' ?>">
+        <i class="fa-solid fa-users"></i>
+        Quản lý tài khoản
+    </a>
+
+    <a href="admin.php?view=coupons"
+       class="<?= $view === 'coupons' ? 'active' : '' ?>">
+        <i class="fa-solid fa-ticket"></i>
+        Quản lý voucher
+    </a>
+
+    <a href="admin.php?view=banners"
+       class="<?= $view === 'banners' ? 'active' : '' ?>">
+        <i class="fa-solid fa-image"></i>
+        Quản lý banner
+    </a>
 </div>
+
 
 <div class="content">
 
