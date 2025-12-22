@@ -3,11 +3,14 @@ include "../db.php";
 $coupons = $conn->query("SELECT * FROM coupons ORDER BY id DESC");
 ?>
 
-<div class="card">
-    <h3>Quản lý Coupon</h3>
-    <a href="#" id="addCouponBtn" class="btn btn-primary" style="margin-bottom:12px;">
+<div class="main-content-wrapper">
+    <link rel="stylesheet" href="../assets/css/coupon.css">
+    <h2 class="page-title">Quản lý Coupon</h2>
+    <div class="py-3">
+    <a href="#" id="addCouponBtn" class="btn btn-add">
     + Thêm coupon
 </a>
+</div>
 
 <!-- MODAL ADD COUPON -->
 <div id="addCouponModal" style="
@@ -57,7 +60,7 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY id DESC");
     </div>
 </div>
 
-    <table id="couponTable">
+    <table id="couponTable" class="order-table coupon-table">
         <tr>
             <th>ID</th>
             <th>Mã coupon</th>
@@ -75,8 +78,8 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY id DESC");
             <td class="min"><?= $c['min_order_total'] ?></td>
             <td class="expired"><?= $c['expired_at'] ?></td>
             <td>
-                <button onclick="openEdit(this)">Sửa</button>
-                <a href="coupon_delete.php?id=<?= $c['id'] ?>"
+                <button class="btn btn-edit" onclick="openEdit(this)">Sửa</button>
+                <a href="coupon_delete.php?id=<?= $c['id'] ?>" class="btn btn-delete"
                    onclick="return confirm('Xóa coupon này?')">Xóa</a>
             </td>
         </tr>
@@ -85,43 +88,41 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY id DESC");
 </div>
 
 <!-- MODAL -->
-<div id="editModal" style="display:none">
-    <div class="modal">
+<link rel="stylesheet" href="../assets/css/coupon_update.css">
+<div id="editModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-header">
         <h3>Sửa Coupon</h3>
+        </div>
+        <div class="modal-body">
         <input type="hidden" id="edit_id">
 
-        Mã coupon:<br>
-        <input id="edit_code"><br>
+        <div class="form-group">
+            <label>Mã Coupon</label>
+            <input id="edit_code" placeholder="Nhập mã..."><br>
+        </div>
 
-        Giảm giá (đ):<br>
-        <input type="number" id="edit_discount"><br>
+        <div class="form-group">
+            <label>Số tiền giảm (đ)</label>
+            <input type="number" id="edit_discount" placeholder="0"><br>
+        </div>
 
-        Đơn tối thiểu (đ):<br>
-        <input type="number" id="edit_min"><br>
+        <div class="form-group">
+            <label>Đơn tối thiểu (đ)</label>
+            <input type="number" id="edit_min" placeholder="0"><br>
+        </div>
 
-        Hết hạn:<br>
-        <input type="datetime-local" id="edit_expired"><br><br>
+        <div class="form-group">
+            <label>Hết hạn</label>
+            <input type="datetime-local" id="edit_expired"><br><br>
+        </div>
 
-        <button onclick="saveEdit()">Lưu</button>
-        <button onclick="closeEdit()">Hủy</button>
+        <div class="modal-footer">
+            <button type="button" class="btn-update-confirm" onclick="saveEdit()">Lưu</button>
+            <button type="button" class="btn-close-popup" onclick="closeEdit()">Hủy</button>
+        </div>
     </div>
 </div>
-
-<style>
-#editModal {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.modal {
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    width: 350px;
-}
-</style>
 
 <script>
 let currentRow = null;

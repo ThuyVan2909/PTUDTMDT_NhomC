@@ -67,7 +67,7 @@ $result = $conn->query($sql);
 <body class="bg-light">
 
 <div class="container py-4">
-    <h3 class="mb-4">Quản lý đơn hàng</h3>
+    <h2 class="mb-4">Quản lý đơn hàng</h2>
 
     <table class="table order-table align-middle">
         <thead class="table-dark text-center">
