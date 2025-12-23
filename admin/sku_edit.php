@@ -3,6 +3,7 @@ include '../db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = intval($_POST['id']);
+    $spu_id = intval($_POST['spu_id']); // Lấy từ hidden input
     $sku_code = $_POST['sku_code'];
     $variant = $_POST['variant'];
     $price = floatval($_POST['price']);
@@ -21,7 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         WHERE id=?
     ");
 
-    $stmt->bind_param("ssddisi", 
+    $stmt->bind_param(
+        "ssddisi", 
         $sku_code, 
         $variant,
         $price,
@@ -32,8 +34,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 
     if ($stmt->execute()) {
-        echo "OK";
+        // Redirect về trang product_edit đúng SPU
+        echo "<script>
+            alert('Cập nhật thành công!');
+            window.location='product_edit.php?id=$spu_id';
+        </script>";
+        exit;
     } else {
-        echo "ERROR: " . $stmt->error;
+        echo "Lỗi: " . $conn->error;
     }
 }

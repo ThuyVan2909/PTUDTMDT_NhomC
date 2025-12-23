@@ -1,22 +1,7 @@
 <?php
 include '../db.php';
 
-/*
-|--------------------------------------------------------------------------
-| UPDATE ORDER STATUS
-|--------------------------------------------------------------------------
-*/
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'], $_POST['status'])) {
-    $order_id = intval($_POST['order_id']);
-    $status   = $_POST['status'];
 
-    $stmt = $conn->prepare("UPDATE orders SET status = ? WHERE id = ?");
-    $stmt->bind_param("si", $status, $order_id);
-    $stmt->execute();
-
-    header("Location: orders.php");
-    exit;
-}
 
 /*
 |--------------------------------------------------------------------------
@@ -118,7 +103,7 @@ switch ($row['status']) {
     case 'Đơn bị huỷ': $selectClass = 'st-cancel'; break;
 }
 ?>
-    <form method="POST" class="d-flex gap-2 align-items-center">
+    <form method="POST" action="order_update.php" class="d-flex gap-2 align-items-center">
         <input type="hidden" name="order_id" value="<?= $row['id'] ?>">
 
         <select name="status" class="form-select form-select-sm status-select <?= $selectClass ?>">

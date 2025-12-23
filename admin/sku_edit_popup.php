@@ -41,6 +41,7 @@ h3.text-primary {
 
 <form method="post" action="sku_edit.php" class="sku-form">
     <input type="hidden" name="id" value="<?= $id ?>">
+    <input type="hidden" name="spu_id" value="<?= $sku['spu_id'] ?>"> <!-- thêm dòng này -->
 
     <div class="mb-3">
         <label class="form-label">SKU Code</label>

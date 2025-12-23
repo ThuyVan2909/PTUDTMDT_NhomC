@@ -201,7 +201,7 @@ document.getElementById('addCouponForm').addEventListener('submit', function(e){
     e.preventDefault();
     const formData = new FormData(this);
 
-    fetch('coupon_add.php', {
+    fetch('coupon_create.php', {
         method:'POST',
         body: formData
     })

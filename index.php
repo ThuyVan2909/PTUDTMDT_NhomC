@@ -400,7 +400,7 @@ body {
 /* ===== LEFT FIXED BANNERS ===== */
 .left-fixed-banners {
     position: sticky;
-    top: 90px;
+    top: 90px; /* dính dưới header */
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -430,6 +430,11 @@ body {
     border-radius: 20px;
     overflow: hidden;
 }
+.top-banner-slider img {
+    max-width: 100%;
+    height: auto;
+}
+
 .top-slide {
     position: absolute;
     inset: 0;
@@ -549,53 +554,100 @@ body {
 
 @media (max-width: 768px) {
     .top-banner-slider {
-        aspect-ratio: 16/9;
+        aspect-ratio: 16/9; /* cao hơn cho mobile */
         margin-bottom: 16px;
     }
 }
 @media (min-width: 992px) {
     .left-fixed-banners a {
-        height: 30vh;
+        height: 30vh; /* thay vì px cố định */
     }
 }
 
 @media (max-width: 768px) {
     .product-track {
-        grid-auto-columns: calc((100% - 16px) / 2); 
+        grid-auto-columns: calc((100% - 16px) / 2); /* 2 cột / hàng */
     }
     .slide-btn {
-        display: block;       
-        width: 36px;          
+        display: block;        /* hiển thị nút */
+        width: 36px;           /* kích thước nhỏ hơn desktop */
         height: 36px;
         font-size: 20px;
         opacity: 0.85;
     }
 
-    /* Nút prev bên trái */
     .slide-btn.prev {
-        left: 8px;            
+        left: 8px;             /* cách viền trái màn hình */
         top: 50%;
         transform: translateY(-50%);
     }
 
-    /* Nút next bên phải */
     .slide-btn.next {
-        right: 8px;         
+        right: 8px;            /* cách viền phải màn hình */
         top: 50%;
         transform: translateY(-50%);
     }
 }
+
+
+
 @media (max-width: 576px) {
+
+    /* KHÓA TRÀN NGANG TOÀN TRANG */
+    html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* ===== SEARCH DROPDOWN ===== */
     .search-dropdown {
-        left: -12px;
-        right: -12px;
-        border-radius: 12px;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0 0 12px 12px;
         padding: 8px 0;
+        box-sizing: border-box;
+    }
+
+    /* ===== PRODUCT SLIDER ===== */
+    .product-slider-wrapper {
+        padding-left: 0;   /* ❌ bỏ padding gây lệch */
+        overflow: hidden;  /* ✅ khóa tràn */
+    }
+
+    .product-slider {
+        overflow: hidden;
+    }
+
+    .product-track {
+        grid-auto-columns: calc((100vw - 16px) / 2);
+    gap: 16px;
+        padding-right: 0;
+    }
+
+    /* ===== SLIDE BUTTON ===== */
+    .slide-btn {
+        top: 45%;
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+    }
+
+    .slide-btn.prev {
+        left: 8px;   /* ❌ KHÔNG ÂM */
+    }
+
+    .slide-btn.next {
+        right: 8px;  /* ❌ KHÔNG ÂM */
     }
 }
+
+
 
 
 </style>
+
 
 </head>
 <body class="bg-light">
@@ -657,7 +709,7 @@ body {
          style="top:60px; left:0; z-index:1050; display:none;">
       <ul class="navbar-nav flex-column gap-2 p-2">
         <li class="nav-item"><a class="nav-link" href="index.php">Trang chủ</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Danh mục</a></li>
+        <li class="nav-item"><a class="nav-link" href="category.php">Danh mục</a></li>
         <li class="nav-item"><a class="nav-link" href="contact.php">Liên hệ</a></li>
         <li class="nav-item">
           <?php if($isLoggedIn): ?>
@@ -673,7 +725,7 @@ body {
     <div class="collapse navbar-collapse" id="navbarMenu">
       <ul class="navbar-nav flex-column flex-lg-row gap-2 gap-lg-4 me-auto">
         <li class="nav-item"><a class="nav-link" href="index.php">Trang chủ</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Danh mục</a></li>
+        <li class="nav-item"><a class="nav-link" href="category.php">Danh mục</a></li>
         <li class="nav-item"><a class="nav-link" href="contact.php">Liên hệ</a></li>
         <li class="nav-item"><a class="nav-link" href="blog.php">Blogs</a></li>
         <li class="nav-item">
@@ -740,7 +792,7 @@ body {
 
 
 
-<div class="container py-4">
+<div id="mainContent" class="container py-4">
   <div class="row">
 
 <!-- ===== BANNER BÊN TRÁI ===== -->
@@ -754,10 +806,8 @@ body {
         </div>
     </div>
 
-
-<!-- ===== MAIN CONTENT ===== -->
+    <!-- MAIN CONTENT -->
     <div class="col-12 col-md-9 col-lg-10">
-
             <!-- LAPTOP -->
             <section id="laptop-section">
                 <h2 class="fw-bold mb-3">Laptop</h2>
@@ -934,6 +984,12 @@ body {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
+</script>
+
+<script>
 function openLogin(){ document.getElementById("loginModal").style.display="flex"; }
 function closeLogin(){ document.getElementById("loginModal").style.display="none"; }
 window.onclick=function(e){ let modal=document.getElementById("loginModal"); if(e.target===modal) modal.style.display="none"; }
@@ -1032,11 +1088,22 @@ if (section && cat) {
 
     // Scroll tới đúng sản phẩm
     if (pid) {
+    setTimeout(() => {
+        const el = document.getElementById("product-" + pid);
+        if (!el) return;
+
+        el.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+        el.classList.add("product-highlight");
         setTimeout(() => {
-            const el = document.getElementById("product-" + pid);
-            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-        }, 200);
-    }
+            el.classList.remove("product-highlight");
+        }, 2500);
+    }, 600);
+}
+
 }
     if (section === "phone") {
     phoneCat = cat;
@@ -1059,25 +1126,6 @@ if (section && cat) {
 }
 
 // SCROLL TO PRODUCT
-const productId = url.searchParams.get("product_id");
-if (productId) {
-    setTimeout(() => {
-        const el = document.getElementById("product-" + productId);
-        if (el) {
-            // Scroll tới sản phẩm
-            window.scrollTo({
-                top: el.offsetTop - 80,
-                behavior: "smooth"
-            });
-
-            // Thêm highlight
-            el.classList.add("product-highlight");
-
-            // Tự động bỏ highlight sau 2.5s
-            setTimeout(() => el.classList.remove("product-highlight"), 2500);
-        }
-    }, 500);
-}
 
 
 </script>
