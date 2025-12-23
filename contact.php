@@ -635,7 +635,8 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
 
     <!-- Main Content -->
     <div class="container py-5">
-        <!-- Hero Section -->
+  
+    
         <div class="contact-hero">
             <div class="row align-items-center">
                 <div class="col-lg-6">
@@ -653,7 +654,7 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
             </div>
         </div>
 
-        <!-- Contact Information -->
+        <!-- THÔNG TIN LIÊN LẠC -->
         <div class="row g-4 mt-4">
             <div class="col-lg-3 col-md-6">
                 <div class="contact-card p-4">
@@ -704,7 +705,7 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
             </div>
         </div>
 
-        <!-- Contact Form -->
+        <!-- BIỂU MẪU LIÊN HỆ -->
         <div class="contact-form-section">
             <h2 class="section-title">Gửi tin nhắn cho chúng tôi</h2>
             <form id="contactForm">
@@ -756,7 +757,7 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
             </form>
         </div>
 
-        <!-- FAQ Section -->
+        <!-- CÁC CÂU HỎI THƯỜNG GẶP -->
         <div class="contact-form-section mt-5">
             <h2 class="section-title">Câu hỏi thường gặp</h2>
             <div class="faq-list">
@@ -769,7 +770,6 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
                         <p>TechZone áp dụng chính sách đổi trả trong vòng 30 ngày kể từ ngày nhận hàng. Sản phẩm phải còn nguyên vẹn, chưa qua sử dụng và có đầy đủ hộp, phụ kiện đi kèm.</p>
                     </div>
                 </div>
-                
                 <div class="faq-item">
                     <div class="faq-question">
                         <span>Làm thế nào để kiểm tra tình trạng đơn hàng?</span>
@@ -779,7 +779,6 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
                         <p>Bạn có thể tra cứu đơn hàng tại mục "Tra cứu đơn hàng" trên menu, hoặc liên hệ hotline 1800 9999 với mã đơn hàng để được hỗ trợ nhanh nhất.</p>
                     </div>
                 </div>
-                
                 <div class="faq-item">
                     <div class="faq-question">
                         <span>Thời gian bảo hành sản phẩm là bao lâu?</span>
@@ -789,7 +788,6 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
                         <p>Máy mới: 12 tháng chính hãng. Máy cũ/thanh lý: 6 tháng tại TechZone. Một số sản phẩm đặc biệt có thể có thời gian bảo hành khác, vui lòng kiểm tra trong mô tả sản phẩm.</p>
                     </div>
                 </div>
-                
                 <div class="faq-item">
                     <div class="faq-question">
                         <span>Tôi có thể mua hàng trả góp không?</span>
@@ -802,7 +800,7 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
             </div>
         </div>
 
-        <!-- Map Section -->
+        <!-- TÍCH HỢP BẢN ĐỒ -->
         <div class="contact-form-section mt-5">
             <h2 class="section-title">Đến với chúng tôi</h2>
             <div class="map-container">

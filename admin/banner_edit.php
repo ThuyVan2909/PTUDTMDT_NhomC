@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 </div>
 
-<script>
+<script>S
 const input = document.querySelector("input[type=file]");
 const preview = document.getElementById("preview");
 

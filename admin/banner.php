@@ -32,7 +32,7 @@ $banners = $conn->query("
     <div class="modal-box" style="max-width: 600px; width: 100%;">
         <span id="closeBannerModal" class="close-btn">&times;</span>
 
-        <div id="bannerModalContent">Loading...</div> <!-- Form load ở đây -->
+        <div id="bannerModalContent">Loading...</div> 
     </div>
 </div>
 

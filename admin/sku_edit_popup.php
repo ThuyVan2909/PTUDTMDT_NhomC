@@ -34,6 +34,7 @@ h3.text-primary {
 }
 
 </style>
+
 <h3 class="mb-3 text-primary">
     <i class="bi bi-pencil-square"></i> Chỉnh sửa SKU #<?= $id ?>
 </h3>

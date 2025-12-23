@@ -41,7 +41,7 @@ $view = $_GET['view'] ?? 'dashboard';
             display: flex;
             align-items: center;
             padding: 14px 20px;
-            gap: 12px;              /* 👈 icon cách chữ */
+            gap: 12px;           
             color: #fff;
             text-decoration: none;
         }
@@ -52,7 +52,7 @@ $view = $_GET['view'] ?? 'dashboard';
             top: 0;
             width: 4px;
             height: 100%;
-            background: #f7f0e0ff;         /* màu thanh */
+            background: #f7f0e0ff;        
             opacity: 0;
             transition: opacity 0.2s ease;
         }
@@ -63,13 +63,13 @@ $view = $_GET['view'] ?? 'dashboard';
     opacity: 1;
 }
         .sidebar a i {
-            width: 20px;            /* cố định chiều rộng icon */
+            width: 20px;           
             text-align: center;
             font-size: 16px;
         }
         .sidebar a:hover { background: #0d3a54; }
         .sidebar a.active {
-            background: #0d3a54;     /* giống hover */
+            background: #0d3a54;    
             font-weight: 600;
         }
         .sidebar a.active:hover {
