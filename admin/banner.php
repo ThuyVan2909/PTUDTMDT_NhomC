@@ -81,7 +81,11 @@ $banners = $conn->query("
     <td><?= $b['is_active'] ? 'ON' : 'OFF' ?></td>
 
     <td>
-        <a href="banner_edit.php?id=<?= $b['id'] ?>" button class="btn-edit-small">Sửa</a> |
+        <button 
+    class="btn-edit-small"
+    onclick="openEditBanner(<?= $b['id'] ?>)">
+    Sửa
+</button>
         <a href="banner_delete.php?id=<?= $b['id'] ?>" button class="btn-delete-small"
         onclick="return confirm('Bạn có chắc muốn xóa banner này?')">
    Xóa
@@ -203,6 +207,45 @@ bannerModal.addEventListener("click", e => {
     if(e.target === bannerModal) bannerModal.style.display = "none";
 });
 
+function openEditBanner(id) {
+    fetch('banner_edit.php?id=' + id)
+        .then(res => res.text())
+        .then(html => {
+            bannerContent.innerHTML = html;
+            bannerModal.style.display = "flex";
+
+            // Preview ảnh khi đổi file
+            const input = bannerContent.querySelector("input[type=file]");
+            const preview = bannerContent.querySelector("#preview");
+            if (input && preview) {
+                input.addEventListener("change", () => {
+                    const file = input.files[0];
+                    if (file) {
+                        preview.src = URL.createObjectURL(file);
+                        preview.style.display = "block";
+                    }
+                });
+            }
+
+            // Submit form bằng AJAX
+            const form = bannerContent.querySelector("form");
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
+                const data = new FormData(form);
+
+                fetch('banner_edit.php?id=' + id, {
+                    method: 'POST',
+                    body: data
+                })
+                .then(res => res.text())
+                .then(() => {
+                    alert("Cập nhật banner thành công!");
+                    bannerModal.style.display = "none";
+                    location.reload();
+                });
+            });
+        });
+}
 
 </script>
 
