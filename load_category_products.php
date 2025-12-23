@@ -2,12 +2,15 @@
 include 'db.php';
 $conn->set_charset("utf8mb4");
 
-/* ===== Nhận dữ liệu từ AJAX ===== */
+/* ===== INPUT ===== */
 $catId = intval($_POST['cat'] ?? 0);
 $min   = intval($_POST['min'] ?? 0);
 $max   = intval($_POST['max'] ?? 50000000);
 
-/* ===== SQL: mỗi SPU 1 card ===== */
+$brand = trim($_POST['brand'] ?? '');
+$type  = trim($_POST['type'] ?? '');
+
+/* ===== BASE SQL ===== */
 $sql = "
 SELECT
     spu.id,
@@ -20,7 +23,7 @@ JOIN sku ON sku.spu_id = spu.id
 WHERE 1
 ";
 
-/* ===== Filter category (cha + con) ===== */
+/* ===== FILTER CATEGORY (click từ menu) ===== */
 if ($catId > 0) {
     $sql .= "
     AND spu.category_id IN (
@@ -30,14 +33,41 @@ if ($catId > 0) {
     ";
 }
 
-/* ===== Filter giá theo SKU ===== */
+/* ===== FILTER TYPE (Điện thoại / Laptop) ===== */
+if ($type === 'phone') {
+    // Điện thoại = category id 1 + con
+    $sql .= "
+    AND spu.category_id IN (
+        SELECT id FROM categories
+        WHERE id = 1 OR parent_id = 1
+    )
+    ";
+}
+
+if ($type === 'laptop') {
+    // Laptop = category id 2 + con
+    $sql .= "
+    AND spu.category_id IN (
+        SELECT id FROM categories
+        WHERE id = 2 OR parent_id = 2
+    )
+    ";
+}
+
+/* ===== FILTER BRAND ===== */
+if ($brand !== '') {
+    $brandSafe = $conn->real_escape_string($brand);
+    $sql .= " AND spu.brand = '$brandSafe' ";
+}
+
+/* ===== FILTER PRICE ===== */
 $sql .= "
 AND COALESCE(sku.promo_price, sku.price) BETWEEN $min AND $max
 GROUP BY spu.id
 ORDER BY final_price ASC
 ";
 
-/* ===== Run ===== */
+/* ===== RUN ===== */
 $res = $conn->query($sql);
 
 if (!$res) {
@@ -45,23 +75,21 @@ if (!$res) {
     exit;
 }
 
-/* ===== Render ===== */
 if ($res->num_rows === 0) {
     echo "<div class='col-12 text-muted'>Không có sản phẩm.</div>";
     exit;
 }
 
+/* ===== RENDER ===== */
 while ($spu = $res->fetch_assoc()) {
 
-    /* --- Ảnh SKU ưu tiên --- */
     $imgRow = $conn->query("
         SELECT si.image_url
         FROM sku s
         JOIN sku_images si ON si.sku_id = s.id
         WHERE s.spu_id = {$spu['id']}
-        ORDER BY 
-            si.is_primary DESC,
-            COALESCE(s.promo_price, s.price) ASC
+        ORDER BY si.is_primary DESC,
+                 COALESCE(s.promo_price, s.price) ASC
         LIMIT 1
     ")->fetch_assoc();
 
@@ -74,12 +102,10 @@ while ($spu = $res->fetch_assoc()) {
     if ($origin > 0 && $final < $origin) {
         $discount = round((($origin - $final) / $origin) * 100);
     }
-
     ?>
-    <div class="col-6 col-md-4 col-xl-3">
-        <a href="product.php?spu_id=<?= $spu['id'] ?>"
-           class="text-decoration-none text-dark">
 
+    <div class="col-6 col-md-4 col-xl-3">
+        <a href="product.php?spu_id=<?= $spu['id'] ?>" class="text-decoration-none text-dark">
             <div class="product-card p-2 h-100 position-relative">
 
                 <?php if ($discount > 0): ?>
@@ -88,8 +114,7 @@ while ($spu = $res->fetch_assoc()) {
                     </span>
                 <?php endif; ?>
 
-                <img src="<?= htmlspecialchars($img) ?>"
-                     class="product-img mb-2">
+                <img src="<?= htmlspecialchars($img) ?>" class="product-img mb-2">
 
                 <div class="product-name">
                     <?= htmlspecialchars($spu['brand'].' '.$spu['name']) ?>
@@ -97,16 +122,14 @@ while ($spu = $res->fetch_assoc()) {
 
                 <div class="mt-1">
                     <span class="price"><?= number_format($final) ?>₫</span>
-
                     <?php if ($discount > 0): ?>
-                        <span class="old-price ms-1">
-                            <?= number_format($origin) ?>₫
-                        </span>
+                        <span class="old-price ms-1"><?= number_format($origin) ?>₫</span>
                     <?php endif; ?>
                 </div>
 
             </div>
         </a>
     </div>
+
     <?php
 }

@@ -436,6 +436,11 @@ body {
     border-radius: 20px;
     overflow: hidden;
 }
+.top-banner-slider img {
+    max-width: 100%;
+    height: auto;
+}
+
 .top-slide {
     position: absolute;
     inset: 0;
@@ -556,55 +561,104 @@ body {
     padding-left: 16px;   /* đẩy nội dung qua phải */
 }
 
-@media (max-width: 768px) {
-    .top-banner-slider {
-        aspect-ratio: 16/9; /* cao hơn cho mobile */
-        margin-bottom: 16px;
-    }
-}
+
 @media (min-width: 992px) {
-    .left-fixed-banners a {
-        height: 70vh; /* thay vì px cố định */
+    .product-track {
+        grid-auto-columns: calc((100% - 48px) / 4);
     }
 }
 
 @media (max-width: 768px) {
     .product-track {
-        grid-auto-columns: calc((100% - 16px) / 2); /* 2 cột / hàng */
+        display: grid;
+        grid-template-rows: repeat(2, auto);
+        grid-auto-flow: column;
+
+        /* MỖI CỘT = NỬA MÀN HÌNH */
+        grid-auto-columns: 50vw;
+
+        gap: 16px;
+
+        /* QUAN TRỌNG: không để padding gây lệch */
+        padding-right: 0;
     }
+
     .slide-btn {
-        display: block;        /* hiển thị nút */
-        width: 36px;           /* kích thước nhỏ hơn desktop */
+        display: block;
+        width: 36px;
         height: 36px;
         font-size: 20px;
         opacity: 0.85;
     }
 
-    /* Nút prev bên trái */
     .slide-btn.prev {
-        left: 8px;             /* cách viền trái màn hình */
-        top: 50%;
-        transform: translateY(-50%);
+        left: 6px;
     }
 
-    /* Nút next bên phải */
     .slide-btn.next {
-        right: 8px;            /* cách viền phải màn hình */
-        top: 50%;
-        transform: translateY(-50%);
+        right: 6px;
     }
 }
+
+
+
 @media (max-width: 576px) {
+
+    /* KHÓA TRÀN NGANG TOÀN TRANG */
+    html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* ===== SEARCH DROPDOWN ===== */
     .search-dropdown {
-        left: -12px;
-        right: -12px;
-        border-radius: 12px;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0 0 12px 12px;
         padding: 8px 0;
+        box-sizing: border-box;
+    }
+
+    /* ===== PRODUCT SLIDER ===== */
+    .product-slider-wrapper {
+        padding-left: 0;   /* ❌ bỏ padding gây lệch */
+        overflow: hidden;  /* ✅ khóa tràn */
+    }
+
+    .product-slider {
+        overflow: hidden;
+    }
+
+    .product-track {
+        grid-auto-columns: calc((100vw - 16px) / 2);
+    gap: 16px;
+        padding-right: 0;
+    }
+
+    /* ===== SLIDE BUTTON ===== */
+    .slide-btn {
+        top: 45%;
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+    }
+
+    .slide-btn.prev {
+        left: 8px;   /* ❌ KHÔNG ÂM */
+    }
+
+    .slide-btn.next {
+        right: 8px;  /* ❌ KHÔNG ÂM */
     }
 }
+
+
 
 
 </style>
+
 
 </head>
 <body class="bg-light">
@@ -667,7 +721,7 @@ body {
          style="top:60px; left:0; z-index:1050; display:none;">
       <ul class="navbar-nav flex-column gap-2 p-2">
         <li class="nav-item"><a class="nav-link" href="index.php">Trang chủ</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Danh mục</a></li>
+        <li class="nav-item"><a class="nav-link" href="category.php">Danh mục</a></li>
         <li class="nav-item"><a class="nav-link" href="contact.php">Liên hệ</a></li>
         <li class="nav-item">
           <?php if($isLoggedIn): ?>
@@ -768,7 +822,7 @@ body {
     </div>
 
     <!-- MAIN CONTENT -->
-    <div class="col-12 col-md-9 col-lg-10">
+    <div class="col-12 col-lg-10">
             <!-- LAPTOP -->
             <section id="laptop-section">
                 <h2 class="fw-bold mb-3">Laptop</h2>

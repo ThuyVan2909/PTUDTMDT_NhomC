@@ -70,23 +70,52 @@ body{background:#f8f9fa}
 <!-- ===== HEADER (copy phong cách index) ===== -->
 <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
   <div class="container">
+
     <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="index.php">
       <img src="assets/images/logo.png" height="36">
     </a>
 
-    <button class="navbar-toggler d-lg-none" type="button" id="mobileMenuToggle">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="ms-auto d-flex align-items-center gap-2">
+    <!-- MENU DESKTOP -->
+    <div class="collapse navbar-collapse" id="mainMenu">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link" href="index.php">Trang chủ</a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+            Danh mục
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="category.php?cat=1">Điện thoại</a></li>
+            <li><a class="dropdown-item" href="category.php?cat=2">Laptop</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="contact.php">Liên hệ</a>
+        </li>
+
+      </ul>
+
+      <!-- CART -->
       <a href="cart.php" class="btn btn-outline-success position-relative">
         🛒
         <span id="cartCount"
-              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          0
+        </span>
       </a>
     </div>
+
   </div>
 </nav>
+
 
 <!-- MOBILE MENU -->
 <div id="mobileMenuDropdown"
