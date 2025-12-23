@@ -42,6 +42,7 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
 <head>
     <title>TechZone</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="assets/images/icon_logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
@@ -106,6 +107,7 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
     background: linear-gradient(90deg, #EEF4FA, #F8FAFC);
     border-bottom: 1px solid #D6E0EA;
 }
+
 
 .navbar .nav-link {
     color: #0F172A !important;

@@ -15,7 +15,7 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
     <title>Chip M4 của Apple: Bước tiến nhảy vọt trong xử lý AI? - TechZone</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <link rel="icon" type="image/png" href="assets/images/icon_logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>

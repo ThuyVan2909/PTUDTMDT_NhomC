@@ -36,8 +36,8 @@
         <ul class="list-unstyled footer-links">
           <li>Hotline: <strong>1800 9999</strong></li>
           <li>Email: support@techzone.vn</li>
-          <li><a href="#">Câu hỏi thường gặp (FAQ)</a></li>
-          <li><a href="#">Liên hệ</a></li>
+          <li><a href="/techzone/blog.php">Câu hỏi thường gặp (FAQ)</a></li>
+          <li><a href="/techzone/blog.php#">Liên hệ</a></li>
         </ul>
       </div>
 

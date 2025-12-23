@@ -25,7 +25,8 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
       <ul class="navbar-nav flex-row gap-4 d-none d-lg-flex">
         <li class="nav-item"><a class="nav-link" href="/techzone/index.php">Trang chủ</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Danh mục</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Liên hệ</a></li>
+        <li class="nav-item"><a class="nav-link" href="/techzone/blog.php">Liên hệ</a></li>
+        <li class="nav-item"><a class="nav-link" href="/techzone/blog.php">Blogs</a></li>
         <li class="nav-item"><a class="nav-link" href="/techzone/account.php?tab=orders">Tra cứu đơn hàng</a></li>
       </ul>
 

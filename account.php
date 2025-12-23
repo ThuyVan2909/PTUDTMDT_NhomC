@@ -41,7 +41,9 @@ $user = $conn->query("SELECT * FROM users WHERE id = $user_id")->fetch_assoc();
 <html>
 <head>
     <title>Tài khoản - TechZone</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="assets/images/icon_logo.png">
     <link rel="stylesheet" href="assets/css/account.css">
     <link rel="stylesheet" href="assets/css/header.css">
     <link rel="stylesheet" href="assets/css/footer.css">

@@ -284,6 +284,7 @@ $provinces = $conn->query("SELECT id, name FROM provinces ORDER BY name")->fetch
     <title>Thanh toán</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="assets/images/icon_logo.png">
     <link rel="stylesheet" href="assets/css/header.css">
     <link rel="stylesheet" href="assets/css/footer.css">
     <!-- Bootstrap -->

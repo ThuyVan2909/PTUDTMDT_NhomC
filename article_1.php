@@ -13,6 +13,7 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
 <html lang="vi">
 <head>
     <title>Đánh giá chi tiết iPhone 15 Pro Max - TechZone</title>
+    <link rel="icon" type="image/png" href="assets/images/icon_logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     

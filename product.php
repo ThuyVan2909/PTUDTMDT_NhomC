@@ -258,6 +258,7 @@ if ($defaultSkuId) {
 <head>
 <meta charset="UTF-8">
 <title><?= $spu['name'] ?></title>
+<link rel="icon" type="image/png" href="assets/images/icon_logo.png">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/header.css">
 <link rel="stylesheet" href="assets/css/footer.css">
