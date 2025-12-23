@@ -92,6 +92,163 @@ $view = $_GET['view'] ?? 'dashboard';
         table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
         table, th, td { border: 1px solid #ccc; }
         th, td { padding: 8px; text-align: left; }
+
+
+        /* ===== DASHBOARD ===== */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #135071, #1f6fa0);
+    color: #fff;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.stat-card i {
+    font-size: 28px;
+    opacity: 0.85;
+}
+
+.stat-card h4 {
+    margin: 12px 0 6px;
+    font-size: 15px;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+.stat-card h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+/* Table đẹp hơn */
+table th {
+    background: #f1f5f9;
+    font-weight: 600;
+}
+
+table tr:hover {
+    background: #f9fbfd;
+}
+
+/* Chart grid */
+.chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Doanh thu */
+.stat-card:nth-child(1) {
+    background: linear-gradient(135deg, #0f2027, #2c5364);
+}
+
+/* Đơn hàng */
+.stat-card:nth-child(2) {
+    background: linear-gradient(135deg, #134e5e, #71b280);
+}
+
+/* Người dùng */
+.stat-card:nth-child(3) {
+    background: linear-gradient(135deg, #41295a, #2f0743);
+}
+
+/* Sản phẩm */
+.stat-card:nth-child(4) {
+    background: linear-gradient(135deg, #f7971e, #ffd200);
+    color: #1f2937;
+}
+
+.stat-card {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stat-card::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 35px rgba(0,0,0,0.25);
+}
+
+.stat-card:hover::after {
+    opacity: 1;
+}
+
+/* ===== CARD CHART NỔI BẬT ===== */
+.chart-card {
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+    position: relative;
+}
+
+.chart-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #3b82f6, #22d3ee);
+    border-radius: 16px 16px 0 0;
+}
+
+.chart-title {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ===== TABLE DASHBOARD ===== */
+.table-dashboard th {
+    background: linear-gradient(90deg, #135071, #1f6fa0);
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+.table-dashboard td:last-child {
+    font-weight: 600;
+    color: #2563eb;
+}
+
+.table-dashboard tr {
+    transition: background 0.2s ease;
+}
+
+.table-dashboard tr:hover {
+    background: #eef6ff;
+}
     </style>
 </head>
 <body>
@@ -155,8 +312,58 @@ else if ($view === 'coupons') {
 else if ($view === 'banners') {
     include "banner.php";
 }
-else {
+else { 
+    
+// ===== QUICK STATS =====
 
+// Tổng doanh thu
+$totalRevenue = $conn->query("
+    SELECT SUM(oi.quantity * COALESCE(oi.price,0) - COALESCE(oi.discount_amount,0)) AS total
+    FROM order_items oi
+")->fetch_assoc()['total'] ?? 0;
+
+// Tổng đơn hàng
+$totalOrders = $conn->query("
+    SELECT COUNT(*) AS total FROM orders
+")->fetch_assoc()['total'] ?? 0;
+
+// Tổng user
+$totalUsers = $conn->query("
+    SELECT COUNT(*) AS total FROM users
+")->fetch_assoc()['total'] ?? 0;
+
+// Tổng sản phẩm (SPU)
+$totalProducts = $conn->query("
+    SELECT COUNT(*) AS total FROM spu
+")->fetch_assoc()['total'] ?? 0;
+
+echo "
+<div class='dashboard-grid'>
+    <div class='stat-card'>
+        <i class='fa-solid fa-coins'></i>
+        <h4>Tổng doanh thu</h4>
+        <h2>".number_format($totalRevenue)." ₫</h2>
+    </div>
+
+    <div class='stat-card'>
+        <i class='fa-solid fa-receipt'></i>
+        <h4>Tổng đơn hàng</h4>
+        <h2>$totalOrders</h2>
+    </div>
+
+    <div class='stat-card'>
+        <i class='fa-solid fa-users'></i>
+        <h4>Tổng người dùng</h4>
+        <h2>$totalUsers</h2>
+    </div>
+
+    <div class='stat-card'>
+        <i class='fa-solid fa-box'></i>
+        <h4>Tổng sản phẩm</h4>
+        <h2>$totalProducts</h2>
+    </div>
+</div>
+";
 
     // ----------------------
 
@@ -171,8 +378,17 @@ else {
         GROUP BY sp.id
     ")->fetch_all(MYSQLI_ASSOC);
 
-    echo "<div class='card'><h3>Doanh thu theo sản phẩm</h3>
-    <table><tr><th>Sản phẩm</th><th>Doanh thu (₫)</th></tr>";
+   echo "
+<div class='chart-card'>
+    <div class='chart-title'>
+        <i class='fa-solid fa-box'></i>
+        Doanh thu theo sản phẩm
+    </div>
+    <table class='table-dashboard'>
+        <tr>
+            <th>Sản phẩm</th>
+            <th>Doanh thu (₫)</th>
+        </tr>";
     foreach($salesByProduct as $r){
         echo "<tr><td>{$r['product_name']}</td><td>".number_format($r['revenue'])."</td></tr>";
     }
@@ -192,7 +408,15 @@ else {
     $catNames = json_encode(array_column($salesByCat,'category_name'));
     $catRevenue = json_encode(array_map('floatval', array_column($salesByCat,'revenue')));
 
-    echo "<div class='card'><h3>Doanh thu theo danh mục</h3><canvas id='catChart' height='100'></canvas></div>";
+    echo "
+<div class='chart-card'>
+    <div class='chart-title'>
+        <i class='fa-solid fa-chart-column'></i>
+        Doanh thu theo danh mục
+    </div>
+    <canvas id='catChart' height='100'></canvas>
+</div>
+";
 
     // ----------------------
     // 4) Sản phẩm bán ra theo ngày (7 ngày gần nhất)
@@ -208,7 +432,15 @@ else {
     $salesDates = json_encode(array_column($salesOverTime,'order_date'));
     $salesQty = json_encode(array_map('intval', array_column($salesOverTime,'sold_qty')));
 
-    echo "<div class='card'><h3>Sản phẩm bán ra trong 7 ngày gần nhất</h3><canvas id='salesChart' height='100'></canvas></div>";
+    echo "
+        <div class='chart-card'>
+            <div class='chart-title'>
+                <i class='fa-solid fa-chart-line'></i>
+                Sản phẩm bán ra (7 ngày)
+            </div>
+            <canvas id='salesChart' height='100'></canvas>
+        </div>
+        ";
 
     // ----------------------
     // 5) Số user đăng ký theo ngày (7 ngày gần nhất)
@@ -223,7 +455,15 @@ else {
     $userDates = json_encode(array_column($usersOverTime,'reg_date'));
     $userCount = json_encode(array_map('intval', array_column($usersOverTime,'user_count')));
 
-    echo "<div class='card'><h3>Số user đăng ký trong 7 ngày gần nhất</h3><canvas id='userChart' height='100'></canvas></div>";
+    echo "
+        <div class='chart-card'>
+            <div class='chart-title'>
+                <i class='fa-solid fa-user-plus'></i>
+                User đăng ký mới (7 ngày)
+            </div>
+            <canvas id='userChart' height='100'></canvas>
+        </div>
+        ";
 }
 ?>
 
@@ -243,7 +483,30 @@ new Chart(document.getElementById('catChart'), {
             borderWidth:1
         }]
     },
-    options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+    options: {
+    responsive: true,
+    plugins: {
+        legend: {
+            labels: {
+                font: { size: 13, weight: '600' }
+            }
+        },
+        tooltip: {
+            backgroundColor: '#0f172a',
+            titleFont: { size: 13 },
+            bodyFont: { size: 12 }
+        }
+    },
+    scales: {
+        y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(0,0,0,0.05)' }
+        },
+        x: {
+            grid: { display: false }
+        }
+    }
+}
 });
 
 // Chart sản phẩm bán ra theo thời gian
@@ -260,7 +523,30 @@ new Chart(document.getElementById('salesChart'), {
             fill:true
         }]
     },
-    options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+    options: {
+    responsive: true,
+    plugins: {
+        legend: {
+            labels: {
+                font: { size: 13, weight: '600' }
+            }
+        },
+        tooltip: {
+            backgroundColor: '#0f172a',
+            titleFont: { size: 13 },
+            bodyFont: { size: 12 }
+        }
+    },
+    scales: {
+        y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(0,0,0,0.05)' }
+        },
+        x: {
+            grid: { display: false }
+        }
+    }
+}
 });
 
 // Chart số user đăng ký theo thời gian
@@ -277,7 +563,30 @@ new Chart(document.getElementById('userChart'), {
             fill:true
         }]
     },
-    options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+    options: {
+    responsive: true,
+    plugins: {
+        legend: {
+            labels: {
+                font: { size: 13, weight: '600' }
+            }
+        },
+        tooltip: {
+            backgroundColor: '#0f172a',
+            titleFont: { size: 13 },
+            bodyFont: { size: 12 }
+        }
+    },
+    scales: {
+        y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(0,0,0,0.05)' }
+        },
+        x: {
+            grid: { display: false }
+        }
+    }
+}
 });
 </script>
 
