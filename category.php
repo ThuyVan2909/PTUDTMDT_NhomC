@@ -1,5 +1,6 @@
 <?php
 $conn = new mysqli("localhost","root","","lendly_db");
+$conn->set_charset("utf8mb4");
 session_start();
 
 $catId = intval($_GET['cat'] ?? 0);
@@ -17,41 +18,77 @@ if ($catId > 0) {
 <meta charset="UTF-8">
 <title><?= htmlspecialchars($category['name'] ?? 'Danh mục') ?></title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <style>
+/* ===== giống index ===== */
+body{background:#f8f9fa}
+
+.product-card{
+  background:#fff;
+  border-radius:10px;
+  border:1px solid #eee;
+  transition:.2s;
+  height:100%;
+}
+.product-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+.product-img{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+}
+.product-name{
+  font-size:15px;
+  font-weight:600;
+  line-height:1.4;
+  height:42px;
+  overflow:hidden;
+}
+.price{
+  font-weight:700;
+  color:#dc3545;
+}
+.old-price{
+  text-decoration:line-through;
+  font-size:13px;
+  color:#999;
+}
+
+/* filter */
 .price-range-box input[type=range]{width:100%}
-.product-card{border:1px solid #eee;border-radius:8px;overflow:hidden}
-.product-img{width:100%;height:180px;object-fit:cover}
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<nav class="navbar navbar-expand-lg border-bottom bg-white">
+<!-- ===== HEADER (copy phong cách index) ===== -->
+<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
   <div class="container">
-
-    <a class="navbar-brand fw-bold" href="index.php">
+    <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="index.php">
       <img src="assets/images/logo.png" height="36">
     </a>
 
-    <!-- MOBILE TOGGLE -->
     <button class="navbar-toggler d-lg-none" type="button" id="mobileMenuToggle">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- CART -->
-    <a href="cart.php" class="btn btn-outline-success position-relative ms-2">
-      🛒
-      <span id="cartCount"
-            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
-    </a>
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <a href="cart.php" class="btn btn-outline-success position-relative">
+        🛒
+        <span id="cartCount"
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+      </a>
+    </div>
   </div>
 </nav>
 
-<!-- MOBILE MENU OVERLAY -->
+<!-- MOBILE MENU -->
 <div id="mobileMenuDropdown"
      class="position-fixed top-0 start-0 w-100 h-100 bg-white d-lg-none"
      style="z-index:1050;display:none">
@@ -66,75 +103,150 @@ if ($catId > 0) {
   </ul>
 </div>
 
-<!-- CONTENT -->
-<div class="container py-4">
+<!-- ===== CONTENT ===== -->
+<div class="container my-4">
   <div class="row">
 
     <!-- FILTER -->
-    <div class="col-lg-3 mb-4">
-      <div class="bg-white p-3 rounded shadow-sm">
-        <h5 class="fw-bold mb-3">Lọc theo giá</h5>
+<div class="col-lg-3 mb-4">
+  <div class="bg-white p-3 rounded shadow-sm">
 
-        <div class="price-range-box">
-          <input type="range" id="minPrice" min="0" max="50000000" step="500000" value="0">
-          <input type="range" id="maxPrice" min="0" max="50000000" step="500000" value="50000000">
+    <h5 class="fw-bold mb-3">Lọc sản phẩm</h5>
 
-          <div class="d-flex justify-content-between small mt-2">
-            <span id="minPriceText">0₫</span>
-            <span id="maxPriceText">50.000.000₫</span>
-          </div>
-        </div>
+    <!-- PRICE RANGE (1 BAR) -->
+    <label class="fw-semibold mb-2">Khoảng giá</label>
 
-        <button class="btn btn-primary w-100 mt-3" id="applyFilter">
-          Áp dụng
-        </button>
+    <div class="position-relative mb-2">
+      <input type="range" id="priceRange"
+             min="0" max="50000000" step="500000" value="50000000"
+             class="form-range">
+      <div class="d-flex justify-content-between small">
+        <span id="minPriceText">0₫</span>
+        <span id="maxPriceText">50.000.000₫</span>
       </div>
     </div>
 
+    <!-- BRAND DROPDOWN -->
+    <div class="dropdown mb-2">
+      <button class="btn btn-outline-secondary w-100 dropdown-toggle text-start"
+              data-bs-toggle="dropdown">
+        Thương hiệu
+      </button>
+      <ul class="dropdown-menu w-100">
+        <li><a class="dropdown-item brand-item" data-brand="">Tất cả</a></li>
+        <li><a class="dropdown-item brand-item" data-brand="Apple">Apple</a></li>
+        <li><a class="dropdown-item brand-item" data-brand="Samsung">Samsung</a></li>
+        <li><a class="dropdown-item brand-item" data-brand="Dell">Dell</a></li>
+        <li><a class="dropdown-item brand-item" data-brand="Asus">Asus</a></li>
+      </ul>
+    </div>
+
+    <!-- TYPE DROPDOWN -->
+    <div class="dropdown mb-3">
+      <button class="btn btn-outline-secondary w-100 dropdown-toggle text-start"
+              data-bs-toggle="dropdown">
+        Loại sản phẩm
+      </button>
+      <ul class="dropdown-menu w-100">
+        <li><a class="dropdown-item type-item" data-type="">Tất cả</a></li>
+        <li><a class="dropdown-item type-item" data-type="phone">Điện thoại</a></li>
+        <li><a class="dropdown-item type-item" data-type="laptop">Laptop</a></li>
+      </ul>
+    </div>
+
+    <button class="btn btn-primary w-100" id="applyFilter">
+      Áp dụng
+    </button>
+
+  </div>
+</div>
+
+
     <!-- PRODUCTS -->
     <div class="col-lg-9">
-      <h3 class="fw-bold mb-3">
+      <h4 class="fw-bold mb-3">
         <?= htmlspecialchars($category['name'] ?? 'Danh mục') ?>
-      </h3>
+      </h4>
 
-      <div id="productList" class="row g-3"></div>
+      <div id="productList" class="row g-3">
+        <!-- ajax load -->
+      </div>
     </div>
 
   </div>
 </div>
 
+
 <script>
+/* ===== GLOBAL FILTER STATE ===== */
+let minPrice = 0;
+let maxPrice = 50000000;
+let selectedBrand = "";
+let selectedType = "";
+
+/* ===== FORMAT ===== */
 function formatVND(v){
-  return Number(v).toLocaleString("vi-VN")+"₫";
+  return Number(v).toLocaleString("vi-VN") + "₫";
 }
 
+/* ===== LOAD PRODUCTS ===== */
 function loadProducts(){
   $.post("load_category_products.php",{
     cat: <?= $catId ?>,
-    min: $("#minPrice").val(),
-    max: $("#maxPrice").val()
+    min: minPrice,
+    max: maxPrice,
+    brand: selectedBrand,
+    type: selectedType
   },function(html){
     $("#productList").html(html);
   });
 }
 
-$("#minPrice,#maxPrice").on("input",function(){
-  let min=parseInt($("#minPrice").val());
-  let max=parseInt($("#maxPrice").val());
-  if(min>max){$("#minPrice").val(max);min=max;}
-  $("#minPriceText").text(formatVND(min));
-  $("#maxPriceText").text(formatVND(max));
+/* ===== PRICE RANGE (1 BAR) ===== */
+$("#priceRange").on("input", function () {
+  maxPrice = parseInt(this.value);
+  $("#minPriceText").text(formatVND(minPrice));
+  $("#maxPriceText").text(formatVND(maxPrice));
 });
 
-$("#applyFilter").click(loadProducts);
+/* ===== BRAND FILTER ===== */
+$(".brand-item").on("click", function () {
+  selectedBrand = $(this).data("brand");
+  $(this).closest(".dropdown")
+         .find("button")
+         .text($(this).text());
+});
 
-// mobile menu
-$("#mobileMenuToggle").click(()=>$("#mobileMenuDropdown").show());
-$("#closeMobileMenu").click(()=>$("#mobileMenuDropdown").hide());
+/* ===== TYPE FILTER ===== */
+$(".type-item").on("click", function () {
+  selectedType = $(this).data("type");
+  $(this).closest(".dropdown")
+         .find("button")
+         .text($(this).text());
+});
 
-// load lần đầu
-loadProducts();
+/* ===== APPLY ===== */
+$("#applyFilter").on("click", function () {
+  loadProducts();
+});
+
+/* ===== MOBILE MENU ===== */
+$("#mobileMenuToggle").on("click", function(){
+  $("#mobileMenuDropdown").show();
+});
+$("#closeMobileMenu").on("click", function(){
+  $("#mobileMenuDropdown").hide();
+});
+
+/* ===== FIRST LOAD ===== */
+$(document).ready(function(){
+  $("#minPriceText").text(formatVND(minPrice));
+  $("#maxPriceText").text(formatVND(maxPrice));
+  loadProducts();
+});
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
