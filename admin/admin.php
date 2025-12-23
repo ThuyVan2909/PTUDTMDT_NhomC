@@ -291,6 +291,12 @@ table tr:hover {
         <i class="fa-solid fa-image"></i>
         Quản lý banner
     </a>
+    <a href="logout.php"
+   class="logout"
+   onclick="return confirm('Bạn có chắc chắn muốn đăng xuất?')">
+    <i class="fa-solid fa-right-from-bracket"></i>
+    Đăng xuất
+</a>
 </div>
 
 
