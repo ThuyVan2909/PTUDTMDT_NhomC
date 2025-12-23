@@ -32,10 +32,8 @@
 .breadcrumb {
     display: flex;
     align-items: center;
-    gap: 6px;
     list-style: none;
     padding: 10px 16px;
-    /* background: linear-gradient(90deg, #f8fafc, #eef2f7); */
     border-radius: 10px;
     font-size: 15px;
 }

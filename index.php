@@ -807,7 +807,7 @@ body {
 
 
 
-<div class="container py-4">
+<div id="mainContent" class="container py-4">
   <div class="row">
 
     <!-- LEFT FIXED BANNERS -->
@@ -999,6 +999,12 @@ body {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
+</script>
+
+<script>
 function openLogin(){ document.getElementById("loginModal").style.display="flex"; }
 function closeLogin(){ document.getElementById("loginModal").style.display="none"; }
 window.onclick=function(e){ let modal=document.getElementById("loginModal"); if(e.target===modal) modal.style.display="none"; }
@@ -1097,11 +1103,22 @@ if (section && cat) {
 
     // Scroll tới đúng sản phẩm
     if (pid) {
+    setTimeout(() => {
+        const el = document.getElementById("product-" + pid);
+        if (!el) return;
+
+        el.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+        el.classList.add("product-highlight");
         setTimeout(() => {
-            const el = document.getElementById("product-" + pid);
-            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-        }, 200);
-    }
+            el.classList.remove("product-highlight");
+        }, 2500);
+    }, 600);
+}
+
 }
     if (section === "phone") {
     phoneCat = cat;
@@ -1124,25 +1141,6 @@ if (section && cat) {
 }
 
 // SCROLL TO PRODUCT
-const productId = url.searchParams.get("product_id");
-if (productId) {
-    setTimeout(() => {
-        const el = document.getElementById("product-" + productId);
-        if (el) {
-            // Scroll tới sản phẩm
-            window.scrollTo({
-                top: el.offsetTop - 80,
-                behavior: "smooth"
-            });
-
-            // Thêm highlight
-            el.classList.add("product-highlight");
-
-            // Tự động bỏ highlight sau 2.5s
-            setTimeout(() => el.classList.remove("product-highlight"), 2500);
-        }
-    }, 500);
-}
 
 
 </script>

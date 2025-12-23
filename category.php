@@ -11,7 +11,22 @@ if ($catId > 0) {
     $rs = $conn->query("SELECT * FROM categories WHERE id = $catId");
     $category = $rs->fetch_assoc();
 }
+
+
 ?>
+
+
+<?php $breadcrumbs = [
+    ["label" => "Trang chủ", "url" => "index.php"]
+];
+
+if (!empty($category['name'])) {
+    $breadcrumbs[] = [
+        "label" => $category['name']
+    ];
+}
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -24,25 +39,36 @@ if ($catId > 0) {
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <style>
-/* ===== giống index ===== */
-body{background:#f8f9fa}
+/* ===== GLOBAL ===== */
+body{
+  background:#f4f6f8;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
 
+/* ===== CARD ===== */
 .product-card{
   background:#fff;
-  border-radius:10px;
-  border:1px solid #eee;
-  transition:.2s;
+  border-radius:14px;
+  border:1px solid #eaeaea;
+  transition:all .25s ease;
   height:100%;
+  overflow:hidden;
 }
 .product-card:hover{
-  transform:translateY(-3px);
-  box-shadow:0 8px 20px rgba(0,0,0,.08);
+  transform:translateY(-4px);
+  box-shadow:0 12px 28px rgba(0,0,0,.12);
 }
+
+/* IMAGE */
 .product-img{
   width:100%;
   height:200px;
-  object-fit:cover;
+  object-fit:contain;
+  background:#fafafa;
+  padding:12px;
 }
+
+/* INFO */
 .product-name{
   font-size:15px;
   font-weight:600;
@@ -50,18 +76,71 @@ body{background:#f8f9fa}
   height:42px;
   overflow:hidden;
 }
+
 .price{
   font-weight:700;
-  color:#dc3545;
+  color:#e53935;
+  font-size:16px;
 }
 .old-price{
   text-decoration:line-through;
   font-size:13px;
-  color:#999;
+  color:#9e9e9e;
 }
 
-/* filter */
-.price-range-box input[type=range]{width:100%}
+/* BUTTON */
+.btn-buy{
+  border-radius:10px;
+  font-size:14px;
+  padding:6px 10px;
+}
+
+/* ===== FILTER BOX ===== */
+.filter-box{
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.06);
+}
+
+/* RANGE */
+input[type=range]::-webkit-slider-thumb{
+  background:#0d6efd;
+}
+input[type=range]::-moz-range-thumb{
+  background:#0d6efd;
+}
+
+/* DROPDOWN */
+.dropdown-menu{
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.12);
+  border:none;
+}
+.dropdown-item{
+  font-size:14px;
+}
+.dropdown-item:hover{
+  background:#f1f3f5;
+}
+
+/* ===== NAVBAR ===== */
+.navbar{
+  box-shadow:0 2px 10px rgba(0,0,0,.05);
+}
+.nav-link{
+  font-weight:500;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 576px){
+  .product-img{
+    height:160px;
+  }
+  h4{
+    font-size:18px;
+  }
+}
+
 </style>
 </head>
 
@@ -116,7 +195,9 @@ body{background:#f8f9fa}
   </div>
 </nav>
 
-
+<div class="container mt-3">
+    <?php include "breadcrumb.php"; ?>
+</div>
 <!-- MOBILE MENU -->
 <div id="mobileMenuDropdown"
      class="position-fixed top-0 start-0 w-100 h-100 bg-white d-lg-none"
@@ -131,6 +212,8 @@ body{background:#f8f9fa}
     <li class="nav-item"><a class="nav-link" href="contact.php">Liên hệ</a></li>
   </ul>
 </div>
+
+
 
 <!-- ===== CONTENT ===== -->
 <div class="container my-4">
