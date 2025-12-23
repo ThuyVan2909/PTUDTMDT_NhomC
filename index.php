@@ -406,8 +406,8 @@ body {
 
 /* ===== LEFT FIXED BANNERS ===== */
 .left-fixed-banners {
-    position: sticky;
-    top: 90px; /* dính dưới header */
+    position: relative;
+    top: 50px; /* dính dưới header */
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -564,7 +564,7 @@ body {
 }
 @media (min-width: 992px) {
     .left-fixed-banners a {
-        height: 30vh; /* thay vì px cố định */
+        height: 70vh; /* thay vì px cố định */
     }
 }
 
