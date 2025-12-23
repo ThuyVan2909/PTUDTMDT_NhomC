@@ -19,7 +19,7 @@ $users = $conn->query("
 <body class="bg-light">
 <div class="container py-4">
 
-<h3 class="mb-4">Quản lý người dùng</h3>
+<h2 class="mb-4">Quản lý người dùng</h2>
 
 <table class="table order-table table-striped table-hover align-middle">
 <thead class="table-dark text-center">

@@ -40,54 +40,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 ?>
-
-<h2>Thêm Banner</h2>
-
-<div class="card" style="max-width:600px; padding:20px; border-radius:10px; box-shadow:0 0 12px rgba(0,0,0,0.1);">
-<form id="addBannerForm" method="post" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:12px;">
-
-
-    <label>Tiêu đề banner</label>
-    <input type="text" name="title" required style="padding:6px 10px; border-radius:5px; border:1px solid #ccc;">
-
-    <label>Chọn sản phẩm</label>
-    <select name="spu_id" required style="padding:6px 10px; border-radius:5px; border:1px solid #ccc;">
-        <option value="">-- Chọn sản phẩm --</option>
-        <?php while ($s = $spus->fetch_assoc()): ?>
-            <option value="<?= $s['id'] ?>">
-                <?= htmlspecialchars($s['brand'] . " - " . $s['name']) ?>
-            </option>
-        <?php endwhile; ?>
-    </select>
-
-    <label>Ảnh banner</label>
-    <input type="file" name="image" accept="image/*" required style="padding:6px 10px;">
-
-    <img id="preview" style="
-        margin-top:10px;
-        max-width:100%;
-        height:auto;
-        display:none;
-        border:1px solid #ccc;
-        border-radius:6px;
-        padding:4px;
-    ">
-
-    <label>Vị trí hiển thị</label>
-    <select name="position" style="padding:6px 10px; border-radius:5px; border:1px solid #ccc;">
-        <option value="left">LEFT (Banner dọc)</option>
-        <option value="top">TOP (Banner slide)</option>
-    </select>
-
-    <label>Thứ tự hiển thị</label>
-    <input type="number" name="sort_order" value="1" min="1" style="padding:6px 10px; border-radius:5px; border:1px solid #ccc;">
-
-    <div style="display:flex; gap:10px; margin-top:12px;">
-        <button type="submit" style="padding:8px 14px; background:#135071; color:#fff; border:none; border-radius:6px; cursor:pointer;">Lưu banner</button>
-        <a href="admin.php?view=banners" style="padding:8px 14px; background:#ccc; color:#333; border-radius:6px; text-decoration:none; text-align:center;">Hủy</a>
+<div class="custom-modal-content">
+    <div class="modal-header-dark">
+        THÊM BANNER MỚI
     </div>
 
-</form>
+    <form id="addBannerForm" method="post" enctype="multipart/form-data" class="modal-padding">
+        <div class="form-group-custom">
+            <label>Tiêu đề banner</label>
+            <input type="text" name="title" required>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Chọn sản phẩm</label>
+            <select name="spu_id" required>
+                <option value="">-- Chọn sản phẩm --</option>
+                <?php while ($s = $spus->fetch_assoc()): ?>
+                    <option value="<?= $s['id'] ?>">
+                        <?= htmlspecialchars($s['brand'] . " - " . $s['name']) ?>
+                    </option>
+                <?php endwhile; ?>
+            </select>
+        </div>
+
+        <div class="form-group-row">
+            <div class="form-group-custom">
+                <label>Vị trí</label>
+                <select name="position">
+                    <option value="top">TOP (Slide)</option>
+                    <option value="left">LEFT (Dọc)</option>
+                </select>
+            </div>
+            <div class="form-group-custom">
+                <label>Thứ tự</label>
+                <input type="number" name="sort_order" value="1" min="1">
+            </div>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Ảnh banner</label>
+            <input type="file" name="image" accept="image/*" required id="bannerFile">
+            <div class="preview-container">
+                <img id="preview" src="" style="display:none;">
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="submit" class="btn-save-dark">Lưu</button>
+            <button type="button" class="btn-cancel-light" onclick="closeBannerModal()">Hủy</button>
+        </div>
+    </form>
 </div>
 
 <script>

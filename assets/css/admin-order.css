@@ -1,3 +1,8 @@
+h2 {
+    margin-bottom: 20px;
+    font-size: 38px;
+}
+body { font-family: "Segoe UI"; padding: 20px; font-size: 16px; }
 
 .order-table{
     background:#fff;

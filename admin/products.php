@@ -103,6 +103,10 @@ img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
     padding:14px 12px;
     text-align:center;
 }
+h2 {
+    margin-bottom: 20px;
+    font-size: 38px;
+}
 
 /* Body */
 .table tbody td {

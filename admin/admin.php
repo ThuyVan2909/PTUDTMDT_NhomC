@@ -18,7 +18,7 @@ $view = $_GET['view'] ?? 'dashboard';
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        body { font-family: Arial; margin: 0; background: #f4f4f4; }
+        body { font-family: "Segoe UI"; padding: 20px; font-size: 16px; }
         .sidebar {
             width: 230px; 
             height: 100vh;
@@ -26,8 +26,16 @@ $view = $_GET['view'] ?? 'dashboard';
             left: 0; top: 0;
             background: #135071;
             color: #fff;
+            line-height: 1.5;
         }
-        .sidebar h2 { text-align: center; padding: 20px 0; margin: 0; }
+        .sidebar h2 { 
+            font-size: 30px; 
+            text-align: center; 
+            padding: 20px 0; 
+            margin: 0;
+            line-height: 1.5;
+            font-weight: 700;
+         }
         .sidebar a {
             position: relative;
             display: flex;
@@ -36,19 +44,18 @@ $view = $_GET['view'] ?? 'dashboard';
             gap: 12px;              /* 👈 icon cách chữ */
             color: #fff;
             text-decoration: none;
-            font-size: 15px;
         }
         .sidebar a::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 4px;
-    height: 100%;
-    background: #f7f0e0ff;         /* màu thanh */
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: #f7f0e0ff;         /* màu thanh */
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
 .sidebar a:hover::before {
     opacity: 1;
 }
@@ -62,12 +69,12 @@ $view = $_GET['view'] ?? 'dashboard';
         }
         .sidebar a:hover { background: #0d3a54; }
         .sidebar a.active {
-    background: #0d3a54;     /* giống hover */
-    font-weight: 600;
-}
-.sidebar a.active:hover {
-    background: #0d3a54;
-}
+            background: #0d3a54;     /* giống hover */
+            font-weight: 600;
+        }
+        .sidebar a.active:hover {
+            background: #0d3a54;
+        }
 
         .content {
             margin-left: 230px;
