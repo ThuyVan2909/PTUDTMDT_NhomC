@@ -405,6 +405,69 @@ body {
     white-space: nowrap;            /* không xuống dòng */
 }
 
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 10px;
+        margin: 20px auto;
+    }
+
+    #cartTable, #cartTable th, #cartTable td {
+        display: block;
+        width: 100%;
+    }
+
+    #cartTable tr {
+        margin-bottom: 20px;
+        border-bottom: 2px solid #f0f0f0;
+        display: block;
+    }
+
+    #cartTable th {
+        display: none; /* ẩn header */
+    }
+
+    #cartTable td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        border-bottom: 1px solid #eee;
+    }
+
+    #cartTable td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        padding-left: 0;
+        font-weight: 600;
+        text-align: left;
+    }
+
+    .product-img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .qty-input {
+        width: 50px;
+    }
+
+    .coupon-box {
+        min-width: auto;
+        max-width: 100%;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .btn.payment-btn {
+        font-size: 16px;
+        padding: 12px;
+    }
+}
+
 </style>
 </head>
 <body>

@@ -41,6 +41,7 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
 <html>
 <head>
     <title>TechZone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
@@ -155,9 +156,13 @@ input.form-control:focus {
     width: 1px;
     height: 18px;
     background-color: #d0d7e2; 
-}.search-box {
-    min-width: 350px;
 }
+
+.search-box {
+    width: 100%;
+    max-width: 360px;
+}
+
 
 /* Icon box bên trái */
 .search-icon-box {
@@ -424,11 +429,11 @@ body {
 /* ===== TOP BANNER SLIDER ===== */
 .top-banner-slider {
     position: relative;
-    height: 380px;
+    width: 100%;
+    aspect-ratio: 16/6; /* tự động co theo tỷ lệ */
     border-radius: 20px;
     overflow: hidden;
 }
-
 .top-slide {
     position: absolute;
     inset: 0;
@@ -549,6 +554,53 @@ body {
     padding-left: 16px;   /* đẩy nội dung qua phải */
 }
 
+@media (max-width: 768px) {
+    .top-banner-slider {
+        aspect-ratio: 16/9; /* cao hơn cho mobile */
+        margin-bottom: 16px;
+    }
+}
+@media (min-width: 992px) {
+    .left-fixed-banners a {
+        height: 30vh; /* thay vì px cố định */
+    }
+}
+
+@media (max-width: 768px) {
+    .product-track {
+        grid-auto-columns: calc((100% - 16px) / 2); /* 2 cột / hàng */
+    }
+    .slide-btn {
+        display: block;        /* hiển thị nút */
+        width: 36px;           /* kích thước nhỏ hơn desktop */
+        height: 36px;
+        font-size: 20px;
+        opacity: 0.85;
+    }
+
+    /* Nút prev bên trái */
+    .slide-btn.prev {
+        left: 8px;             /* cách viền trái màn hình */
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    /* Nút next bên phải */
+    .slide-btn.next {
+        right: 8px;            /* cách viền phải màn hình */
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+@media (max-width: 576px) {
+    .search-dropdown {
+        left: -12px;
+        right: -12px;
+        border-radius: 12px;
+        padding: 8px 0;
+    }
+}
+
 
 </style>
 
@@ -572,94 +624,116 @@ body {
 
 <!-- HEADER -->
 <nav class="navbar navbar-expand-lg border-bottom">
-  <div class="container d-flex align-items-center">
+  <div class="container d-flex flex-wrap align-items-center">
 
-  <!-- LEFT: LOGO -->
-     <a class="navbar-brand d-flex align-items-center fw-bold me-4" href="index.php">
-        <img 
-            src="assets/images/logo.png" 
-            class="logo-img"
-            alt="TechZone Logo"
-        >
+    <!-- LEFT: LOGO -->
+    <a class="navbar-brand d-flex align-items-center fw-bold me-4" href="index.php">
+      <img src="assets/images/logo.png" class="logo-img" alt="TechZone Logo">
     </a>
 
-    <!-- RIGHT: MENU + SEARCH + ACTIONS -->
-    <div class="d-flex align-items-center gap-4 ms-auto">
+    <!-- MOBILE: TOGGLE MENU BUTTON -->
+    <button class="navbar-toggler d-lg-none ms-auto" type="button" id="mobileMenuToggle">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-            <!-- MENU -->
-        <ul class="navbar-nav flex-row gap-4 d-none d-lg-flex">
-            <li class="nav-item">
-                <a class="nav-link" href="index.php">Trang chủ</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Danh mục</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Liên hệ</a>
-            </li>
-            <li class="nav-item">
-    <?php if($isLoggedIn): ?>
-        <a class="nav-link" href="account.php?tab=orders">Tra cứu đơn hàng</a>
-    <?php else: ?>
-        <a class="nav-link" href="javascript:void(0);" onclick="promptLogin()">Tra cứu đơn hàng</a>
-    <?php endif; ?>
-</li>
+    <!-- MOBILE: ACCOUNT + CART -->
+    <div class="d-flex align-items-center gap-2 d-lg-none ms-2">
+      <?php if(!$isLoggedIn): ?>
+        <button class="btn btn-outline-primary" onclick="openLogin()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+               class="bi bi-person" viewBox="0 0 16 16">
+            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+            <path d="M14 13c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4"/>
+          </svg>
+        </button>
+      <?php else: ?>
+        <a href="account.php" class="btn btn-outline-primary"><?= htmlspecialchars($userName) ?></a>
+      <?php endif; ?>
 
-        </ul>
-
-         <!-- SEARCH -->
-          <div class="search-wrapper" style="position:relative;">
-        <div class="search-box d-flex align-items-center">
-            <div class="search-icon-box">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-                </svg>
-            </div>
-            <input 
-            type="text"
-            id="searchInput"
-            class="form-control search-input"
-            placeholder="Bạn đang tìm gì?"
-            autocomplete="off"
-        >
+      <a href="cart.php" class="btn btn-outline-success position-relative">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+             class="bi bi-bag-check" viewBox="0 0 16 16">
+          <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1"/>
+          <path d="M2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>
+        </svg>
+        <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+      </a>
     </div>
 
-    <!-- DROPDOWN KẾT QUẢ -->
-    <div id="searchDropdown" class="search-dropdown"></div>
-</div>
+    <!-- MOBILE MENU DROPDOWN (overlay) -->
+    <div id="mobileMenuDropdown" class="position-absolute bg-white shadow-sm w-100 d-lg-none" 
+         style="top:60px; left:0; z-index:1050; display:none;">
+      <ul class="navbar-nav flex-column gap-2 p-2">
+        <li class="nav-item"><a class="nav-link" href="index.php">Trang chủ</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Danh mục</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Liên hệ</a></li>
+        <li class="nav-item">
+          <?php if($isLoggedIn): ?>
+            <a class="nav-link" href="account.php?tab=orders">Tra cứu đơn hàng</a>
+          <?php else: ?>
+            <a class="nav-link" href="javascript:void(0);" onclick="promptLogin()">Tra cứu đơn hàng</a>
+          <?php endif; ?>
+        </li>
+      </ul>
+    </div>
 
-    <?php if(!$isLoggedIn): ?>
-        <!-- Nếu chưa đăng nhập -->
-            <button class="btn btn-outline-primary" onclick="openLogin()">
+    <!-- RIGHT: MENU + SEARCH + ACTIONS (Desktop) -->
+    <div class="collapse navbar-collapse" id="navbarMenu">
+      <ul class="navbar-nav flex-column flex-lg-row gap-2 gap-lg-4 me-auto">
+        <li class="nav-item"><a class="nav-link" href="index.php">Trang chủ</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Danh mục</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Liên hệ</a></li>
+        <li class="nav-item">
+          <?php if($isLoggedIn): ?>
+            <a class="nav-link" href="account.php?tab=orders">Tra cứu đơn hàng</a>
+          <?php else: ?>
+            <a class="nav-link" href="javascript:void(0);" onclick="promptLogin()">Tra cứu đơn hàng</a>
+          <?php endif; ?>
+        </li>
+      </ul>
+
+      <!-- SEARCH DESKTOP -->
+      <div class="search-wrapper d-none d-lg-block position-relative me-3">
+        <div class="search-box d-flex align-items-center">
+          <div class="search-icon-box">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+            </svg>
+          </div>
+          <input type="text" id="searchInput" class="form-control search-input" placeholder="Bạn đang tìm gì?" autocomplete="off">
+        </div>
+        <div id="searchDropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- ACCOUNT / CART -->
+      <div class="d-flex align-items-center gap-2">
+        <?php if(!$isLoggedIn): ?>
+          <button class="btn btn-outline-primary" onclick="openLogin()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                     class="bi bi-person" viewBox="0 0 16 16">
-                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
-                    <path d="M14 13c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4"/>
+                 class="bi bi-person" viewBox="0 0 16 16">
+              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+              <path d="M14 13c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4"/>
             </svg>
-        </button>
+          </button>
+        <?php else: ?>
+          <a href="account.php" class="btn btn-outline-primary"><?= htmlspecialchars($userName) ?></a>
+        <?php endif; ?>
 
-    <?php else: ?>
-        <!-- Nếu đã đăng nhập -->
-        <a href="account.php" class="btn btn-outline-primary">
-            <?= htmlspecialchars($userName) ?>
+        <a href="cart.php" class="btn btn-outline-success position-relative">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+               class="bi bi-bag-check" viewBox="0 0 16 16">
+            <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1"/>
+            <path d="M2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>
+          </svg>
+          <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
         </a>
-    <?php endif; ?>
+      </div>
+    </div>
 
-    <a href="cart.php" class="btn btn-outline-success position-relative">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                 class="bi bi-bag-check" viewBox="0 0 16 16">
-                <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1"/>
-                <path d="M2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>
-            </svg>
-        
-        <span id="cartCount" 
-            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
-    </a>
-
-</div>
-
-  </div>
+  
 </nav>
+
+
 <!-- ===== TOP BANNER SLIDER ===== -->
 <div class="container my-3">
     <div class="top-banner-slider">
@@ -691,7 +765,7 @@ body {
     </div>
 
     <!-- MAIN CONTENT -->
-    <div class="col-lg-10">
+    <div class="col-12 col-md-9 col-lg-10">
             <!-- LAPTOP -->
             <section id="laptop-section">
                 <h2 class="fw-bold mb-3">Laptop</h2>
@@ -1110,5 +1184,31 @@ function promptLogin() {
     openLogin(); // mở popup đăng nhập
 }
 </script>
+
+
+<script>
+  // Toggle menu mobile overlay
+  const toggleBtn = document.getElementById('mobileMenuToggle');
+  const menuDropdown = document.getElementById('mobileMenuDropdown');
+
+  toggleBtn.addEventListener('click', () => {
+    if(menuDropdown.style.display === 'none' || menuDropdown.style.display === ''){
+      menuDropdown.style.display = 'block';
+    } else {
+      menuDropdown.style.display = 'none';
+    }
+  });
+
+  // Optional: click outside để đóng menu
+  document.addEventListener('click', function(e){
+    if(!menuDropdown.contains(e.target) && !toggleBtn.contains(e.target)){
+      menuDropdown.style.display = 'none';
+    }
+  });
+</script>
+
+
+
+
 </body>
 </html>
