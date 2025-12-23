@@ -599,13 +599,14 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
             </div>
         </div>
 
+        
         <!-- Blog Articles -->
         <div class="row">
             <!-- Article 1 -->
             <div class="col-lg-4 col-md-6">
                 <div class="blog-card">
                     <div class="position-relative">
-                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIwbQ5HAGRbXkKfAQm6Gg9apVtNuxquUiBrdbsHnxA0DdaProUtwUiMPP-pSaprNxBzaa72E2yKSQmFcB8_OU1OO87jjDCXUwsVblqV9iRly-XfRGdN0uYFs8cpIUi4jjBh1Zwi1MSbR4pQhe--bgwtjLBnI7dK52YU89K8nHXps86oiMs0vVggvttTzZtj2gdD9dn9J0LHkZtXigidx6cU3M_Aun6W27FnlZLkFZugJFp-VqXJdHVrb6WPxuxnTkz1cYC5PeLaUU" 
+                        <img src="https://pos.nvncdn.com/a135ac-81120/ps/20240126_1xIv7aEwEj.jpeg?v=1706258255" 
                              alt="iPhone mới nhất với khung titan" class="blog-image">
                         <span class="blog-badge" style="background: #e30019;">Review</span>
                     </div>

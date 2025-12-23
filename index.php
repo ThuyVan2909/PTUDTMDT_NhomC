@@ -666,7 +666,7 @@ body {
       <ul class="navbar-nav flex-column gap-2 p-2">
         <li class="nav-item"><a class="nav-link" href="index.php">Trang chủ</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Danh mục</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Liên hệ</a></li>
+        <li class="nav-item"><a class="nav-link" href="contact.php">Liên hệ</a></li>
         <li class="nav-item">
           <?php if($isLoggedIn): ?>
             <a class="nav-link" href="account.php?tab=orders">Tra cứu đơn hàng</a>
@@ -682,7 +682,8 @@ body {
       <ul class="navbar-nav flex-column flex-lg-row gap-2 gap-lg-4 me-auto">
         <li class="nav-item"><a class="nav-link" href="index.php">Trang chủ</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Danh mục</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Liên hệ</a></li>
+        <li class="nav-item"><a class="nav-link" href="contact.php">Liên hệ</a></li>
+        <li class="nav-item"><a class="nav-link" href="blog.php">Blogs</a></li>
         <li class="nav-item">
           <?php if($isLoggedIn): ?>
             <a class="nav-link" href="account.php?tab=orders">Tra cứu đơn hàng</a>
@@ -886,8 +887,8 @@ body {
         <ul class="list-unstyled footer-links">
           <li>Hotline: <strong>1800 9999</strong></li>
           <li>Email: support@techzone.vn</li>
-          <li><a href="#">Câu hỏi thường gặp (FAQ)</a></li>
-          <li><a href="#">Liên hệ</a></li>
+          <li><a href="contact.php">Câu hỏi thường gặp (FAQ)</a></li>
+          <li><a href="contact.php">Liên hệ</a></li>
         </ul>
       </div>
 

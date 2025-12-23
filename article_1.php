@@ -202,7 +202,7 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] : null;
                 </header>
 
                 <div class="tw-mb-10 tw-rounded-xl tw-overflow-hidden tw-shadow-lg">
-                    <img alt="iPhone 15 Pro Max Titanium" class="tw-w-full tw-h-auto tw-object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIwbQ5HAGRbXkKfAQm6Gg9apVtNuxquUiBrdbsHnxA0DdaProUtwUiMPP-pSaprNxBzaa72E2yKSQmFcB8_OU1OO87jjDCXUwsVblqV9iRly-XfRGdN0uYFs8cpIUi4jjBh1Zwi1MSbR4pQhe--bgwtjLBnI7dK52YU89K8nHXps86oiMs0vVggvttTzZtj2gdD9dn9J0LHkZtXigidx6cU3M_Aun6W27FnlZLkFZugJFp-VqXJdHVrb6WPxuxnTkz1cYC5PeLaUU"/>
+                    <img alt="iPhone 15 Pro Max Titanium" class="tw-w-full tw-h-auto tw-object-cover" src="https://pos.nvncdn.com/a135ac-81120/ps/20240126_1xIv7aEwEj.jpeg?v=1706258255/">
                     <p class="tw-text-center tw-text-sm tw-text-[#677483] tw-mt-2 tw-italic">iPhone 15 Pro Max với thiết kế khung viền Titanium mới.</p>
                 </div>
 
