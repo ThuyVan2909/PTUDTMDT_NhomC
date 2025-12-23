@@ -30,27 +30,32 @@
 /* --- Bảng dữ liệu Banner --- */
 .banner-table {
     width: 100%;
-    border-collapse: collapse;
-    background: transparent;
-    border-radius: 12px;
+    border-collapse: separate; 
+    border-spacing: 0;
+    background: #fff;
+    border-radius: 16px;
     overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0,0,0,.08);
+    border: none;
 }
 
 .banner-table th {
-    background: #1A3D64;
-    color: #fff;
-    padding: 15px;
-    text-align: center;
-    font-size: 14px;
+    background: #1A3D64 !important; /* Màu xanh đậm bạn yêu cầu */
+    color: #ffffff !important;      /* Chữ trắng */
+    font-weight: 700;
+    padding: 16px 12px;
+    text-align: center;             /* Canh giữa */
+    border: none;
     text-transform: uppercase;
+    font-size: 14px;
 }
 
 .banner-table td {
-    padding: 15px;
-    text-align: center;
+    padding: 14px 12px;
+    text-align: center;             /* Canh giữa nội dung các ô */
     vertical-align: middle;
-    background: #fff;
-    border-bottom: 1px solid #f0f0f0;
+    border-top: 1px solid #e9eef5;
+    color: #444;
 }
 
 .banner-table tr:nth-child(even) td {
@@ -64,6 +69,21 @@
 .banner-table tr[draggable="true"]:active {
     cursor: grabbing;
     background: #eef2f7;
+}
+
+
+/* XEN KẼ */
+.banner-table tbody tr:nth-child(odd) td {
+    background: #f4f7fb;
+}
+.banner-table-table tbody tr:nth-child(even) td {
+    background: #ffffff;
+}
+
+/* HOVER */
+.banner-table tbody tr:hover td {
+    background: #e6effa;
+    transition: background .2s ease;
 }
 
 /* --- Modal Overlay & Box --- */
