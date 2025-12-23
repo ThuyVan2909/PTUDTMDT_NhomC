@@ -683,7 +683,7 @@ body {
     <div class="collapse navbar-collapse" id="navbarMenu">
       <ul class="navbar-nav flex-column flex-lg-row gap-2 gap-lg-4 me-auto">
         <li class="nav-item"><a class="nav-link" href="index.php">Trang chủ</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Danh mục</a></li>
+        <li class="nav-item"><a class="nav-link" href="category.php">Danh mục</a></li>
         <li class="nav-item"><a class="nav-link" href="contact.php">Liên hệ</a></li>
         <li class="nav-item"><a class="nav-link" href="blog.php">Blogs</a></li>
         <li class="nav-item">
