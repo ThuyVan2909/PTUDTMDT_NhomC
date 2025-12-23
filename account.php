@@ -93,7 +93,6 @@ $user = $conn->query("SELECT * FROM users WHERE id = $user_id")->fetch_assoc();
 $tab = $_GET['tab'] ?? 'profile';
 
 if ($tab === 'profile') {
-
     if (isset($_GET['updated'])) {
         echo "<div class='alert alert-success'>Cập nhật thông tin thành công.</div>";
     }
@@ -221,9 +220,7 @@ document.getElementById("saveAddress").addEventListener("click",function(){
 
 <?php
 } elseif ($tab === 'orders') {
-
     echo "<h3 class='fw-bold mb-4 text-primary-custom'>Quản lý đơn hàng</h3>";
-
     $uid = $_SESSION['user_id'];
     $stmt = $conn->prepare("SELECT * FROM orders WHERE user_id=? ORDER BY id DESC");
     $stmt->bind_param("i", $uid);

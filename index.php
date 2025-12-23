@@ -72,7 +72,7 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
 
 /* ===== ANNOUNCEMENT BAR ===== */
 .announcement-bar {
-    background: #1A3D64; /* xanh TechZone */
+    background: #1A3D64;
     color: #fff;
     font-size: 14px;
     font-weight: 500;
@@ -102,7 +102,7 @@ $watch_categories = $conn->query("SELECT * FROM categories WHERE parent_id = 3")
 }
 
 
-/* ===== HEADER STYLE (TechZone) ===== */
+/* ===== HEADER ===== */
 .navbar {
     background: linear-gradient(90deg, #EEF4FA, #F8FAFC);
     border-bottom: 1px solid #D6E0EA;
@@ -165,8 +165,6 @@ input.form-control:focus {
     max-width: 360px;
 }
 
-
-/* Icon box bên trái */
 .search-icon-box {
     width: 44px;
     height: 44px;
@@ -187,24 +185,22 @@ input.form-control:focus {
     height: 18px;
 }
 
-/* Input */
 .search-input {
     height: 44px;
     border-radius: 0 8px 8px 0;
     border-left: none;
 }
 
-/* Focus */
 .search-input:focus {
     box-shadow: none;
     border-color: #1A3D64;
 }
 
-/* Hover icon */
 .search-icon-box:hover {
     background: #1A3D64;
     color: #fff;
 }
+
 .btn-icon {
     width: 18px;
     height: 18px;
@@ -289,7 +285,6 @@ input.form-control:focus {
     padding: 12px 0;
 }
 
-
 .search-item {
     display: flex;
     align-items: center;
@@ -304,13 +299,12 @@ input.form-control:focus {
 }
 
 .search-thumb {
-    width: 108px;      /* tăng từ 56 → 64 */
+    width: 108px;
     height: 108px;
     border-radius: 10px;
     object-fit: cover;
     background: #eee;
 }
-
 
 .search-info {
     flex: 1;
@@ -318,16 +312,15 @@ input.form-control:focus {
 
 .search-name {
     font-weight: 400;
-    font-size: 18px;   /* tăng từ 14 */
+    font-size: 18px;   
     margin-bottom: 6px;
 }
 
 .search-price {
     color: #e30019;
     font-weight: 600;
-    font-size: 18px;   /* tăng từ 13 */
+    font-size: 18px;  
 }
-
 
 .discount-badge {
     position: absolute;
@@ -357,7 +350,7 @@ body {
     font-family: Arial;
 }
 
-/* LOGIN POPUP */
+/* ===== LOGIN POPU ===== */
 .login-modal {
     display: none;
     position: fixed;
@@ -407,7 +400,7 @@ body {
 /* ===== LEFT FIXED BANNERS ===== */
 .left-fixed-banners {
     position: sticky;
-    top: 90px; /* dính dưới header */
+    top: 90px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -428,11 +421,12 @@ body {
     height: 100%;
     object-fit: cover;
 }
+
 /* ===== TOP BANNER SLIDER ===== */
 .top-banner-slider {
     position: relative;
     width: 100%;
-    aspect-ratio: 16/6; /* tự động co theo tỷ lệ */
+    aspect-ratio: 16/6;
     border-radius: 20px;
     overflow: hidden;
 }
@@ -460,7 +454,7 @@ body {
     transition: transform .25s ease, box-shadow .25s ease;
 }
 
-/* Lift card */
+
 .product-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 14px 30px rgba(0,0,0,.15);
@@ -478,7 +472,7 @@ body {
 
 
 .product-img-wrapper {
-    height: 290px;       /* 👈 ảnh cao hơn */
+    height: 290px;      
     display: flex;
     align-items: center;
     justify-content: center;
@@ -514,32 +508,29 @@ body {
 
 .product-track {
     display: grid;
-    grid-template-rows: repeat(2, auto); /* 2 hàng */
+    grid-template-rows: repeat(2, auto);
     grid-auto-flow: column;
     grid-auto-columns: calc((100% - 48px) / 4); 
-    /* 👆 4 cột / hàng, trừ gap */
     gap: 16px;
     transition: transform .4s ease;
 }
 
 
-/* Card giữ nguyên Bootstrap col */
 .product-track .col {
     width: 100%;
 }
 
-/* Nút slide */
 .slide-btn {
     position: absolute;
-    top: 50%;                 /* ↓ hạ xuống so với 45% */
+    top: 50%;             
     transform: translateY(-50%);
-    width: 40px;              /* ↓ nhỏ hơn */
-    height: 40px;             /* ↓ nhỏ hơn */
+    width: 40px;             
+    height: 40px;           
     border-radius: 50%;
     border: none;
     background: #1A3D64;
     color: #fff;
-    font-size: 20px;          /* ↓ icon nhỏ lại */
+    font-size: 20px;        
     cursor: pointer;
     z-index: 10;
     opacity: .85;
@@ -553,28 +544,28 @@ body {
 .slide-btn.next { right: -40px; }
 
 .product-slider-wrapper {
-    padding-left: 16px;   /* đẩy nội dung qua phải */
+    padding-left: 16px;  
 }
 
 @media (max-width: 768px) {
     .top-banner-slider {
-        aspect-ratio: 16/9; /* cao hơn cho mobile */
+        aspect-ratio: 16/9;
         margin-bottom: 16px;
     }
 }
 @media (min-width: 992px) {
     .left-fixed-banners a {
-        height: 30vh; /* thay vì px cố định */
+        height: 30vh;
     }
 }
 
 @media (max-width: 768px) {
     .product-track {
-        grid-auto-columns: calc((100% - 16px) / 2); /* 2 cột / hàng */
+        grid-auto-columns: calc((100% - 16px) / 2); 
     }
     .slide-btn {
-        display: block;        /* hiển thị nút */
-        width: 36px;           /* kích thước nhỏ hơn desktop */
+        display: block;       
+        width: 36px;          
         height: 36px;
         font-size: 20px;
         opacity: 0.85;
@@ -582,14 +573,14 @@ body {
 
     /* Nút prev bên trái */
     .slide-btn.prev {
-        left: 8px;             /* cách viền trái màn hình */
+        left: 8px;            
         top: 50%;
         transform: translateY(-50%);
     }
 
     /* Nút next bên phải */
     .slide-btn.next {
-        right: 8px;            /* cách viền phải màn hình */
+        right: 8px;         
         top: 50%;
         transform: translateY(-50%);
     }
@@ -617,7 +608,6 @@ body {
     <span>Sản phẩm chính hãng – Xuất VAT đầy đủ</span>
     <span>Giao nhanh – Miễn phí cho đơn 300k</span>
 
-    <!-- duplicate để chạy mượt -->
     <span>Thu cũ giá ngon – Lên đời tiết kiệm</span>
     <span>Sản phẩm chính hãng – Xuất VAT đầy đủ</span>
     <span>Giao nhanh – Miễn phí cho đơn 300k</span>
@@ -628,7 +618,7 @@ body {
 <nav class="navbar navbar-expand-lg border-bottom">
   <div class="container d-flex flex-wrap align-items-center">
 
-    <!-- LEFT: LOGO -->
+    <!-- Bên trái: LOGO TechZone -->
     <a class="navbar-brand d-flex align-items-center fw-bold me-4" href="index.php">
       <img src="assets/images/logo.png" class="logo-img" alt="TechZone Logo">
     </a>
@@ -733,20 +723,17 @@ body {
       </div>
     </div>
 
-  
 </nav>
 
 
-<!-- ===== TOP BANNER SLIDER ===== -->
+<!-- ===== BANNER PHÍA TRÊN ===== -->
 <div class="container my-3">
     <div class="top-banner-slider">
-
         <?php while($b = $topBanners->fetch_assoc()): ?>
             <a href="<?= $b['link'] ?>" class="top-slide">
                 <img src="<?= $b['image_url'] ?>" alt="<?= $b['title'] ?>">
             </a>
         <?php endwhile; ?>
-
     </div>
 </div>
 
@@ -756,7 +743,7 @@ body {
 <div class="container py-4">
   <div class="row">
 
-    <!-- LEFT FIXED BANNERS -->
+<!-- ===== BANNER BÊN TRÁI ===== -->
     <div class="col-lg-2 d-none d-lg-block left-col">
         <div class="left-fixed-banners">
             <?php while($b = $leftBanners->fetch_assoc()): ?>
@@ -767,8 +754,10 @@ body {
         </div>
     </div>
 
-    <!-- MAIN CONTENT -->
+
+<!-- ===== MAIN CONTENT ===== -->
     <div class="col-12 col-md-9 col-lg-10">
+
             <!-- LAPTOP -->
             <section id="laptop-section">
                 <h2 class="fw-bold mb-3">Laptop</h2>
@@ -852,12 +841,12 @@ body {
 </div>
 
 
-<!-- FOOTER -->
+<!-- ===== FOOTER ===== -->
 <footer class="footer mt-5">
   <div class="container py-5">
     <div class="row g-4">
 
-      <!-- COL 1: BRAND -->
+      <!-- LOGO THƯƠNG HIỆU -->
       <div class="col-lg-4 col-md-6">
         <div class="d-flex align-items-center gap-2 mb-3">
           <img src="assets/images/logo.png" alt="TechZone" height="36">
@@ -872,7 +861,7 @@ body {
         </small>
       </div>
 
-      <!-- COL 2: POLICY -->
+      <!-- CHÍNH SÁCH -->
       <div class="col-lg-2 col-md-6">
         <h6 class="fw-semibold mb-3">Chính sách</h6>
         <ul class="list-unstyled footer-links">
@@ -883,7 +872,7 @@ body {
         </ul>
       </div>
 
-      <!-- COL 3: SUPPORT -->
+      <!-- LIÊN HỆ  -->
       <div class="col-lg-3 col-md-6">
         <h6 class="fw-semibold mb-3">Hỗ trợ khách hàng</h6>
         <ul class="list-unstyled footer-links">
@@ -894,7 +883,7 @@ body {
         </ul>
       </div>
 
-      <!-- COL 4: SOCIAL -->
+      <!-- COL 4: MẠNG XÃ HỘI VÀ PHƯƠNG THỨC THANH TOÁN TÍCH HỢP -->
       <div class="col-lg-3 col-md-6">
         <h6 class="fw-semibold mb-3">Kết nối với TechZone</h6>
         <div class="d-flex gap-3 mb-3">

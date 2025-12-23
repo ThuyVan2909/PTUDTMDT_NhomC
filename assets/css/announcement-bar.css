@@ -1,0 +1,30 @@
+/* ===== ANNOUNCEMENT BAR ===== */
+.announcement-bar {
+    background: #1A3D64;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.announcement-track {
+    display: inline-flex;
+    align-items: center;
+    gap: 48px;
+    padding: 8px 0;
+    animation: marquee 18s linear infinite;
+}
+
+.announcement-track span {
+    display: inline-block;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}

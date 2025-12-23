@@ -75,19 +75,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form method="POST" action="">
+            <!-- NHẬP HỌ TÊN -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Họ tên</label>
                     <input type="text" name="fullname" class="form-control rounded-3" required>
                 </div>
-
+            <!-- NHẬP EMAIL -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Email</label>
                     <input type="email" name="email" class="form-control rounded-3" required>
-                    <div class="mt-2">
-</div>
-
+                    <div class="mt-2"></div>
                 </div>
-
+            <!-- NHẬP MẬT KHẨU -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Mật khẩu</label>
                     <input type="password"
@@ -102,12 +101,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         style="width: 0%;"></div>
                 </div>
                 <small id="password-strength-text" class="fw-semibold"></small>
-
+            <!-- NHẬP SỐ ĐIỆN THOẠI -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Số điện thoại</label>
                     <input type="text" name="phone" class="form-control rounded-3">
                 </div>
-
+            <!--  CHỌN TỈNH / THÀNH -->
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">Tỉnh / Thành</label>
@@ -115,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <option value="">Chọn Tỉnh/Thành</option>
                         </select>
                     </div>
-
+            <!--  CHỌN QUẬN / HUYỆN -->
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">Quận / Huyện</label>
                         <select name="district_id" id="district" class="form-control rounded-3" required>
@@ -123,17 +122,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </select>
                     </div>
                 </div>
-
+            <!--  NHẬP SỐ NHÀ, TÊN ĐƯỜNG  -->
                 <div class="mb-4">
-    <label class="form-label fw-semibold">Số nhà, tên đường</label>
-    <input type="text"
-           name="street"
-           class="form-control rounded-3"
-           placeholder="Ví dụ: 123 Lê Lợi"
-           required>
-</div>
-
-
+                    <label class="form-label fw-semibold">Số nhà, tên đường</label>
+                    <input type="text"
+                            name="street"
+                            class="form-control rounded-3"
+                            placeholder="Ví dụ: 123 Lê Lợi"
+                            required>
+                </div>
+            <!-- NÚT ĐĂNG KÝ -->
                 <div class="d-grid">
                     <button type="submit"
                             class="btn text-white fw-semibold rounded-pill py-2"

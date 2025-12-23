@@ -29,7 +29,7 @@ if (empty($cart)) {
 <head>
 <meta charset="UTF-8">
 <title>Giỏ hàng</title>
-<link rel="icon" type="image/png" href="assets/images/icon_logo.png">
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/header.css">
 <link rel="stylesheet" href="assets/css/footer.css">
@@ -399,10 +399,10 @@ body {
 
 /* ===== SUBTOTAL (TỪNG SẢN PHẨM) ===== */
 .item-subtotal {
-    font-weight: 700;              /* đậm */
-    color: #e30019;                /* đỏ chuẩn UI thương mại */
+    font-weight: 700;             
+    color: #e30019;               
     font-size: 16px;
-    white-space: nowrap;            /* không xuống dòng */
+    white-space: nowrap;            
 }
 
 
@@ -426,7 +426,7 @@ body {
     }
 
     #cartTable th {
-        display: none; /* ẩn header */
+        display: none; 
     }
 
     #cartTable td {
@@ -495,6 +495,8 @@ body {
 <div class="container my-5">
         <div class="row">
             <div class="col-12">
+
+            
 <table id="cartTable">
 <tr>
     <th>Ảnh sản phẩm</th>
@@ -503,7 +505,7 @@ body {
     <th>Số lượng</th>
     <th>Tổng</th>
 </tr>
-
+<!-- HIỂN THỊ THÔNG TIN CHI TIẾT GIỎ HÀNG -->
 <?php if(!empty($cart)):
     foreach($cart as $item):
         $price = $item['promo_price'] ?? $item['price'];
@@ -553,7 +555,7 @@ body {
 <tr><td colspan="5" style="text-align:center;">Giỏ hàng trống</td></tr>
 <?php endif; ?>
 
-<!-- Tổng tạm tính -->
+<!-- TỔNG TẠM TÍNH-->
 <tr>
     <td colspan="4" class="total-row">Tạm tính:</td>
     <td class="total-row" id="subtotalDisplay"><?= number_format($total) ?> đ</td>
@@ -584,8 +586,9 @@ body {
 
 <div class="row mt-4">
     <div class="col-md-6 ms-auto">
-<!-- Nhập mã giảm giá -->
-   <!-- <div class="col-lg-4"> -->
+
+
+<!-- Chọn mã giảm giá -->
     <div class="coupon-box coupon-wrapper">
     <label class="coupon-label">Mã giảm giá</label>
 
@@ -597,10 +600,7 @@ body {
         </span>
     </div>
 
-    
-</div>
-
-
+    </div>
 
 
 <?php if (!empty($cart)): ?>
